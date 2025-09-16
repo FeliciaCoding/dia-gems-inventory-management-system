@@ -1,0 +1,135 @@
+= Instructions Projet
+Nastaran FATEMI <nastaran.fatemi@heig-vd.ch>; Christopher MEIER <christopher.meier@heig-vd.ch>
+:lang: fr
+:toc:
+:toc-title: Table des matières
+
+== Objectifs
+
+Le but de ce projet est d’entreprendre la réalisation complète d’une *application de base de données*
+de votre choix. Le projet sera réalisé par groupe de 3 personnes. Il comprendra plusieurs phases mettant
+en oeuvre les concepts de réalisation de base de données vus dans le cours.
+
+Phase I : Cahier des charges::
+* Description détaillées de l’analyse des besoins. Cette analyse comprendra à la fois les besoins
+en données et les besoins fonctionnels.
+
+Phase II : Modélisation conceptuelle::
+* Réalisation du schéma conceptuel de votre base de données au format UML.
+
+Phase III : Modélisation relationnelle::
+* Transformation de votre schéma UML en schéma relationnel.
+* Création de la base de données (les tables et les contraintes d’intégrités référentielles).
+
+Phase IV : Requêtes, Vues et Triggers::
+* Ecriture de requêtes.
+* Création des vues et des déclencheurs automatiques.
+
+Phase V : Application de base de données::
+* Réalisation d’une application web permettant la visualisation et la manipulation
+de la base.
+* L'application web est developée en utilisant la librairie python https://streamlit.io/[Streamlit].
+* Utilisation d’une API de connexion de l’application à la base de données.
+
+
+
+== Planning
+
+[cols="~,~"]
+|===
+|Livrables|Dates prévues
+
+a|
+Phase I::
+* Description de la problématique, avec analyse des besoins qui seront nécessaires
+pour la conception des schémas.
+|
+dim. 12.10.2025 
+
+à 23h59
+
+a|
+Phase II::
+* Schéma conceptuel au format UML.
+|
+-
+
+a|
+Phase III::
+* Schéma relationnel.
+* Fichier du script de création des tables et des contraintes d’intégrité référentielle.
+|
+-
+
+a|
+Phase IV::
+* Fichier du script d’insertion des données dans la base.
+* Fichier du script pour ajouter des vues et des triggers.
+* Fichier contenant des requêtes liées aux fonctionnalités prévues.
+|
+-
+
+a|
+Rendu ﬁnal::
+* Un ﬁchier README.md contenant les instructions de déploiement.
+* Le script complet de la création de la base de données.
+* Le code source du programme d’application avec les commentaires
+* Un rapport PDF contenant les rendus mis à jour des phases precedentes
+|
+dim. 18.01.2026
+
+à 23h59
+
+a|
+Présentation ﬁnale::
+* Durée : 30 minutes par groupe (20 minutes de présentation et 10 minutes de questions).
+* 10-12 slides comprenant la description de la problématique, les choix d’implémentation, les schémas conceptuel, relationnel et les spéciﬁcités d’implémentation.
+* Démo des fonctionnalités de l’application.
+* Questions/réponses sur l’application développée.
+|
+mar. 20.01.2026 et jeu. 22.01.2026
+
+Rendre les slides
+avant Mardi 13h sur le
+repo
+|===
+
+
+
+== Evaluation
+
+1. Les livrables de chaque phase doivent être rendus dans le temps imparti (pénalité pour les retards)
+*sur Github Classroom*.
+2. Chaque phase ne sera pas corrigée, mais discutée avec chaque groupe individuellement, aﬁn de
+pouvoir améliorer chaque partie pour le rendu ﬁnal.
+3. Le projet compte comme 50% de la note ﬁnale des laboratoires.
+
+
+== Exemples de thème
+
+Voici quelques exemples de projet pour vous inspirer. Le plus important est de proposer un sujet qui
+vous passionne.
+
+* Movie Database
+* Covoiturage
+* Gestion de cartes (Magic)
+* Webmail
+* Tournoi de jeux video
+* Gestion d’hôpital
+* Gestion de salles
+* Questionnaires en ligne
+* Gestion pour entreprise pharmaceutique
+* WS Deck Builder
+* BDD sons
+* Furst Système ERP
+* Gestion de complexe sportif
+* Gestion de patient dans un service de neuropsychologie
+* Gestion d’une école
+* Location d’objets via site Web
+* Gestion complète d’une maison
+* Organisation d’un festival
+* Gestion de commune
+* Plateforme online d’entraînement personnalisé de ﬁtness
+* Lecteur de musique cross-platform
+* Gestion des cours dans un ﬁtness
+* Gestion des stocks d’un supermarché
