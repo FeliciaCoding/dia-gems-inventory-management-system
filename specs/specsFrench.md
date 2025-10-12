@@ -200,7 +200,7 @@ Les données suivantes seront requises (liste non exhaustive) :
 - Compte bureau
 
 #### Documents
-- Bon d’achat
+- Achat
 - Mémo entrée / Retour mémo entrée
 - Mémo sortie / Retour mémo sortie
 - Transfert :
