@@ -57,8 +57,8 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - Allow to store / update photos and the URL of videos
 - Generate and export shipping reports in excel
 ### Accountant :
-- Allow to extract Receviable / payables based on purchase note and invoice
-- Produce AR / AP summaries and export to excel for reconcilliation
+- Allow to extract Receviables / Payables based on purchase note and invoice
+- Produce Receviables / Payables summaries and export to excel for reconcilliation
 ### Sale :
 - Consult real-time item status, location, and pricing
 - issue invoices and mark items sold.
