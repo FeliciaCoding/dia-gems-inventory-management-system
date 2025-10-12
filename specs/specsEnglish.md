@@ -4,7 +4,7 @@
 member:  Liao Pei-Wen, Maksym Makovskyi, Wu Guo Yu
 
 
----
+
 
 ## Introduction :
 
@@ -20,7 +20,7 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - End-to-end traceability with controlled, auditable state transitions.
 - Faster operations from receiving to certification to listing; fewer variances; higher inventory turns.
 
----
+
 
 ## User profile  :
 
@@ -64,7 +64,7 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - issue invoices and mark items sold.
 - Share goods' info/ media with clients
 
----
+
 
 ## Required Data:
 Following data will be required but not limited to :

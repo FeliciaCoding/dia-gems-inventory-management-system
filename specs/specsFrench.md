@@ -4,7 +4,7 @@
 
 ##### Veuillez noter que les spécifications originales sont en anglais [specsEnglish.md](specsEnglish.md) . La version française est une traduction réalisée à l’aide d’un outil de traduction.
 
----
+
 
 
 ## Introduction :
@@ -22,7 +22,7 @@ Une plateforme sécurisée d’inventaire et de traçabilité pour les diamants,
 - Traçabilité de bout en bout avec transitions d’état contrôlées et auditables.
 - Opérations plus rapides de la réception à la certification puis à la mise en vente ; moins d’écarts ; rotation d’inventaire plus élevée.
 
----
+
 
 ## Profil utilisateur :
 
@@ -34,7 +34,7 @@ Une plateforme sécurisée d’inventaire et de traçabilité pour les diamants,
     - **Ventes** : Vérification de la disponibilité / du prix / de la localisation et éventuellement émission de factures. Besoin d’une recherche rapide et précise avec un statut et des médias à jour.
     - **Comptable** : Gestion clients/fournisseurs (AR/AP) et rapprochements. Besoin de documents cohérents, de liens propres entre marchandises et facture + exports/imports fiables.
 
----
+
 
 ## Fonctionnalités :
 
@@ -63,12 +63,11 @@ Une plateforme sécurisée d’inventaire et de traçabilité pour les diamants,
 - Extraire **comptes clients / comptes fournisseurs (AR/AP)** à partir des bons d’achat et des factures.
 - Produire des synthèses AR/AP et exporter en Excel pour le rapprochement.
 
-### Ventes :
+### Vendeurs :
 - Consulter en temps réel le statut, la localisation et le prix des articles.
 - Émettre des factures et marquer les articles comme vendus.
 - Partager avec les clients les informations/médias des marchandises.
 
----
 
 ## Données requises :
 Les données suivantes seront requises (liste non exhaustive) :
