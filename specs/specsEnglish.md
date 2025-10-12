@@ -1,6 +1,9 @@
 # Inventory Management Tool For Diamond/ Precious Stones
 
-##### member:  Liao Pei-Wen, Maksym Makovskyi, Wu Guo Yu
+#####
+member:  Liao Pei-Wen, Maksym Makovskyi, Wu Guo Yu
+
+
 ---
 
 ## Introduction :
@@ -17,6 +20,8 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - End-to-end traceability with controlled, auditable state transitions.
 - Faster operations from receiving to certification to listing; fewer variances; higher inventory turns.
 
+---
+
 ## User profile  :
 
 - Company type : Colored stones / Dimond Dealer in B2B
@@ -26,6 +31,8 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
     - Administrator : Tracking goods' overall status, generating inventory list, following shipment
     - Sales : Checking availability / price / location and eventually issueing invoices. Need fast, accuate search with up-to-date status and media.
     - Accountant : Handle AR/AP and reconsiliation. Need consistent documents, clean links between goods and invoice + reliable exports/ import.
+
+---
 
 ## Functionalities:
 
@@ -56,6 +63,8 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - Consult real-time item status, location, and pricing
 - issue invoices and mark items sold.
 - Share goods' info/ media with clients
+
+---
 
 ## Required Data:
 Following data will be required but not limited to :
