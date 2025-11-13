@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>550</x><y>560</y><w>140</w><h>160</h></coordinates><panel_attributes>/Action/
+<diagram program="umletino" version="15.1"><zoom_level>9</zoom_level><element><id>UMLClass</id><coordinates><x>441</x><y>335</y><w>126</w><h>144</h></coordinates><panel_attributes>Action
 --
 _actionId_
 date
@@ -11,62 +11,43 @@ terms
 remarks
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>340</x><y>710</y><w>300</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>280;10;280;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>110</x><y>750</y><w>440</w><h>200</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;180;10;10;420;10</additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>750</y><w>790</w><h>200</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;770;10;770;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>60</x><y>930</y><w>100</w><h>120</h></coordinates><panel_attributes>Purchase 
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>252</x><y>470</y><w>270</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>280;10;280;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>45</x><y>506</y><w>396</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;180;10;10;420;10</additional_attributes></element><element><id>Relation</id><coordinates><x>414</x><y>506</y><w>729</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;790;10;790;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>668</y><w>90</w><h>108</h></coordinates><panel_attributes>Purchase 
 --
 purchaseNum
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1240</x><y>930</y><w>100</w><h>120</h></coordinates><panel_attributes>Sale
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1080</x><y>668</y><w>90</w><h>108</h></coordinates><panel_attributes>Sale
 --
 _invoiceNum_
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>220</x><y>870</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>UMLClass</id><coordinates><x>300</x><y>930</y><w>110</w><h>120</h></coordinates><panel_attributes>ReturnMemoIn
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>144</x><y>506</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>108</x><y>839</y><w>99</w><h>108</h></coordinates><panel_attributes>ReturnMemoIn
 --
-retMemoInNum
-backDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>420</x><y>930</y><w>100</w><h>120</h></coordinates><panel_attributes>Memo In 
+
+backDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>324</x><y>668</y><w>90</w><h>108</h></coordinates><panel_attributes>Memo Out
 --
 memoInNum
-shipDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>670</x><y>930</y><w>120</w><h>120</h></coordinates><panel_attributes>TransferToOffice
+shipDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>549</x><y>668</y><w>108</w><h>108</h></coordinates><panel_attributes>TransferToOffice
 --
 transferOfficeNum
-shipDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>180</x><y>930</y><w>100</w><h>120</h></coordinates><panel_attributes>Memo In 
+shipDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>108</x><y>668</y><w>90</w><h>108</h></coordinates><panel_attributes>Memo In 
 --
 memoInNum
-shipDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>540</x><y>930</y><w>120</w><h>120</h></coordinates><panel_attributes>ReturnMemoIn
+shipDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>324</x><y>839</y><w>108</w><h>108</h></coordinates><panel_attributes>ReturnMemoOut
 --
-returnMemoinNum
-backDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>870</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>580</x><y>870</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>330</x><y>870</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>UMLClass</id><coordinates><x>200</x><y>800</y><w>170</w><h>30</h></coordinates><panel_attributes>/ShipWithoutPurchase/
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>440</x><y>800</y><w>170</w><h>30</h></coordinates><panel_attributes>/ShipWithoutSelling/
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>280</x><y>820</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>220</x><y>870</y><w>140</w><h>30</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;120;10</additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>820</y><w>90</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>70;10;70;60;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>870</y><w>90</w><h>30</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;70;10</additional_attributes></element><element><id>Relation</id><coordinates><x>270</x><y>750</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>750</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>UMLClass</id><coordinates><x>790</x><y>800</y><w>170</w><h>30</h></coordinates><panel_attributes>/ShipInternally/
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>860</x><y>750</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>710</x><y>820</y><w>180</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>160;10;160;60;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>710</x><y>870</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>UMLClass</id><coordinates><x>820</x><y>930</y><w>100</w><h>30</h></coordinates><panel_attributes>/ShipLabo/
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1050</x><y>930</y><w>100</w><h>30</h></coordinates><panel_attributes>/ShipFactory/
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>860</x><y>870</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>820</x><y>870</y><w>300</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;280;10;280;60</additional_attributes></element><element><id>UMLClass</id><coordinates><x>710</x><y>1080</y><w>110</w><h>120</h></coordinates><panel_attributes>TransferToLabo
+backDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>423</x><y>506</y><w>81</w><h>423</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>70;10;70;450;10;450</additional_attributes></element><element><id>Relation</id><coordinates><x>594</x><y>506</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>666</x><y>668</y><w>99</w><h>108</h></coordinates><panel_attributes>TransferToLab
 --
 transferLabNum
-shipDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>880</x><y>1080</y><w>100</w><h>120</h></coordinates><panel_attributes>BackFormLabo
+shipDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>666</x><y>839</y><w>90</w><h>108</h></coordinates><panel_attributes>BackFormLab
 --
-backDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>750</x><y>950</y><w>140</w><h>150</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>120;10;120;110;10;110;10;130</additional_attributes></element><element><id>Relation</id><coordinates><x>860</x><y>1050</y><w>90</w><h>50</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>70;30;70;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1000</x><y>1080</y><w>120</w><h>120</h></coordinates><panel_attributes>SentToFac
+backDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>891</x><y>668</y><w>108</w><h>108</h></coordinates><panel_attributes>SentToFac
 --
 weight_ct_before
-shape_before</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1030</x><y>950</y><w>90</w><h>150</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>70;10;70;100;10;100;10;130</additional_attributes></element><element><id>Relation</id><coordinates><x>1060</x><y>1040</y><w>150</w><h>60</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>130;40;130;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1140</x><y>1080</y><w>120</w><h>120</h></coordinates><panel_attributes>BackFormFac
+shape_before</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>900</x><y>839</y><w>81</w><h>108</h></coordinates><panel_attributes>BackFormFac
 --
 weight_ct_after
 shape_after
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>550</x><y>320</y><w>140</w><h>130</h></coordinates><panel_attributes>**Office**
---
-_officeId_
-	
 
-
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>610</x><y>440</y><w>40</w><h>140</h></coordinates><panel_attributes>lt=-
-m1=*</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>580</y><w>140</w><h>130</h></coordinates><panel_attributes>**Supplier**
---
-_supplierId_
-
-
-	
-
-
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>170</x><y>630</y><w>400</w><h>40</h></coordinates><panel_attributes>lt=-
-m1=*</panel_attributes><additional_attributes>10;10;380;10</additional_attributes></element><element><id>Relation</id><coordinates><x>680</x><y>630</y><w>940</w><h>40</h></coordinates><panel_attributes>lt=-
-m1=*</panel_attributes><additional_attributes>920;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1600</x><y>380</y><w>140</w><h>280</h></coordinates><panel_attributes>**Items**
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>495</x><y>227</y><w>36</w><h>126</h></coordinates><panel_attributes>lt=-
+m1=*</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>Relation</id><coordinates><x>558</x><y>389</y><w>846</w><h>36</h></coordinates><panel_attributes>lt=-
+m1=*</panel_attributes><additional_attributes>920;10;10;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1386</x><y>164</y><w>126</w><h>252</h></coordinates><panel_attributes>**Item**
 --
 _lotId_
 stock_name
@@ -91,35 +72,26 @@ origin
 	
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>580</x><y>1280</y><w>140</w><h>130</h></coordinates><panel_attributes>**Client**
---
-_clientId_
-
-
-	
-
-
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>0</x><y>710</y><w>600</w><h>670</h></coordinates><panel_attributes>lt=-
-m1=*</panel_attributes><additional_attributes>580;640;10;640;10;30;580;30;580;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1410</x><y>920</y><w>100</w><h>100</h></coordinates><panel_attributes>Diamond
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1215</x><y>659</y><w>90</w><h>90</h></coordinates><panel_attributes>Diamond
 --
 shape
 clarity
 
 	
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1620</x><y>920</y><w>120</w><h>120</h></coordinates><panel_attributes>ColoredGemStones
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1404</x><y>659</y><w>108</w><h>108</h></coordinates><panel_attributes>ColoredGemStones
 --
 gem_type
 shape
 color
 treatement
 origin
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1310</x><y>1080</y><w>120</w><h>120</h></coordinates><panel_attributes>WhiteDiamond
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1125</x><y>803</y><w>108</w><h>108</h></coordinates><panel_attributes>WhiteDiamond
 --
 white_level
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1460</x><y>1080</y><w>160</w><h>120</h></coordinates><panel_attributes>ColoredDiamond
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1260</x><y>803</y><w>144</w><h>108</h></coordinates><panel_attributes>ColoredDiamond
 --
 gem_tpy
 color
@@ -129,26 +101,10 @@ color
 
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1450</x><y>850</y><w>140</w><h>90</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>120;10;120;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1550</x><y>880</y><w>150</w><h>60</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>130;40;130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1370</x><y>1010</y><w>110</w><h>90</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>90;10;90;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1450</x><y>1040</y><w>120</w><h>60</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>100;40;100;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>180</x><y>320</y><w>140</w><h>130</h></coordinates><panel_attributes>**Laboratoire**
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1251</x><y>596</y><w>126</w><h>81</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>120;10;120;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1341</x><y>623</y><w>135</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>130;40;130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1179</x><y>740</y><w>99</w><h>81</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>90;10;90;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1251</x><y>767</y><w>108</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>100;40;100;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>450</x><y>74</y><w>126</w><h>162</h></coordinates><panel_attributes>Counterpart
 --
-_labId_
-
-	
-
-
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>930</x><y>320</y><w>140</w><h>130</h></coordinates><panel_attributes>**Factory**
---
-_facId_
-serviceType
-	
-
-
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>230</x><y>440</y><w>340</w><h>180</h></coordinates><panel_attributes>lt=-
-m1=*</panel_attributes><additional_attributes>10;10;10;70;210;70;210;160;320;160</additional_attributes></element><element><id>Relation</id><coordinates><x>680</x><y>440</y><w>350</w><h>180</h></coordinates><panel_attributes>lt=-
-m1=*
-</panel_attributes><additional_attributes>320;10;320;80;200;80;200;160;10;160</additional_attributes></element><element><id>UMLClass</id><coordinates><x>550</x><y>0</y><w>140</w><h>180</h></coordinates><panel_attributes>/Counterpart/
---
-account_type
+_id_
+account_type [1..*]
 name
 nb_tele
 adress
@@ -159,7 +115,7 @@ adress
 email
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>100</x><y>170</y><w>530</w><h>140</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>510;10;510;120;10;120</additional_attributes></element><element><id>Relation</id><coordinates><x>600</x><y>280</y><w>1310</w><h>1020</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;1290;10;1280;950;50;950;50;1000</additional_attributes></element><element><id>Relation</id><coordinates><x>230</x><y>280</y><w>30</w><h>60</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>600</x><y>280</y><w>30</w><h>60</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>990</x><y>280</y><w>30</w><h>60</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>1560</x><y>650</y><w>130</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>110;10;110;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>1660</x><y>690</y><w>130</w><h>30</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>110;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1520</x><y>740</y><w>100</w><h>120</h></coordinates><panel_attributes>/LooseStone/
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1350</x><y>407</y><w>117</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>110;10;110;60;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>1440</x><y>452</y><w>117</w><h>27</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>110;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1314</x><y>497</y><w>90</w><h>108</h></coordinates><panel_attributes>/LooseStone/
 --
 shape
 weight_ct
@@ -168,7 +124,7 @@ measurement
 	width
 	depth
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1560</x><y>690</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1690</x><y>720</y><w>190</w><h>190</h></coordinates><panel_attributes>Jewellry
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1350</x><y>452</y><w>27</w><h>63</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1467</x><y>479</y><w>171</w><h>171</h></coordinates><panel_attributes>Jewellry
 --
 Jew_type
 gross_weight_gr
@@ -182,8 +138,9 @@ total_side_stone_weight_ct
 side_stone_type
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1760</x><y>690</y><w>30</w><h>50</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>100</x><y>280</y><w>30</w><h>320</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;300</additional_attributes></element><element><id>UMLClass</id><coordinates><x>870</x><y>850</y><w>120</w><h>30</h></coordinates><panel_attributes>disjoint, total
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1670</x><y>670</y><w>120</w><h>30</h></coordinates><panel_attributes>disjoint, total
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1100</x><y>1020</y><w>120</w><h>30</h></coordinates><panel_attributes>disjoint, total
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>870</x><y>1020</y><w>120</w><h>30</h></coordinates><panel_attributes>disjoint, total
-</panel_attributes><additional_attributes></additional_attributes></element></diagram>
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1530</x><y>452</y><w>27</w><h>45</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1449</x><y>434</y><w>108</w><h>27</h></coordinates><panel_attributes>disjoint, total
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>360</x><y>506</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>747</x><y>506</y><w>99</w><h>414</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>90;10;90;440;10;440</additional_attributes></element><element><id>Relation</id><coordinates><x>936</x><y>506</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>972</x><y>506</y><w>90</w><h>414</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>80;10;80;440;10;440</additional_attributes></element><element><id>Relation</id><coordinates><x>99</x><y>776</y><w>108</w><h>81</h></coordinates><panel_attributes>lt=[retMemoInNum]-
+</panel_attributes><additional_attributes>60;10;60;70</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>506</y><w>90</w><h>414</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>80;10;80;440;10;440</additional_attributes></element><element><id>Relation</id><coordinates><x>306</x><y>776</y><w>135</w><h>81</h></coordinates><panel_attributes>lt=[returnMemoOutNum]-
+</panel_attributes><additional_attributes>70;10;70;70</additional_attributes></element><element><id>Relation</id><coordinates><x>702</x><y>506</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>675</x><y>776</y><w>72</w><h>81</h></coordinates><panel_attributes>lt=[shipNum]-
+</panel_attributes><additional_attributes>40;10;40;70</additional_attributes></element><element><id>Relation</id><coordinates><x>900</x><y>776</y><w>72</w><h>81</h></coordinates><panel_attributes>lt=[shipNum]-
+</panel_attributes><additional_attributes>40;10;40;70</additional_attributes></element></diagram>
