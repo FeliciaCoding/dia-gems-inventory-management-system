@@ -11,6 +11,17 @@ counterpart (**counterpart_id**, name, phone_number, address_short, city, postal
 
 action (**action_id**, unit_price, terms, remarks, creation_date, last_update)
 
+purchase_notice (**action_id**, purchase_num)
+purchase_notice.action_id references action.action_id
+
+memo_in (**action_id**, memo_in_num, ship_date)
+memo_in.action_id references action.action_id
+
+return_memo_in (**action_id**, **return_memo_in**, back_date)
+return_memo_in.action_id references action.action_id
+
+
+
 ```
 to be completed
 ```
