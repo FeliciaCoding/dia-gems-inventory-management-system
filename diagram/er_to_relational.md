@@ -1,31 +1,46 @@
-### Work in progress
-Counterpart (**counterpart_id**, name, phone_number, address_short, city, postal_code, country, email)
+### Relational schema (work in progress)
 
-Action (**action_id**, unit_price, terms, remarks, creation_date, last_update)
+#### `counterpart`
 
-### Few questions regarding `Action` entity
+counterpart (**counterpart_id**, name, phone_number, address_short, city, postal_code, country, email)
 
-1. Should we add `Employee` entity ? 
-Since for tracability it would be nice     
-to see who has performed an action.
-<br/>
+---
 
-2. What is `action_office`?
-<br/>
 
-3. Why we need `location` ? 
-Action is already bounded to at least two counterparts.
-So, having an information about those counterparts and 
-seeing which table is being affected (`TranserToLab` for example)
-we could deduce (or even more: while translating er schema to relation 
-one we have to create a special table
-that will represent this kind of association between two entities, 
-and there will be a column for `sender_counterpart` 
-and `receiver_counterpart`) that target location is the lab.
-<br/>
+#### `action`
 
-4. What is `account` ?
+action (**action_id**, unit_price, terms, remarks, creation_date, last_update)
 
 ```
+to be completed
+```
+
+---
+
+
+#### `item`
+
+item (**lot_id**, stock_name, status, location, item_type, qty, 
+      purchase_date, sold_date, supplier, sale_unit, cost_unit, 
+      cert_lab, cert_number, origin, creation_date)
+
+loose_stone (**lot_id**, weight_ct, length, width, depth)
+loose_stone.lot_id references item.lot_id
+
+white_diamond (**lot_id**, white_level, shape, clarity)
+white_diamond.lot_id references loose_stone.lot_id
+
+colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, shape, clarity)
+colored_diamond.lot_id references loose_stone.lot_id
+
+colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
+colored_gem_stone.lot_id references loose_stone.lot_id
+
+jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
+        total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
+        total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
+
+action_item(**action_id**, **lot_id**)
+
 
 
