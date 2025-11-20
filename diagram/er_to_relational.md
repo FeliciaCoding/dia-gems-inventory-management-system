@@ -11,6 +11,9 @@ counterpart (**counterpart_id**, name, phone_number, address_short, city, postal
 
 action (**action_id**, unit_price, terms, remarks, creation_date, last_update)
 
+counterpart_action (**sender_id, receiver_id, action_id**)
+
+
 purchase_notice (**action_id**, purchase_num)
 purchase_notice.action_id references action.action_id
 
