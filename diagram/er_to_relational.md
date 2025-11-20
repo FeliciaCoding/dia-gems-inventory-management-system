@@ -13,7 +13,8 @@ counterpart_account_type (**counterpart_id**, **type_id**)
 #### `employee`
 employee (**employee_id**, first_name, last_name, email, role, is_active)
 
-action_log (**log_id**, action_id, employee_id, action_type, log_time)
+update_log (**log_id**, action_id, employee_id, update_type, log_time)
+
 ---
 
 

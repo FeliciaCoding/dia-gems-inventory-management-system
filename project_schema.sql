@@ -41,7 +41,20 @@ CREATE TABLE employee (
    email VARCHAR(50) UNIQUE NOT NULL,
    role VARCHAR(50),
    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-)
+);
 
 
--- action_log (**log_id**, action_id, employee_id, action_type, log_time)
+
+
+
+-- update_log (**log_id**, action_id, employee_id, update_type, log_time)
+CREATE TABLE update_log (
+   log_id BIGINT PRIMARY KEY,
+   action_id BIGINT NOT NULL,
+   employee_id BIGINT NOT NULL,
+   update_type VARCHAR(30) NOT NULL,
+   log_time TIMESTAMP NOT NULL,
+   FOREIGN KEY (action_id) REFERENCES action(action_id),
+   FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
+);
+-- last_update TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
