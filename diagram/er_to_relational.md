@@ -4,12 +4,22 @@
 
 counterpart (**counterpart_id**, name, phone_number, address_short, city, postal_code, country, email)
 
+account_type (**type_name**, category, is_internal)
+
+counterpart_account_type (**counterpart_id**, **type_id**)
+
+---
+
+#### `employee`
+employee (**employee_id**, first_name, last_name, email, role, is_active)
+
+action_log (**log_id**, action_id, employee_id, action_type, log_time)
 ---
 
 
 #### `action`
 
-action (**action_id**, unit_price, terms, remarks, creation_date, last_update)
+action (**action_id**, terms, remarks, creation_date, last_update)
 
 counterpart_action (**sender_id, receiver_id, action_id**)
 
