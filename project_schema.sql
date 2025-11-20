@@ -40,12 +40,8 @@ CREATE TABLE employee (
    last_name VARCHAR(30) NOT NULL,
    email VARCHAR(50) UNIQUE NOT NULL,
    role VARCHAR(50),
-   is_active BOOLEAN NOT NULL DEFAULT TRUE,
+   is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
-
-
-
-
 
 -- update_log (**log_id**, action_id, employee_id, update_type, log_time)
 CREATE TABLE update_log (
@@ -57,4 +53,28 @@ CREATE TABLE update_log (
    FOREIGN KEY (action_id) REFERENCES action(action_id),
    FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
 );
+
+-- action (**action_id**, terms, remarks, creation_date, last_update)
+CREATE TABLE action (
+   action_id BIGINT PRIMARY KEY,
+   terms VARCHAR(50),
+   remarks TEXT,
+   creation_date TIMESTAMP NOT NULL,
+   last_update TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
+  );
+
+
+-- counterpart_action (**from_counterpart_id, to_counterpart_id, action_id**)
+
+CREATE TABLE counterpart_action (
+   from_counterpart_id BIGINT NOT NULL,
+   to_counterpart_id BIGINT NOT NULL,
+   action_id BIGINT NOT NULL,
+   FOREIGN KEY (from_counterpart_id) REFERENCES counterpart(counterpart_id),
+   FOREIGN KEY (to_counterpart_id) REFERENCES counterpart(counterpart_id),
+   FOREIGN KEY (action_id) REFERENCES action(action_id)
+);
+
+
+
 -- last_update TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL

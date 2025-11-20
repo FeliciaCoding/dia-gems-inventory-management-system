@@ -22,7 +22,7 @@ update_log (**log_id**, action_id, employee_id, update_type, log_time)
 
 action (**action_id**, terms, remarks, creation_date, last_update)
 
-counterpart_action (**sender_id, receiver_id, action_id**)
+counterpart_action (**from_counterpart_id, to_counterpart_id, action_id**)
 
 
 purchase_notice (**action_id**, purchase_num)
