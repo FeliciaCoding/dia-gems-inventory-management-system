@@ -94,11 +94,11 @@ CREATE TABLE action_item(
    lot_id BIGINT NOT NULL,
    qty INT NOT NULL,
    unit_price INT NOT NULL,
-   currency VARCHAR(30) NOT NULL,
+   currency_code VARCHAR(30) NOT NULL,
    PRIMARY KEY (action_id, line_no),
    FOREIGN KEY (action_id) REFERENCES action(action_id),
    FOREIGN KEY (lot_id) REFERENCES item(lot_id),
-   FOREIGN KEY (currency_code) REFERENCES currency(currency_code)
+   FOREIGN KEY (currency_code) REFERENCES currency(code)
 );
 
 -- purchase(**action_id**, purchase_num)
@@ -169,13 +169,46 @@ CREATE TABLE return_memo_out_details(
    FOREIGN KEY (memo_out_action_id, memo_out_line_no) REFERENCES action_item(action_id, line_no)
 );
 
---CREATE TABLE transfer_to_office();
---CREATE TABLE transfer_to_lab();
---CREATE TABLE back_from_lab();
---CREATE TABLE back_from_lab_details();
+-- transfer_to_office(**action_id**, transfer_num, ship_date)
+CREATE TABLE transfer_to_office(
+   action_id     BIGINT PRIMARY KEY,
+   transfer_num VARCHAR(30),
+   ship_date DATE,
+   FOREIGN KEY (action_id) REFERENCES action(action_id)
+);
+
+-- transfer_to_lab(**action_id**, transfer_num, ship_date)
+CREATE TABLE transfer_to_lab(
+   action_id     BIGINT PRIMARY KEY,
+   transfer_num VARCHAR(30),
+   ship_date DATE,
+   FOREIGN KEY (action_id) REFERENCES action(action_id)
+);
+
+-- back_from_lab(**action_id, back_from_lab_num**, back_date)
+CREATE TABLE back_from_lab(
+   action_id BIGINT NOT NULL,
+   back_from_lab_num VARCHAR(30),
+   back_date DATE NOT NULL,
+   PRIMARY KEY (action_id, back_from_lab_num),
+   FOREIGN KEY (action_id) REFERENCES transfer_to_lab(action_id)
+);
+
+-- back_from_lab_details(**return_action_id,return_line_no**, send_action_id, send_line_no, qty_returned)
+CREATE TABLE back_from_lab_details(
+   return_action_id BIGINT PRIMARY KEY,
+   return_line_no    INT NOT NULL,
+   send_action_id BIGINT NOT NULL,
+   send_line_no  INT NOT NULL,
+   qty_returned  INT NOT NULL,
+   PRIMARY KEY (return_action_id, return_line_no),
+   FOREIGN KEY (return_action_id) REFERENCES back_from_lab(action_id),
+   FOREIGN KEY (send_action_id) REFERENCES transfer_to_lab(action_id),
+   FOREIGN KEY (send_action_id, send_line_no) REFERENCES action_item(action_id, line_no)
+);
 --CREATE TABLE transfer_to_factory();
 --CREATE TABLE back_to_factory();
 --CREATE TABLE back_from_factory_details();
 --CREATE TABLE sale();
 
---CREATE TABLE currency();
+

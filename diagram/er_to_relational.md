@@ -58,8 +58,20 @@ return_memo_out_details( **return_action_id, return_line_no**, memo_out_action_i
     memo_out_action_id references action_item.action_id
     memo_out_line_no references action_item.line_no
     
+transfer_to_office(**action_id**, transfer_num, ship_date)
+    action_id references action.action_id
 
+transfer_to_lab(**action_id**, transfer_num, ship_date)
+    action_id references action.action_id
 
+back_from_lab(**action_id, back_from_lab_num**, back_date)
+    action_id REFERENCES transfer_to_lab.action_id
+
+back_from_lab_details(**return_action_id,return_line_no**, send_action_id, send_line_no, qty_returned)
+    return_action_id references back_from_lab.action_id
+    send_action_id references transfer_to_lab.action_id
+    send_action_id references action_item.action_id
+    send_out_line_no references action_item.line_no
 ```
 to be completed
 ```
@@ -98,6 +110,12 @@ action_item(**action_id,line_no**, lot_id, qty, unit_price,currency_code)
 
 ### `currency`
 currency (**code**, name)
+
+---
+### `certificate`
+```
+to be completed
+```
 
 
 
