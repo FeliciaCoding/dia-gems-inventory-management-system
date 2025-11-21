@@ -6,7 +6,9 @@ counterpart (**counterpart_id**, name, phone_number, address_short, city, postal
 
 account_type (**type_name**, category, is_internal)
 
-counterpart_account_type (**counterpart_id**, **type_id**)
+counterpart_account_type (**counterpart_id**, **type_name**)
+counterpart_id references counterpart.counterpart_id
+type_name references account_type.type_name
 
 ---
 
@@ -14,6 +16,8 @@ counterpart_account_type (**counterpart_id**, **type_id**)
 employee (**employee_id**, first_name, last_name, email, role, is_active)
 
 update_log (**log_id**, action_id, employee_id, update_type, log_time)
+action_id references action.action_id 
+employee_id references employee.employee_id
 
 ---
 
@@ -23,10 +27,13 @@ update_log (**log_id**, action_id, employee_id, update_type, log_time)
 action (**action_id**, terms, remarks, creation_date, last_update)
 
 counterpart_action (**from_counterpart_id, to_counterpart_id, action_id**)
+from_counterpart_id references counterpart.counterpart_id
+to_counterpart_id references counterpart.counterpart_id
+action_id references action.action_id
 
 
-purchase_notice (**action_id**, purchase_num)
-purchase_notice.action_id references action.action_id
+purchase(**action_id**, purchase_num)
+purchase.action_id references action.action_id
 
 memo_in (**action_id**, memo_in_num, ship_date)
 memo_in.action_id references action.action_id
