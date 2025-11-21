@@ -4,6 +4,12 @@ SET search_path TO project;
 
 BEGIN;
 
+-- currency (**code**, name)
+CREATE TABLE currency(
+   code VARCHAR(5) PRIMARY KEY,
+   name VARCHAR(20) NOT NULL
+);
+
 -- counterpart (**counterpart_id**, name, phone_number, address_short, city, postal_code, country, email)
 CREATE TABLE counterpart
 (
