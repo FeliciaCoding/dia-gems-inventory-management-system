@@ -7,8 +7,8 @@ counterpart (**counterpart_id**, name, phone_number, address_short, city, postal
 account_type (**type_name**, category, is_internal)
 
 counterpart_account_type (**counterpart_id**, **type_name**)
-counterpart_id references counterpart.counterpart_id
-type_name references account_type.type_name
+    counterpart_id references counterpart.counterpart_id
+    type_name references account_type.type_name
 
 ---
 
@@ -16,8 +16,8 @@ type_name references account_type.type_name
 employee (**employee_id**, first_name, last_name, email, role, is_active)
 
 update_log (**log_id**, action_id, employee_id, update_type, log_time)
-action_id references action.action_id 
-employee_id references employee.employee_id
+    action_id references action.action_id 
+    employee_id references employee.employee_id
 
 ---
 
@@ -27,20 +27,37 @@ employee_id references employee.employee_id
 action (**action_id**, terms, remarks, creation_date, last_update)
 
 counterpart_action (**from_counterpart_id, to_counterpart_id, action_id**)
-from_counterpart_id references counterpart.counterpart_id
-to_counterpart_id references counterpart.counterpart_id
-action_id references action.action_id
-
+    from_counterpart_id references counterpart.counterpart_id
+    to_counterpart_id references counterpart.counterpart_id
+    action_id references action.action_id
 
 purchase(**action_id**, purchase_num)
-purchase.action_id references action.action_id
+    purchase.action_id references action.action_id
 
 memo_in (**action_id**, memo_in_num, ship_date)
-memo_in.action_id references action.action_id
+    memo_in.action_id references action.action_id
 
-return_memo_in (**action_id**, **return_memo_in**, back_date)
-return_memo_in.action_id references action.action_id
+return_memo_in (**action_id, return_memo_in_num**, back_date)
+    action_id references memo_in.action_id
 
+return_memo_in_details( **return_action_id, return_line_no**, memo_in_action_id, memo_in_line_no, qty_returned)
+    return_action_id references return_memo_in.action_id
+    memo_in_action_id references memo_out.action_id
+    memo_in_action_id references action_item.action_id
+    memo_in_line_no references action_item.line_no
+
+memo_out(**action_id**, memo_out_nu, ship_date )
+     action_id references action.action_id
+
+return_memo_out(**action_id, return_memo_out_num**, back_date)
+       action_id REFERENCES memo_out.action_id
+
+return_memo_out_details( **return_action_id, return_line_no**, memo_out_action_id, memo_out_line_no, qty_returned)
+    return_action_id references return_memo_in.action_id
+    memo_out_action_id references memo_out.action_id
+    memo_out_action_id references action_item.action_id
+    memo_out_line_no references action_item.line_no
+    
 
 
 ```
@@ -72,7 +89,10 @@ jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
         total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
         total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
 
-action_item(**action_id**, **lot_id**)
+action_item(**action_id,line_no**, lot_id, qty, unit_price,currency_code)
+   action_id references action.action_id
+   lot_id references item.lot_id
+   currency_code references currency.currency_code
 
 
 
