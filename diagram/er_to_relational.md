@@ -37,8 +37,9 @@ purchase(**action_id**, purchase_num)
 memo_in (**action_id**, memo_in_num, ship_date)
     memo_in.action_id references action.action_id
 
-return_memo_in (**action_id, return_memo_in_num**, back_date)
-    action_id references memo_in.action_id
+return_memo_in (**return_action_id**, orig_memo_in_action_id, return_memo_in_num, back_date)
+    return_action_id references action.action_id
+    orig_memo_action_id references memo_in.action_id
 
 return_memo_in_details( **return_action_id, return_memo_in_num, return_line_no**, memo_in_action_id, memo_in_line_no, qty_returned)
     (return_action_id, return_memo_in_num)  references (return_memo_in.action_id, return_memo_in.memo_in_num)

@@ -104,7 +104,7 @@ CREATE TABLE action_item
     FOREIGN KEY (lot_id) REFERENCES item (lot_id),
     FOREIGN KEY (currency_code) REFERENCES currency (code),
     CHECK (qty > 0),
-    CHECK (unit_price >=0)
+    CHECK (unit_price >= 0)
 
 );
 
@@ -125,14 +125,15 @@ CREATE TABLE memo_in
     FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
 
--- return_mem**o_in (**action_id, return_memo_in_num**, back_date)
+-- return_memo_in (**return_action_id**, orig_memo_in_action_id, return_memo_in_num, back_date)
 CREATE TABLE return_memo_in
 (
-    action_id          BIGINT NOT NULL,
-    return_memo_in_num VARCHAR(30),
-    back_date          DATE   NOT NULL,
-    PRIMARY KEY (action_id, return_memo_in_num),
-    FOREIGN KEY (action_id) REFERENCES memo_in (action_id)
+    return_action_id    BIGINT PRIMARY KEY,
+    orig_memo_action_id BIGINT NOT NULL,
+    return_memo_in_num  VARCHAR(30),
+    back_date           DATE   NOT NULL,
+    FOREIGN KEY (return_action_id) REFERENCES action (action_id),
+    FOREIGN KEY (orig_memo_action_id) REFERENCES memo_in (action_id)
 );
 
 
