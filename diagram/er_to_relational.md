@@ -77,8 +77,8 @@ transfer_to_lab(**action_id**, transfer_num, ship_date)
 
 back_from_lab(**action_id**, orig_transfer_id, back_from_lab_num, back_date)
     `back_from_lab.action_id` REFERENCES `action.action_id`
-    `back_from_lab.orig_memo_action_id` references `transfer_to_lab.action_id`
-    `back_from_lab.orig_memo_action_id` is not null
+    `back_from_lab.orig_transfer_id` references `transfer_to_lab.action_id`
+    `back_from_lab.orig_transfer_id` is not null
 
 back_from_lab_items (**action_id**, **lot_id**, qty_returned)
     `back_from_lab_items.action_id` references `back_from_lab.action_id`,
@@ -89,7 +89,7 @@ transfer_to_factory(**action_id**, transfer_num, ship_date)
     `transfer_to_factory.action_id` references `action.action_id`
     
 back_from_factory(**action_id**, orig_transfer_id, back_from_fac_num, back_date)
-    `back_from_factory.action_id` references `back_from_factory.action_id`
+    `back_from_factory.action_id` references `action.action_id`
     `back_from_factory.orig_transfer_id` references `transfer_to_factory.action_id` 
     `back_from_factory.orig_transfer_id` is not null 
 
@@ -121,14 +121,14 @@ colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_col
 colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
     colored_gem_stone.lot_id references loose_stone.lot_id
 
-jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
+jewelry (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
     total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
 
 action_item(**action_id,lot_id**, line_no, qty, unit_price,currency_code)
    `action_item.action_id` references `action.action_id`
    `action_item.lot_id` references `item.lot_id`
-   `currency_code` references `currency.currency_code`
+   `currency_code` references `currency.code`
    `(action_item.action_id, action_item.line_no)` is unique
 
 
