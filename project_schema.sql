@@ -233,3 +233,110 @@ CREATE TABLE back_from_lab_details
 --CREATE TABLE sale();
 
 
+-- item (**lot_id**, stock_name,
+--    purchase_date, supplier, sale_unit, cost_unit, 
+--    origin, creation_date)
+CREATE TABLE item
+(
+    lot_id        BIGINT                                 PRIMARY KEY,
+    stock_name    VARCHAR(50)                            NOT NULL,
+    purchase_date TIMESTAMP                              NOT NULL,
+    supplier      BIGINT                                 NOT NULL,
+    origin        VARCHAR(50)                            NOT NULL,
+    creation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    last_update   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+
+    FOREIGN KEY (supplier) REFERENCES counterpart (counterpart_id)
+);
+
+
+-- loose_stone (**lot_id**, weight_ct, length, width, depth)
+--    loose_stone.lot_id references item.lot_id
+CREATE TABLE loose_stone 
+(
+    lot_id        BIGINT    PRIMARY KEY,
+    weight_ct     INTEGER   NOT NULL,
+    length        INTEGER   NOT NULL,
+    width         INTEGER   NOT NULL,
+    depth         INTEGER   NOT NULL,
+    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+);
+
+-- white_diamond (**lot_id**, white_level, shape, clarity)
+--     white_diamond.lot_id references loose_stone.lot_id
+CREATE TABLE white_diamond
+(
+    lot_id        BIGINT      PRIMARY KEY,
+    white_level   INTEGER     NOT NULL,
+    shape         VARCHAR(50) NOT NULL,
+    clarity       VARCHAR(50) NOT NULL,
+    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
+);
+
+-- colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, shape, clarity)
+--     colored_diamond.lot_id references loose_stone.lot_id
+CREATE TABLE colored_diamond
+(
+    lot_id          BIGINT      PRIMARY KEY,
+    gem_type        VARCHAR(50) NOT NULL,
+    fancy_intensity VARCHAR(50) NOT NULL,
+    fancy_overton   VARCHAR(50) NOT NULL,
+    fancy_color     VARCHAR(50) NOT NULL,
+    shape         VARCHAR(50)   NOT NULL,
+    white_level   INTEGER       NOT NULL,
+    clarity       VARCHAR(50)   NOT NULL,
+    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
+);
+
+-- colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
+--     colored_gem_stone.lot_id references loose_stone.lot_id
+CREATE TABLE colored_gem_stone
+(
+    lot_id        BIGINT        PRIMARY KEY,
+    gem_type      VARCHAR(50)   NOT NULL,
+    shape         VARCHAR(50)   NOT NULL,
+    color         VARCHAR(50)   NOT NULL,
+    treatment     VARCHAR(50)   NOT NULL,
+    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
+);
+
+-- jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
+--     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
+--    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
+CREATE TABLE jewerly 
+(
+    lot_id                      BIGINT        PRIMARY KEY,
+    jewerly_type                VARCHAR(50)   NOT NULL,
+    gross_weight_gr             INTEGER       NOT NULL,
+    metal_type                  VARCHAR(50)   NOT NULL,
+    metal_weight_gr             INTEGER       NOT NULL,
+    total_side_stone_qty        INTEGER       NOT NULL,
+    total_side_stone_weight_cty INTEGER       NOT NULL,
+    side_stone_type             VARCHAR(50)   NOT NULL,
+    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+);
+
+-- certificate(**certificate_id**, lab_id, issue_date, shape, weight_ct, length, width, depth, clarity, color, treatment, gem_type)
+--     certificate.lab_id references counterpart.counterpart_id
+CREATE TABLE certificate
+(
+    certificate_id  BIGINT       PRIMARY KEY,
+    lab_id          BIGINT       NOT NULL,
+    certificate_num VARCHAR(50)  NOT NULL,
+    issue_date      TIMESTAMP    NOT NULL,
+    shape           VARCHAR(50),
+    weight_ct       INTEGER,
+    length          INTEGER,
+    width           INTEGER,
+    depth           INTEGER,
+    clarity         VARCHAR(50),
+    color           VARCHAR(50),
+    treatment       VARCHAR(50),
+    gem_type        VARCHAR(50),
+    creation_date   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    last_update     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+
+    FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
+); 
+
+
