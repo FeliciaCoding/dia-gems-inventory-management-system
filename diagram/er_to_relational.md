@@ -1,4 +1,4 @@
-## Relational schema (work in progress)
+## Relational schema
 
 ### `counterpart`
 

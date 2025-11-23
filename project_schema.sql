@@ -95,9 +95,9 @@ CREATE TABLE action_item
 (
     action_id     BIGINT,
     lot_id        BIGINT,
-    line_no       INT        NOT NULL,
-    qty           INT        NOT NULL,
-    unit_price    INT        NOT NULL,
+    line_no       INTEGER        NOT NULL,
+    qty           INTEGER        NOT NULL,
+    unit_price    INTEGER        NOT NULL,
     currency_code VARCHAR(5) NOT NULL,
     PRIMARY KEY (action_id, lot_id),
     UNIQUE (action_id, line_no),
@@ -143,7 +143,7 @@ CREATE TABLE return_memo_in_items
 (
     action_id    BIGINT,
     lot_id       BIGINT,
-    qty_returned INT NOT NULL,
+    qty_returned INTEGER NOT NULL,
     PRIMARY KEY (action_id, lot_id),
     FOREIGN KEY (action_id) REFERENCES return_memo_in (action_id),
     FOREIGN KEY (lot_id) REFERENCES item (lot_id),
@@ -175,7 +175,7 @@ CREATE TABLE return_memo_out_items
 (
     return_action_id BIGINT,
     lot_id           BIGINT NOT NULL,
-    qty_returned     INT    NOT NULL,
+    qty_returned     INTEGER    NOT NULL,
     PRIMARY KEY (return_action_id, lot_id),
     FOREIGN KEY (return_action_id) REFERENCES return_memo_out (action_id),
     FOREIGN KEY (lot_id) REFERENCES item (lot_id),
@@ -215,8 +215,8 @@ CREATE TABLE back_from_lab
 CREATE TABLE back_from_lab_items
 (
     action_id    BIGINT,
-    lot_id       INT NOT NULL,
-    qty_returned INT NOT NULL,
+    lot_id       INTEGER NOT NULL,
+    qty_returned INTEGER NOT NULL CHECK (qty_returned > 0),
     PRIMARY KEY (action_id, lot_id),
     FOREIGN KEY (action_id) REFERENCES back_from_lab (action_id),
     FOREIGN KEY (lot_id) REFERENCES item (lot_id)
@@ -247,8 +247,8 @@ CREATE TABLE back_from_factory
 CREATE TABLE back_from_factory_details
 (
     action_id    BIGINT PRIMARY KEY,
-    lot_id       INT NOT NULL,
-    qty_returned INT NOT NULL,
+    lot_id       INTEGER NOT NULL,
+    qty_returned INTEGER NOT NULL CHECK (qty_returned > 0),
     FOREIGN KEY (action_id) REFERENCES back_from_factory (action_id),
     FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 );
@@ -259,11 +259,6 @@ CREATE TABLE sale
     sale_num VARCHAR(30),
     FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
-
-
-
-
-
 
 
 -- item (**lot_id**, stock_name,
@@ -277,7 +272,7 @@ CREATE TABLE item
     supplier      BIGINT                                 NOT NULL,
     origin        VARCHAR(50)                            NOT NULL,
     creation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    last_update   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    last_update   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL  CHECK (last_update >= creation_date),
 
     FOREIGN KEY (supplier) REFERENCES counterpart (counterpart_id)
 );
@@ -288,10 +283,10 @@ CREATE TABLE item
 CREATE TABLE loose_stone 
 (
     lot_id        BIGINT    PRIMARY KEY,
-    weight_ct     INTEGER   NOT NULL,
-    length        INTEGER   NOT NULL,
-    width         INTEGER   NOT NULL,
-    depth         INTEGER   NOT NULL,
+    weight_ct     INTEGER   NOT NULL CHECK (weight_ct > 0),
+    length        INTEGER   NOT NULL CHECK (length > 0),
+    width         INTEGER   NOT NULL CHECK (width > 0),
+    depth         INTEGER   NOT NULL CHECK (depth > 0),
     FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 );
 
@@ -300,7 +295,7 @@ CREATE TABLE loose_stone
 CREATE TABLE white_diamond
 (
     lot_id        BIGINT      PRIMARY KEY,
-    white_level   INTEGER     NOT NULL,
+    white_level   VARCHAR(50) NOT NULL,
     shape         VARCHAR(50) NOT NULL,
     clarity       VARCHAR(50) NOT NULL,
     FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
@@ -315,9 +310,9 @@ CREATE TABLE colored_diamond
     fancy_intensity VARCHAR(50) NOT NULL,
     fancy_overton   VARCHAR(50) NOT NULL,
     fancy_color     VARCHAR(50) NOT NULL,
-    shape         VARCHAR(50)   NOT NULL,
-    white_level   INTEGER       NOT NULL,
-    clarity       VARCHAR(50)   NOT NULL,
+    shape           VARCHAR(50) NOT NULL,
+    white_level     VARCHAR(50) NOT NULL,
+    clarity         VARCHAR(50) NOT NULL,
     FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
 );
 
@@ -340,12 +335,12 @@ CREATE TABLE jewelry
 (
     lot_id                      BIGINT        PRIMARY KEY,
     jewelry_type                VARCHAR(50)   NOT NULL,
-    gross_weight_gr             INTEGER       NOT NULL,
+    gross_weight_gr             INTEGER       NOT NULL CHECK (gross_weight_gr > 0),
     metal_type                  VARCHAR(50)   NOT NULL,
-    metal_weight_gr             INTEGER       NOT NULL,
-    total_side_stone_qty        INTEGER       NOT NULL,
-    total_side_stone_weight_cty INTEGER       NOT NULL,
-    side_stone_type             VARCHAR(50)   NOT NULL,
+    metal_weight_gr             INTEGER       NOT NULL CHECK (metal_weight_gr > 0),
+    total_side_stone_qty        INTEGER       NOT NULL CHECK (total_side_stone_qty > 0),
+    total_side_stone_weight_cty INTEGER       NOT NULL CHECK (total_side_stone_weight_cty > 0),
+    side_stone_type             VARCHAR(50)   NOT NUL,
     FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 );
 
@@ -358,16 +353,16 @@ CREATE TABLE certificate
     certificate_num VARCHAR(50)  NOT NULL,
     issue_date      TIMESTAMP    NOT NULL,
     shape           VARCHAR(50),
-    weight_ct       INTEGER,
-    length          INTEGER,
-    width           INTEGER,
-    depth           INTEGER,
+    weight_ct       INTEGER CHECK (weight_ct > 0),
+    length          INTEGER CHECK (length > 0),
+    width           INTEGER CHECK (widht > 0),
+    depth           INTEGER CHECK (depth > 0),
     clarity         VARCHAR(50),
     color           VARCHAR(50),
     treatment       VARCHAR(50),
     gem_type        VARCHAR(50),
     creation_date   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    last_update     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    last_update     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL CHECK (last_update >= creation_date),
 
     FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
 ); 
