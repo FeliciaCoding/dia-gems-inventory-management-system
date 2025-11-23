@@ -40,11 +40,10 @@ memo_in (**action_id**, memo_in_num, ship_date)
 return_memo_in (**action_id, return_memo_in_num**, back_date)
     action_id references memo_in.action_id
 
-return_memo_in_details( **return_action_id, return_line_no**, memo_in_action_id, memo_in_line_no, qty_returned)
-    return_action_id references return_memo_in.action_id
+return_memo_in_details( **return_action_id, return_memo_in_num, return_line_no**, memo_in_action_id, memo_in_line_no, qty_returned)
+    (return_action_id, return_memo_in_num)  references (return_memo_in.action_id, return_memo_in.memo_in_num)
     memo_in_action_id references memo_in.action_id
-    memo_in_action_id references action_item.action_id
-    memo_in_line_no references action_item.line_no
+    (memo_in_action_id,memo_in_line_no)  references (action_item.action_id, action_item.line_no)
 
 memo_out(**action_id**, memo_out_num, ship_date )
     action_id references action.action_id
@@ -52,11 +51,10 @@ memo_out(**action_id**, memo_out_num, ship_date )
 return_memo_out(**action_id, return_memo_out_num**, back_date)
     action_id REFERENCES memo_out.action_id
 
-return_memo_out_details( **return_action_id, return_line_no**, memo_out_action_id, memo_out_line_no, qty_returned)
-    return_action_id references return_memo_in.action_id
+return_memo_out_details( **return_action_id, return_memo_out_num, return_line_no**, memo_out_action_id, memo_out_line_no, qty_returned)
+    (return_action_id, return_memo_out_num) references (return_memo_out.action_id, return_memo_out.return_memo_out_num)
     memo_out_action_id references memo_out.action_id
-    memo_out_action_id references action_item.action_id
-    memo_out_line_no references action_item.line_no
+    (memo_out_action_id, memo_out_line_no) references (action_item.action_id, action_item.line_no)
     
 transfer_to_office(**action_id**, transfer_num, ship_date)
     action_id references action.action_id
@@ -67,11 +65,11 @@ transfer_to_lab(**action_id**, transfer_num, ship_date)
 back_from_lab(**action_id, back_from_lab_num**, back_date)
     action_id REFERENCES transfer_to_lab.action_id
 
-back_from_lab_details(**return_action_id,return_line_no**, send_action_id, send_line_no, qty_returned)
-    return_action_id references back_from_lab.action_id
+back_from_lab_details(**return_action_id,back_from_lab_num, return_line_no**, send_action_id, send_line_no, qty_returned)
+    (return_action_id, back_from_lab_num) references (back_from_lab.action_id, back_from_lab.back_from_lab_num)
     send_action_id references transfer_to_lab.action_id
-    send_action_id references action_item.action_id
-    send_out_line_no references action_item.line_no
+    (send_action_id, send_out_line_no) references (action_item.action_id, action_item.line_no)
+
 ```
 to be completed
 ```

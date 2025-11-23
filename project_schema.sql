@@ -135,12 +135,13 @@ CREATE TABLE return_memo_in
 CREATE TABLE return_memo_in_details
 (
    return_action_id  BIGINT PRIMARY KEY,
+   return_memo_in_num VARCHAR(30),
    return_line_no    INT    NOT NULL,
    memo_in_action_id BIGINT NOT NULL,
    memo_in_line_no   INT    NOT NULL,
    qty_returned      INT    NOT NULL,
-   PRIMARY KEY (return_action_id, return_line_no),
-   FOREIGN KEY (return_action_id) REFERENCES return_memo_in (action_id),
+   PRIMARY KEY (return_action_id, return_memo_in_num, return_line_no),
+   FOREIGN KEY (return_action_id, return_memo_in_num) REFERENCES return_memo_in (action_id, return_memo_in_num),
    FOREIGN KEY (memo_in_action_id) REFERENCES memo_in (action_id),
    FOREIGN KEY (memo_in_action_id, memo_in_line_no) REFERENCES action_item (action_id, line_no),
    CHECK (qty_returned > 0)
@@ -169,12 +170,13 @@ CREATE TABLE return_memo_out
 CREATE TABLE return_memo_out_details
 (
    return_action_id   BIGINT PRIMARY KEY,
+   return_memo_out_num VARCHAR(30),
    return_line_no     INT    NOT NULL,
    memo_out_action_id BIGINT NOT NULL,
    memo_out_line_no   INT    NOT NULL,
    qty_returned       INT    NOT NULL,
-   PRIMARY KEY (return_action_id, return_line_no),
-   FOREIGN KEY (return_action_id) REFERENCES return_memo_out (action_id),
+   PRIMARY KEY (return_action_id, return_memo_out_num, return_line_no),
+   FOREIGN KEY (return_action_id, return_memo_out_num) REFERENCES return_memo_out (action_id, return_memo_out_num),
    FOREIGN KEY (memo_out_action_id) REFERENCES memo_out (action_id),
    FOREIGN KEY (memo_out_action_id, memo_out_line_no) REFERENCES action_item (action_id, line_no)
 );
