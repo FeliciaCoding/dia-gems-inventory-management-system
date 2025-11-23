@@ -4,14 +4,14 @@ SET search_path TO project;
 
 BEGIN;
 
--- currency (**code**, name)
+
 CREATE TABLE currency
 (
     code VARCHAR(5) PRIMARY KEY,
     name VARCHAR(20) NOT NULL
 );
 
--- counterpart (**counterpart_id**, name, phone_number, address_short, city, postal_code, country, email)
+
 CREATE TABLE counterpart
 (
     counterpart_id BIGINT PRIMARY KEY,
@@ -24,7 +24,7 @@ CREATE TABLE counterpart
     email          VARCHAR(100) UNIQUE
 );
 
--- account_type (**type_name**, category, is_internal)
+
 CREATE TABLE account_type
 (
     type_name   VARCHAR(30) PRIMARY KEY,
@@ -32,18 +32,18 @@ CREATE TABLE account_type
     is_internal BOOLEAN     NOT NULL DEFAULT FALSE
 );
 
--- counterpart_account_type (**counterpart_id**, **type_id**)
+
 CREATE TABLE counterpart_account_type
 (
-    counterpart_id BIGINT      NOT NULL,
-    type_name      VARCHAR(30) NOT NULL,
+    counterpart_id BIGINT,
+    type_name      VARCHAR(30),
     PRIMARY KEY (counterpart_id, type_name),
     FOREIGN KEY (counterpart_id) REFERENCES counterpart (counterpart_id),
     FOREIGN KEY (type_name) REFERENCES account_type (type_name)
 
 );
 
--- employee (**employee_id**, first_name, last_name, email, role, is_active)
+
 CREATE TABLE employee
 (
     employee_id BIGINT PRIMARY KEY,
@@ -54,7 +54,7 @@ CREATE TABLE employee
     is_active   BOOLEAN            NOT NULL DEFAULT TRUE
 );
 
--- action (**action_id**, terms, remarks, creation_date, last_update)
+
 CREATE TABLE action
 (
     action_id     BIGINT PRIMARY KEY,
@@ -62,9 +62,10 @@ CREATE TABLE action
     remarks       TEXT,
     creation_date TIMESTAMP                              NOT NULL,
     last_update   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+        CHECK (last_update >= creation_date)
 );
 
--- update_log (**log_id**, action_id, employee_id, update_type, log_time)
+
 CREATE TABLE update_log
 (
     log_id      BIGINT PRIMARY KEY,
@@ -77,24 +78,24 @@ CREATE TABLE update_log
 );
 
 
--- counterpart_action (**from_counterpart_id, to_counterpart_id, action_id**)
+
 CREATE TABLE counterpart_action
 (
-    from_counterpart_id BIGINT NOT NULL,
-    to_counterpart_id   BIGINT NOT NULL,
-    action_id           BIGINT NOT NULL,
+    from_counterpart_id BIGINT,
+    to_counterpart_id   BIGINT,
+    action_id           BIGINT,
     PRIMARY KEY (from_counterpart_id, to_counterpart_id, action_id),
     FOREIGN KEY (from_counterpart_id) REFERENCES counterpart (counterpart_id),
     FOREIGN KEY (to_counterpart_id) REFERENCES counterpart (counterpart_id),
     FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
 
--- action_item(**action_id**, **lot_id**, line_no, qty, unit_price,currency_code)
+
 CREATE TABLE action_item
 (
-    action_id     BIGINT     NOT NULL,
+    action_id     BIGINT,
+    lot_id        BIGINT,
     line_no       INT        NOT NULL,
-    lot_id        BIGINT     NOT NULL,
     qty           INT        NOT NULL,
     unit_price    INT        NOT NULL,
     currency_code VARCHAR(5) NOT NULL,
@@ -108,7 +109,7 @@ CREATE TABLE action_item
 
 );
 
--- purchase(**action_id**, purchase_num)
+
 CREATE TABLE purchase
 (
     action_id    BIGINT PRIMARY KEY,
@@ -116,121 +117,152 @@ CREATE TABLE purchase
     FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
 
--- memo_in (**action_id**, memo_in_num, ship_date)
+
 CREATE TABLE memo_in
 (
     action_id   BIGINT PRIMARY KEY,
-    memo_in_num VARCHAR(30),
-    ship_date   DATE,
+    memo_in_num VARCHAR(30) NOT NULL,
+    ship_date   DATE        NOT NULL,
     FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
 
--- return_memo_in (**return_action_id**, orig_memo_in_action_id, return_memo_in_num, back_date)
+
 CREATE TABLE return_memo_in
 (
-    return_action_id    BIGINT PRIMARY KEY,
+    action_id           BIGINT PRIMARY KEY,
     orig_memo_action_id BIGINT NOT NULL,
     return_memo_in_num  VARCHAR(30),
     back_date           DATE   NOT NULL,
-    FOREIGN KEY (return_action_id) REFERENCES action (action_id),
+    FOREIGN KEY (action_id) REFERENCES action (action_id),
     FOREIGN KEY (orig_memo_action_id) REFERENCES memo_in (action_id)
 );
 
 
--- return_memo_in_details( **return_action_id, return_line_no**, memo_in_action_id, memo_in_line_no, qty_returned)
-CREATE TABLE return_memo_in_details
+
+CREATE TABLE return_memo_in_items
 (
-    return_action_id   BIGINT PRIMARY KEY,
-    return_memo_in_num VARCHAR(30),
-    return_line_no     INT    NOT NULL,
-    memo_in_action_id  BIGINT NOT NULL,
-    memo_in_line_no    INT    NOT NULL,
-    qty_returned       INT    NOT NULL,
-    PRIMARY KEY (return_action_id, return_memo_in_num, return_line_no),
-    FOREIGN KEY (return_action_id, return_memo_in_num) REFERENCES return_memo_in (action_id, return_memo_in_num),
-    FOREIGN KEY (memo_in_action_id) REFERENCES memo_in (action_id),
-    FOREIGN KEY (memo_in_action_id, memo_in_line_no) REFERENCES action_item (action_id, line_no),
+    action_id    BIGINT,
+    lot_id       BIGINT,
+    qty_returned INT NOT NULL,
+    PRIMARY KEY (action_id, lot_id),
+    FOREIGN KEY (action_id) REFERENCES return_memo_in (return_action_id),
+    FOREIGN KEY (lot_id) REFERENCES item (lot_id),
     CHECK (qty_returned > 0)
 );
 
--- memo_out(**action_id**, memo_out_num, ship_date )
+
 CREATE TABLE memo_out
 (
     action_id    BIGINT PRIMARY KEY,
     memo_out_num VARCHAR(30),
-    ship_date    DATE,
+    ship_date    DATE NOT NULL,
     FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
 
--- return_memo_out(**action_id, return_memo_out_num**, back_date)
+
 CREATE TABLE return_memo_out
 (
-    action_id           BIGINT NOT NULL,
+    action_id           BIGINT PRIMARY KEY,
+    orig_memo_action_id BIGINT NOT NULL,
     return_memo_out_num VARCHAR(30),
     back_date           DATE   NOT NULL,
-    PRIMARY KEY (action_id, return_memo_out_num),
-    FOREIGN KEY (action_id) REFERENCES memo_out (action_id)
+    FOREIGN KEY (action_id) REFERENCES action (action_id),
+    FOREIGN KEY (orig_memo_action_id) REFERENCES memo_out (action_id)
 );
 
--- return_memo_out_details( **return_action_id, return_line_no**, memo_out_action_id, memo_out_line_no, qty_returned)
-CREATE TABLE return_memo_out_details
+
+CREATE TABLE return_memo_out_items
 (
-    return_action_id    BIGINT PRIMARY KEY,
-    return_memo_out_num VARCHAR(30),
-    return_line_no      INT    NOT NULL,
-    memo_out_action_id  BIGINT NOT NULL,
-    memo_out_line_no    INT    NOT NULL,
-    qty_returned        INT    NOT NULL,
-    PRIMARY KEY (return_action_id, return_memo_out_num, return_line_no),
-    FOREIGN KEY (return_action_id, return_memo_out_num) REFERENCES return_memo_out (action_id, return_memo_out_num),
-    FOREIGN KEY (memo_out_action_id) REFERENCES memo_out (action_id),
-    FOREIGN KEY (memo_out_action_id, memo_out_line_no) REFERENCES action_item (action_id, line_no)
+    return_action_id BIGINT,
+    lot_id           BIGINT NOT NULL,
+    qty_returned     INT    NOT NULL,
+    PRIMARY KEY (return_action_id, lot_id),
+    FOREIGN KEY (return_action_id) REFERENCES return_memo_out (action_id),
+    FOREIGN KEY (lot_id) REFERENCES item (lot_id),
+    CHECK (qty_returned > 0)
 );
 
--- transfer_to_office(**action_id**, transfer_num, ship_date)
+
 CREATE TABLE transfer_to_office
 (
     action_id    BIGINT PRIMARY KEY,
     transfer_num VARCHAR(30),
-    ship_date    DATE,
+    ship_date    DATE NOT NULL,
     FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
 
--- transfer_to_lab(**action_id**, transfer_num, ship_date)
+
 CREATE TABLE transfer_to_lab
 (
     action_id    BIGINT PRIMARY KEY,
     transfer_num VARCHAR(30),
-    ship_date    DATE,
+    ship_date    DATE NOT NULL,
     FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
 
 -- back_from_lab(**action_id, back_from_lab_num**, back_date)
 CREATE TABLE back_from_lab
 (
-    action_id         BIGINT NOT NULL,
+    action_id         BIGINT PRIMARY KEY,
+    orig_transfer_id  BIGINT NOT NULL,
     back_from_lab_num VARCHAR(30),
     back_date         DATE   NOT NULL,
-    PRIMARY KEY (action_id, back_from_lab_num),
-    FOREIGN KEY (action_id) REFERENCES transfer_to_lab (action_id)
+    FOREIGN KEY (action_id) REFERENCES action (action_id),
+    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_lab (action_id)
 );
 
--- back_from_lab_details(**return_action_id,return_line_no**, send_action_id, send_line_no, qty_returned)
-CREATE TABLE back_from_lab_details
+
+CREATE TABLE back_from_lab_items
 (
-    return_action_id BIGINT PRIMARY KEY,
-    return_line_no   INT    NOT NULL,
-    send_action_id   BIGINT NOT NULL,
-    send_line_no     INT    NOT NULL,
-    qty_returned     INT    NOT NULL,
-    PRIMARY KEY (return_action_id, return_line_no),
-    FOREIGN KEY (return_action_id) REFERENCES back_from_lab (action_id),
-    FOREIGN KEY (send_action_id) REFERENCES transfer_to_lab (action_id),
-    FOREIGN KEY (send_action_id, send_line_no) REFERENCES action_item (action_id, line_no)
+    action_id    BIGINT,
+    lot_id       INT NOT NULL,
+    qty_returned INT NOT NULL,
+    PRIMARY KEY (action_id, lot_id),
+    FOREIGN KEY (action_id) REFERENCES back_from_lab (action_id),
+    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 );
---CREATE TABLE transfer_to_factory();
---CREATE TABLE back_to_factory();
---CREATE TABLE back_from_factory_details();
---CREATE TABLE sale();
+
+
+
+CREATE TABLE transfer_to_factory
+(
+    action_id    BIGINT PRIMARY KEY,
+    transfer_num VARCHAR(30),
+    ship_date    DATE NOT NULL,
+    FOREIGN KEY (action_id) REFERENCES action (action_id)
+);
+
+
+CREATE TABLE back_from_factory
+(
+    action_id         BIGINT PRIMARY KEY,
+    orig_transfer_id  BIGINT NOT NULL,
+    back_from_fac_num VARCHAR(30),
+    back_date         DATE   NOT NULL,
+    FOREIGN KEY (action_id) REFERENCES action (action_id),
+    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
+);
+
+
+CREATE TABLE back_from_factory_details
+(
+    action_id    BIGINT PRIMARY KEY,
+    lot_id       INT NOT NULL,
+    qty_returned INT NOT NULL,
+    FOREIGN KEY (action_id) REFERENCES back_from_factory (action_id),
+    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+);
+
+CREATE TABLE sale
+(
+    action_id    BIGINT PRIMARY KEY,
+    sale_num VARCHAR(30),
+    FOREIGN KEY (action_id) REFERENCES action (action_id)
+);
+
+
+
+
+
 
 
