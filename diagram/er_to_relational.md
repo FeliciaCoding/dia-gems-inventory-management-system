@@ -105,9 +105,9 @@ sale(**action_id**, sale_num) <br>
 
 ### `item`
 
-item (**lot_id**, stock_name, status, location, item_type, qty, 
-    purchase_date, sold_date, supplier, sale_unit, cost_unit, 
-    cert_lab, cert_number, origin, creation_date)
+item (**lot_id**, stock_name,
+      purchase_date, supplier, sale_unit, cost_unit, origin)
+
 
 loose_stone (**lot_id**, weight_ct, length, width, depth)
     loose_stone.lot_id references item.lot_id
@@ -124,6 +124,7 @@ colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
 jewelry (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
     total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
+    jewerly.lot_id references item.lot_id
 
 
 
@@ -141,10 +142,12 @@ action_item(**action_id,lot_id**, line_no, qty, unit_price,currency_code) <br>
 currency (**code**, name)
 
 ---
+
 ### `certificate`
-```
-to be completed
-```
+
+certificate(**certificate_id**, lab_id, issue_date, shape, weight_ct,
+            length, width, depth, clarity, color, treatment, gem_type)
+    certificate.lab_id references counterpart.counterpart_id
 
 
 
