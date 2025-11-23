@@ -97,7 +97,7 @@ CREATE TABLE action_item
     lot_id        BIGINT,
     line_no       INTEGER        NOT NULL,
     qty           INTEGER        NOT NULL,
-    unit_price    INTEGER        NOT NULL,
+    unit_price    MONEY          NOT NULL,
     currency_code VARCHAR(5) NOT NULL,
     PRIMARY KEY (action_id, lot_id),
     UNIQUE (action_id, line_no),
