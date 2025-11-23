@@ -97,7 +97,8 @@ back_from_factory_items(**action_id**, **lot_id**, qty_returned)
     `back_from_factory_items.action_id` references `back_from_factory.action_id`,
     `back_from_factory_items.lot_id` references `item.lot_id`
 
-sale()
+sale(**action_id**, sale_num)
+    `sale.action_id` references `action.action_id`
 
 ---
 
@@ -129,10 +130,7 @@ action_item(**action_id,lot_id**, line_no, qty, unit_price,currency_code)
    `action_item.lot_id` references `item.lot_id`
    `currency_code` references `currency.currency_code`
    `(action_item.action_id, action_item.line_no)` is unique
-    
 
-sale(**action_id**, sale_num)
-    `sale.action_id` references `action.action_id`
 
 ---
 
