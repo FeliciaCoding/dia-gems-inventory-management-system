@@ -99,10 +99,12 @@ jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
     total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
 
-action_item(**action_id,line_no**, lot_id, qty, unit_price,currency_code)
+action_item(**action_id,lot_id**, line_no, qty, unit_price,currency_code)
    action_id references action.action_id
    lot_id references item.lot_id
    currency_code references currency.currency_code
+   (action_id, line_no) is unique
+    
 
 ---
 
