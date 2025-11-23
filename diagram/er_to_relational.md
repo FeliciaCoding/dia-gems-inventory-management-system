@@ -108,26 +108,22 @@ sale(**action_id**, sale_num) <br>
 item (**lot_id**, stock_name,
       purchase_date, supplier, sale_unit, cost_unit, origin)
 
+loose_stone (**lot_id**, weight_ct, length, width, depth) <br>
+    `loose_stone.lot_id` references `item.lot_id`
 
-loose_stone (**lot_id**, weight_ct, length, width, depth)
-    loose_stone.lot_id references item.lot_id
+white_diamond (**lot_id**, white_level, shape, clarity) <br>
+    `white_diamond.lot_id` references `loose_stone.lot_id`
 
-white_diamond (**lot_id**, white_level, shape, clarity)
-    white_diamond.lot_id references loose_stone.lot_id
+colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, shape, clarity) <br>
+    `colored_diamond.lot_id` references `loose_stone.lot_id`
 
-colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, shape, clarity)
-    colored_diamond.lot_id references loose_stone.lot_id
-
-colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
-    colored_gem_stone.lot_id references loose_stone.lot_id
+colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin) <br>
+    `colored_gem_stone.lot_id` references `loose_stone.lot_id`
 
 jewelry (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
-    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
-    jewerly.lot_id references item.lot_id
-
-
-
+    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)  <br>
+    `jewerly.lot_id` references `item.lot_id`
 
 action_item(**action_id,lot_id**, line_no, qty, unit_price,currency_code) <br>
    `action_item.action_id` references `action.action_id` <br>
@@ -147,7 +143,7 @@ currency (**code**, name)
 
 certificate(**certificate_id**, lab_id, issue_date, shape, weight_ct,
             length, width, depth, clarity, color, treatment, gem_type)
-    certificate.lab_id references counterpart.counterpart_id
+    `certificate.lab_id` references `counterpart.counterpart_id`
 
 
 

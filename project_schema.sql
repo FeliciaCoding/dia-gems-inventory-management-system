@@ -145,7 +145,7 @@ CREATE TABLE return_memo_in_items
     lot_id       BIGINT,
     qty_returned INT NOT NULL,
     PRIMARY KEY (action_id, lot_id),
-    FOREIGN KEY (action_id) REFERENCES return_memo_in (return_action_id),
+    FOREIGN KEY (action_id) REFERENCES return_memo_in (action_id),
     FOREIGN KEY (lot_id) REFERENCES item (lot_id),
     CHECK (qty_returned > 0)
 );
@@ -336,10 +336,10 @@ CREATE TABLE colored_gem_stone
 -- jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
 --     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
 --    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
-CREATE TABLE jewerly 
+CREATE TABLE jewelry
 (
     lot_id                      BIGINT        PRIMARY KEY,
-    jewerly_type                VARCHAR(50)   NOT NULL,
+    jewelry_type                VARCHAR(50)   NOT NULL,
     gross_weight_gr             INTEGER       NOT NULL,
     metal_type                  VARCHAR(50)   NOT NULL,
     metal_weight_gr             INTEGER       NOT NULL,
