@@ -42,11 +42,11 @@ return_memo_in (**action_id, return_memo_in_num**, back_date)
 
 return_memo_in_details( **return_action_id, return_line_no**, memo_in_action_id, memo_in_line_no, qty_returned)
     return_action_id references return_memo_in.action_id
-    memo_in_action_id references memo_out.action_id
+    memo_in_action_id references memo_in.action_id
     memo_in_action_id references action_item.action_id
     memo_in_line_no references action_item.line_no
 
-memo_out(**action_id**, memo_out_nu, ship_date )
+memo_out(**action_id**, memo_out_num, ship_date )
     action_id references action.action_id
 
 return_memo_out(**action_id, return_memo_out_num**, back_date)
