@@ -235,7 +235,7 @@ CREATE TABLE back_from_lab_details
 
 -- item (**lot_id**, stock_name,
 --    purchase_date, supplier, sale_unit, cost_unit, 
---    origin, creation_date)
+--    origin)
 CREATE TABLE item
 (
     lot_id        BIGINT                                 PRIMARY KEY,

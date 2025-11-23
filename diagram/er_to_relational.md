@@ -79,9 +79,9 @@ to be completed
 
 #### `item`
 
-item (**lot_id**, stock_name, status, location, item_type, qty, 
-    purchase_date, sold_date, supplier, sale_unit, cost_unit, 
-    cert_lab, cert_number, origin, creation_date)
+item (**lot_id**, stock_name,
+      purchase_date, supplier, sale_unit, cost_unit, origin)
+
 
 loose_stone (**lot_id**, weight_ct, length, width, depth)
     loose_stone.lot_id references item.lot_id
@@ -116,7 +116,8 @@ currency (**code**, name)
 
 ### `certificate`
 
-certificate(**certificate_id**, lab_id, issue_date, shape, weight_ct, length, width, depth, clarity, color, treatment, gem_type)
+certificate(**certificate_id**, lab_id, issue_date, shape, weight_ct,
+            length, width, depth, clarity, color, treatment, gem_type)
     certificate.lab_id references counterpart.counterpart_id
 
 
