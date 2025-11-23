@@ -94,7 +94,7 @@ CREATE TABLE action_item(
    lot_id BIGINT NOT NULL,
    qty INT NOT NULL,
    unit_price INT NOT NULL,
-   currency_code VARCHAR(30) NOT NULL,
+   currency_code VARCHAR(5) NOT NULL,
    PRIMARY KEY (action_id, line_no),
    FOREIGN KEY (action_id) REFERENCES action(action_id),
    FOREIGN KEY (lot_id) REFERENCES item(lot_id),
