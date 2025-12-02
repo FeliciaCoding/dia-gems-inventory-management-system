@@ -60,7 +60,7 @@ CREATE TABLE action
    action_id     BIGINT PRIMARY KEY,
    terms         TEXT,
    remarks       TEXT,
-   creation_date TIMESTAMP                              NOT NULL,
+   creation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    last_update   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
       CHECK (last_update >= creation_date)
 );
@@ -69,10 +69,10 @@ CREATE TABLE action
 CREATE TABLE update_log
 (
    log_id      BIGINT PRIMARY KEY,
-   action_id   BIGINT    NOT NULL,
-   employee_id BIGINT    NOT NULL,
-   update_type TEXT      NOT NULL,
-   log_time    TIMESTAMP NOT NULL,
+   action_id   BIGINT                                 NOT NULL,
+   employee_id BIGINT                                 NOT NULL,
+   update_type TEXT                                   NOT NULL,
+   log_time    TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id),
    FOREIGN KEY (employee_id) REFERENCES employee (employee_id)
 );
@@ -269,7 +269,7 @@ CREATE TABLE item
 (
    lot_id        BIGINT PRIMARY KEY,
    stock_name    TEXT                                   NOT NULL,
-   purchase_date TIMESTAMP                              NOT NULL,
+   purchase_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    supplier      BIGINT                                 NOT NULL,
    origin        TEXT                                   NOT NULL,
    creation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -296,9 +296,9 @@ CREATE TABLE loose_stone
 CREATE TABLE white_diamond
 (
    lot_id      BIGINT PRIMARY KEY,
-   white_level INTEGER     NOT NULL,
-   shape       TEXT NOT NULL,
-   clarity     TEXT NOT NULL,
+   white_level INTEGER NOT NULL,
+   shape       TEXT    NOT NULL,
+   clarity     TEXT    NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
 );
 
@@ -307,13 +307,13 @@ CREATE TABLE white_diamond
 CREATE TABLE colored_diamond
 (
    lot_id          BIGINT PRIMARY KEY,
-   gem_type        TEXT NOT NULL,
-   fancy_intensity TEXT NOT NULL,
-   fancy_overton   TEXT NOT NULL,
-   fancy_color     TEXT NOT NULL,
-   shape           TEXT NOT NULL,
-   white_level     INTEGER     NOT NULL,
-   clarity         TEXT NOT NULL,
+   gem_type        TEXT    NOT NULL,
+   fancy_intensity TEXT    NOT NULL,
+   fancy_overton   TEXT    NOT NULL,
+   fancy_color     TEXT    NOT NULL,
+   shape           TEXT    NOT NULL,
+   white_level     INTEGER NOT NULL,
+   clarity         TEXT    NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
 );
 
@@ -335,13 +335,13 @@ CREATE TABLE colored_gem_stone
 CREATE TABLE jewelry
 (
    lot_id                      BIGINT PRIMARY KEY,
-   jewelry_type                TEXT NOT NULL,
-   gross_weight_gr             INTEGER     NOT NULL,
-   metal_type                  TEXT NOT NULL,
-   metal_weight_gr             INTEGER     NOT NULL,
-   total_side_stone_qty        INTEGER     NOT NULL,
-   total_side_stone_weight_cty INTEGER     NOT NULL,
-   side_stone_type             TEXT NOT NULL,
+   jewelry_type                TEXT    NOT NULL,
+   gross_weight_gr             INTEGER NOT NULL,
+   metal_type                  TEXT    NOT NULL,
+   metal_weight_gr             INTEGER NOT NULL,
+   total_side_stone_qty        INTEGER NOT NULL,
+   total_side_stone_weight_cty INTEGER NOT NULL,
+   side_stone_type             TEXT    NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 );
 
@@ -351,8 +351,8 @@ CREATE TABLE certificate
 (
    certificate_id  BIGINT PRIMARY KEY,
    lab_id          BIGINT                                 NOT NULL,
-   certificate_num TEXT                            NOT NULL,
-   issue_date      TIMESTAMP                              NOT NULL,
+   certificate_num TEXT                                   NOT NULL,
+   issue_date      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    shape           TEXT,
    weight_ct       INTEGER,
    length          INTEGER,
