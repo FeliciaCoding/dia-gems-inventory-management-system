@@ -152,8 +152,8 @@ CREATE TABLE return_memo_in
 
 CREATE TABLE return_memo_in_items
 (
-   action_id    SERIAL,
-   lot_id       SERIAL,
+   action_id SERIAL,
+   lot_id    SERIAL,
    PRIMARY KEY (action_id, lot_id),
    FOREIGN KEY (action_id) REFERENCES return_memo_in (action_id),
    FOREIGN KEY (lot_id) REFERENCES item (lot_id),
@@ -221,8 +221,8 @@ CREATE TABLE back_from_lab
 
 CREATE TABLE back_from_lab_items
 (
-   action_id    SERIAL,
-   lot_id       SERIAL NOT NULL,
+   action_id SERIAL,
+   lot_id    SERIAL NOT NULL,
    PRIMARY KEY (action_id, lot_id),
    FOREIGN KEY (action_id) REFERENCES back_from_lab (action_id),
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
@@ -261,10 +261,10 @@ CREATE TABLE back_from_factory_details
    after_depth     DECIMAL(10, 2),
    FOREIGN KEY (action_id) REFERENCES back_from_factory (action_id),
    FOREIGN KEY (lot_id) REFERENCES item (lot_id),
-   FOREIGN KEY (after_shape)  REFERENCES loose_stone (shape),
-   FOREIGN KEY (after_length)  REFERENCES loose_stone (length),
-   FOREIGN KEY (after_width)  REFERENCES loose_stone (width),
-   FOREIGN KEY (after_depth)  REFERENCES loose_stone (depth)
+   FOREIGN KEY (after_shape) REFERENCES loose_stone (shape),
+   FOREIGN KEY (after_length) REFERENCES loose_stone (length),
+   FOREIGN KEY (after_width) REFERENCES loose_stone (width),
+   FOREIGN KEY (after_depth) REFERENCES loose_stone (depth)
 );
 
 CREATE TABLE sale
@@ -333,7 +333,7 @@ CREATE TABLE colored_diamond
    gem_type        TEXT            NOT NULL,
    fancy_intensity fancy_intensity NOT NULL,
    fancy_overtone  TEXT            NOT NULL,
-   fancy_color     TEXT            NOT NULL,
+   fancy_color     fancy_color     NOT NULL,
    clarity         clarity         NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
 );
@@ -363,7 +363,7 @@ CREATE TABLE jewelry
    lot_id                     SERIAL PRIMARY KEY,
    jewelry_type               jewelry_type   NOT NULL,
    gross_weight_gr            DECIMAL(10, 2) NOT NULL,
-   metal_type                 TEXT           NOT NULL,
+   metal_type                 metal_type          NOT NULL,
    metal_weight_gr            DECIMAL(10, 2) NOT NULL,
    total_side_stone_qty       INTEGER        NOT NULL,
    total_side_stone_weight_ct DECIMAL(10, 2) NOT NULL,
