@@ -14,7 +14,7 @@ CREATE TABLE currency
 
 CREATE TABLE counterpart
 (
-   counterpart_id BIGINT PRIMARY KEY,
+   counterpart_id SERIAL PRIMARY KEY,
    name           TEXT UNIQUE NOT NULL,
    phone_number   TEXT,
    address_short  TEXT,
@@ -35,7 +35,7 @@ CREATE TABLE account_type
 
 CREATE TABLE counterpart_account_type
 (
-   counterpart_id BIGINT,
+   counterpart_id SERIAL,
    type_name      TEXT,
    PRIMARY KEY (counterpart_id, type_name),
    FOREIGN KEY (counterpart_id) REFERENCES counterpart (counterpart_id),
@@ -46,7 +46,7 @@ CREATE TABLE counterpart_account_type
 
 CREATE TABLE employee
 (
-   employee_id BIGINT PRIMARY KEY,
+   employee_id SERIAL PRIMARY KEY,
    first_name  TEXT        NOT NULL,
    last_name   TEXT        NOT NULL,
    email       TEXT UNIQUE NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE employee
 
 CREATE TABLE action
 (
-   action_id     BIGINT PRIMARY KEY,
+   action_id     SERIAL PRIMARY KEY,
    terms         TEXT,
    remarks       TEXT,
    creation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -68,9 +68,9 @@ CREATE TABLE action
 
 CREATE TABLE update_log
 (
-   log_id      BIGINT PRIMARY KEY,
-   action_id   BIGINT                                 NOT NULL,
-   employee_id BIGINT                                 NOT NULL,
+   log_id      SERIAL PRIMARY KEY,
+   action_id   SERIAL                                 NOT NULL,
+   employee_id SERIAL                                 NOT NULL,
    update_type TEXT                                   NOT NULL,
    log_time    TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id),
@@ -81,9 +81,9 @@ CREATE TABLE update_log
 
 CREATE TABLE counterpart_action
 (
-   from_counterpart_id BIGINT,
-   to_counterpart_id   BIGINT,
-   action_id           BIGINT,
+   from_counterpart_id SERIAL,
+   to_counterpart_id   SERIAL,
+   action_id           SERIAL,
    PRIMARY KEY (from_counterpart_id, to_counterpart_id, action_id),
    FOREIGN KEY (from_counterpart_id) REFERENCES counterpart (counterpart_id),
    FOREIGN KEY (to_counterpart_id) REFERENCES counterpart (counterpart_id),
@@ -93,8 +93,8 @@ CREATE TABLE counterpart_action
 
 CREATE TABLE action_item
 (
-   action_id     BIGINT,
-   lot_id        BIGINT,
+   action_id     SERIAL,
+   lot_id        SERIAL,
    line_no       INT  NOT NULL,
    qty           INT  NOT NULL,
    unit_price    INT  NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE action_item
 
 CREATE TABLE purchase
 (
-   action_id    BIGINT PRIMARY KEY,
+   action_id    SERIAL PRIMARY KEY,
    purchase_num TEXT,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
@@ -120,7 +120,7 @@ CREATE TABLE purchase
 
 CREATE TABLE memo_in
 (
-   action_id   BIGINT PRIMARY KEY,
+   action_id   SERIAL PRIMARY KEY,
    memo_in_num TEXT NOT NULL,
    ship_date   DATE NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
@@ -129,8 +129,8 @@ CREATE TABLE memo_in
 
 CREATE TABLE return_memo_in
 (
-   action_id           BIGINT PRIMARY KEY,
-   orig_memo_action_id BIGINT NOT NULL,
+   action_id           SERIAL PRIMARY KEY,
+   orig_memo_action_id SERIAL NOT NULL,
    return_memo_in_num  TEXT,
    back_date           DATE   NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id),
@@ -141,8 +141,8 @@ CREATE TABLE return_memo_in
 
 CREATE TABLE return_memo_in_items
 (
-   action_id    BIGINT,
-   lot_id       BIGINT,
+   action_id    SERIAL,
+   lot_id       SERIAL,
    qty_returned INT NOT NULL,
    PRIMARY KEY (action_id, lot_id),
    FOREIGN KEY (action_id) REFERENCES return_memo_in (action_id),
@@ -153,7 +153,7 @@ CREATE TABLE return_memo_in_items
 
 CREATE TABLE memo_out
 (
-   action_id    BIGINT PRIMARY KEY,
+   action_id    SERIAL PRIMARY KEY,
    memo_out_num TEXT,
    ship_date    DATE NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
@@ -162,8 +162,8 @@ CREATE TABLE memo_out
 
 CREATE TABLE return_memo_out
 (
-   action_id           BIGINT PRIMARY KEY,
-   orig_memo_action_id BIGINT NOT NULL,
+   action_id           SERIAL PRIMARY KEY,
+   orig_memo_action_id SERIAL NOT NULL,
    return_memo_out_num TEXT,
    back_date           DATE   NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id),
@@ -173,8 +173,8 @@ CREATE TABLE return_memo_out
 
 CREATE TABLE return_memo_out_items
 (
-   return_action_id BIGINT,
-   lot_id           BIGINT NOT NULL,
+   return_action_id SERIAL,
+   lot_id           SERIAL NOT NULL,
    qty_returned     INT    NOT NULL,
    PRIMARY KEY (return_action_id, lot_id),
    FOREIGN KEY (return_action_id) REFERENCES return_memo_out (action_id),
@@ -185,7 +185,7 @@ CREATE TABLE return_memo_out_items
 
 CREATE TABLE transfer_to_office
 (
-   action_id    BIGINT PRIMARY KEY,
+   action_id    SERIAL PRIMARY KEY,
    transfer_num TEXT,
    ship_date    DATE NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
@@ -194,7 +194,7 @@ CREATE TABLE transfer_to_office
 
 CREATE TABLE transfer_to_lab
 (
-   action_id    BIGINT PRIMARY KEY,
+   action_id    SERIAL PRIMARY KEY,
    transfer_num TEXT,
    ship_date    DATE NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
@@ -203,8 +203,8 @@ CREATE TABLE transfer_to_lab
 -- back_from_lab(**action_id, back_from_lab_num**, back_date)
 CREATE TABLE back_from_lab
 (
-   action_id         BIGINT PRIMARY KEY,
-   orig_transfer_id  BIGINT NOT NULL,
+   action_id         SERIAL PRIMARY KEY,
+   orig_transfer_id  SERIAL NOT NULL,
    back_from_lab_num TEXT,
    back_date         DATE   NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id),
@@ -214,9 +214,9 @@ CREATE TABLE back_from_lab
 
 CREATE TABLE back_from_lab_items
 (
-   action_id    BIGINT,
-   lot_id       INT NOT NULL,
-   qty_returned INT NOT NULL,
+   action_id    SERIAL,
+   lot_id       SERIAL NOT NULL,
+   qty_returned INT    NOT NULL,
    PRIMARY KEY (action_id, lot_id),
    FOREIGN KEY (action_id) REFERENCES back_from_lab (action_id),
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
@@ -226,7 +226,7 @@ CREATE TABLE back_from_lab_items
 
 CREATE TABLE transfer_to_factory
 (
-   action_id    BIGINT PRIMARY KEY,
+   action_id    SERIAL PRIMARY KEY,
    transfer_num TEXT,
    ship_date    DATE NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
@@ -235,8 +235,8 @@ CREATE TABLE transfer_to_factory
 
 CREATE TABLE back_from_factory
 (
-   action_id         BIGINT PRIMARY KEY,
-   orig_transfer_id  BIGINT NOT NULL,
+   action_id         SERIAL PRIMARY KEY,
+   orig_transfer_id  SERIAL NOT NULL,
    back_from_fac_num TEXT,
    back_date         DATE   NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id),
@@ -246,16 +246,16 @@ CREATE TABLE back_from_factory
 
 CREATE TABLE back_from_factory_details
 (
-   action_id    BIGINT PRIMARY KEY,
-   lot_id       INT NOT NULL,
-   qty_returned INT NOT NULL,
+   action_id    SERIAL PRIMARY KEY,
+   lot_id       SERIAL NOT NULL,
+   qty_returned INT    NOT NULL,
    FOREIGN KEY (action_id) REFERENCES back_from_factory (action_id),
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 );
 
 CREATE TABLE sale
 (
-   action_id BIGINT PRIMARY KEY,
+   action_id SERIAL PRIMARY KEY,
    sale_num  TEXT,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
 );
@@ -267,10 +267,10 @@ CREATE TABLE sale
 --    origin)
 CREATE TABLE item
 (
-   lot_id        BIGINT PRIMARY KEY,
+   lot_id        SERIAL PRIMARY KEY,
    stock_name    TEXT                                   NOT NULL,
    purchase_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   supplier      BIGINT                                 NOT NULL,
+   supplier      SERIAL                                 NOT NULL,
    origin        TEXT                                   NOT NULL,
    creation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    last_update   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -283,11 +283,11 @@ CREATE TABLE item
 --    loose_stone.lot_id references item.lot_id
 CREATE TABLE loose_stone
 (
-   lot_id    BIGINT PRIMARY KEY,
-   weight_ct INTEGER NOT NULL,
-   length    INTEGER NOT NULL,
-   width     INTEGER NOT NULL,
-   depth     INTEGER NOT NULL,
+   lot_id    SERIAL PRIMARY KEY,
+   weight_ct DECIMAL(10, 2) NOT NULL,
+   length    DECIMAL(10, 2) NOT NULL,
+   width     DECIMAL(10, 2) NOT NULL,
+   depth     DECIMAL(10, 2) NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 );
 
@@ -295,7 +295,7 @@ CREATE TABLE loose_stone
 --     white_diamond.lot_id references loose_stone.lot_id
 CREATE TABLE white_diamond
 (
-   lot_id      BIGINT PRIMARY KEY,
+   lot_id      SERIAL PRIMARY KEY,
    white_level INTEGER NOT NULL,
    shape       TEXT    NOT NULL,
    clarity     TEXT    NOT NULL,
@@ -306,14 +306,14 @@ CREATE TABLE white_diamond
 --     colored_diamond.lot_id references loose_stone.lot_id
 CREATE TABLE colored_diamond
 (
-   lot_id          BIGINT PRIMARY KEY,
-   gem_type        TEXT    NOT NULL,
-   fancy_intensity TEXT    NOT NULL,
-   fancy_overton   TEXT    NOT NULL,
-   fancy_color     TEXT    NOT NULL,
-   shape           TEXT    NOT NULL,
-   white_level     INTEGER NOT NULL,
-   clarity         TEXT    NOT NULL,
+   lot_id          SERIAL PRIMARY KEY,
+   gem_type        TEXT NOT NULL,
+   fancy_intensity TEXT NOT NULL,
+   fancy_overton   TEXT NOT NULL,
+   fancy_color     TEXT NOT NULL,
+   shape           TEXT NOT NULL,
+   white_level     TEXT NOT NULL,
+   clarity         TEXT NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
 );
 
@@ -321,7 +321,7 @@ CREATE TABLE colored_diamond
 --     colored_gem_stone.lot_id references loose_stone.lot_id
 CREATE TABLE colored_gem_stone
 (
-   lot_id    BIGINT PRIMARY KEY,
+   lot_id    SERIAL PRIMARY KEY,
    gem_type  TEXT NOT NULL,
    shape     TEXT NOT NULL,
    color     TEXT NOT NULL,
@@ -334,14 +334,14 @@ CREATE TABLE colored_gem_stone
 --    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
 CREATE TABLE jewelry
 (
-   lot_id                      BIGINT PRIMARY KEY,
-   jewelry_type                TEXT    NOT NULL,
-   gross_weight_gr             INTEGER NOT NULL,
-   metal_type                  TEXT    NOT NULL,
-   metal_weight_gr             INTEGER NOT NULL,
-   total_side_stone_qty        INTEGER NOT NULL,
-   total_side_stone_weight_cty INTEGER NOT NULL,
-   side_stone_type             TEXT    NOT NULL,
+   lot_id                     SERIAL PRIMARY KEY,
+   jewelry_type               TEXT           NOT NULL,
+   gross_weight_gr            DECIMAL(10, 2) NOT NULL,
+   metal_type                 TEXT           NOT NULL,
+   metal_weight_gr            DECIMAL(10, 2) NOT NULL,
+   total_side_stone_qty       INTEGER        NOT NULL,
+   total_side_stone_weight_ct DECIMAL(10, 2) NOT NULL,
+   side_stone_type            TEXT           NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 );
 
@@ -349,15 +349,15 @@ CREATE TABLE jewelry
 --     certificate.lab_id references counterpart.counterpart_id
 CREATE TABLE certificate
 (
-   certificate_id  BIGINT PRIMARY KEY,
-   lab_id          BIGINT                                 NOT NULL,
+   certificate_id  SERIAL PRIMARY KEY,
+   lab_id          SERIAL                                 NOT NULL,
    certificate_num TEXT                                   NOT NULL,
    issue_date      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    shape           TEXT,
-   weight_ct       INTEGER,
-   length          INTEGER,
-   width           INTEGER,
-   depth           INTEGER,
+   weight_ct       DECIMAL(10, 2),
+   length          DECIMAL(10, 2),
+   width           DECIMAL(10, 2),
+   depth           DECIMAL(10, 2),
    clarity         TEXT,
    color           TEXT,
    treatment       TEXT,
