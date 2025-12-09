@@ -74,11 +74,6 @@ return_memo_in (**action_id**, orig_memo_in_action_id, return_memo_in_num, back_
     `orig_memo_action_id` references `memo_in.action_id` NOT NULL
 
 
-return_memo_in_items( **action_id, lot_id**, notes) <br>
-    `action_id` references `return_memo_in.action_id` <br>
-    `lot_id` references `item.lot_id`
-
-
 memo_out(**action_id**, memo_out_num, ship_date, expected_return_date) <br>
     `action_id` references `action.action_id`
 
@@ -86,11 +81,6 @@ memo_out(**action_id**, memo_out_num, ship_date, expected_return_date) <br>
 return_memo_out(**action_id**, orig_memo_action_id, return_memo_out_num, back_date) <br>
     `action_id` references `action.action_id` <br>
     `orig_memo_action_id` references `memo_out.action_id` NOT NULL
-
-
-return_memo_out_items (**action_id, lot_id**, notes) <br>
-    `action_id` references `return_memo_out.action_id` <br>
-    `lot_id` references `item.lot_id`
 
 
 transfer_to_office(**action_id**, transfer_num, ship_date) <br>
@@ -106,23 +96,13 @@ back_from_lab(**action_id**, orig_transfer_id, back_from_lab_num, back_date)  <b
     `orig_transfer_id` references `transfer_to_lab.action_id` NOT NULL
 
 
-back_from_lab_items (**action_id, lot_id**, notes) <br>
-    `action_id` references `back_from_lab.action_id` <br>
-    `lot_id` references `item.lot_id`
-
-
 transfer_to_factory(**action_id**, transfer_num, ship_date) <br>
     `transfer_to_factory.action_id` references `action.action_id`
 
 
-back_from_factory(**action_id**, orig_transfer_id, back_from_fac_num, back_date) <br>
+back_from_factory(**action_id**, orig_transfer_id, back_from_fac_num, back_date, after_weight_ct, after_shape, after_length, after_width, after_depth, weight_loss_ct, note) <br>
     `action_id` references `action.action_id` <br>
     `orig_transfer_id` references `transfer_to_factory.action_id` NOT NULL
-
-
-back_from_factory_details(**action_id, lot_id**, after_weight_ct, after_shape, after_length, after_width, after_depth, weight_loss_ct, note) <br>
-    `action_id` references `back_from_factory.action_id` <br>
-    `lot_id` references `item.lot_id`
 
 
 sale(**action_id**, sale_num, sale_date, payment_method, payment_status) <br>
