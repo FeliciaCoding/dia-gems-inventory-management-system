@@ -71,7 +71,6 @@ CREATE TABLE counterpart_account_type
 
 );
 
-CREATE TYPE role AS ENUM ('Chief', 'Admin', 'Sales', 'Accountant');
 CREATE TABLE employee
 (
    employee_id    SERIAL PRIMARY KEY,
