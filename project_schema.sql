@@ -54,7 +54,7 @@ CREATE TABLE counterpart
 
 CREATE TABLE account_type
 (
-   type_name   TEXT PRIMARY KEY,
+   type_name   TEXT PRIMARY KEY, -- Diamond supplier, jewellry supplier, retail client, diamond wholesaler, certification lab, NY office
    category    category NOT NULL,
    is_internal BOOLEAN  NOT NULL DEFAULT FALSE
 );
