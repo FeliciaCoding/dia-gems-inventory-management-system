@@ -289,7 +289,10 @@ CREATE TABLE back_from_factory
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
-      ON DELETE RESTRICT ON UPDATE CASCADE
+      ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT positive_weight CHECK (after_weight_ct > 0),
+    CONSTRAINT positive_dimensions CHECK (after_length > 0 AND after_width > 0 AND after_depth > 0),
+    CONSTRAINT non_negative_weight_loss CHECK (weight_loss_ct >= 0),
 );
 
 
