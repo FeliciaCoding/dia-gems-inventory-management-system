@@ -72,7 +72,7 @@ CREATE TABLE counterpart_account_type
 
 );
 
-
+CREATE TYPE role AS ENUM ('Chief', 'Admin', 'Sales', 'Accountant');
 CREATE TABLE employee
 (
    employee_id    SERIAL PRIMARY KEY,
@@ -455,6 +455,8 @@ ON DELETE CASCADE ON UPDATE CASCADE
 -- jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
 --     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
 --    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
+CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring', 'Brooch', 'Bracelet');
+CREATE TYPE metal_type AS ENUM ('PT900', 'PT950', '18k white gold', '14k white gold', '18k white/yellow gold', '18k rose gold', '18k white gold + PT');
 CREATE TABLE jewelry
 (
    lot_id                     INTEGER PRIMARY KEY,
