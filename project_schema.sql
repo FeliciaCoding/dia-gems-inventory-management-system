@@ -71,7 +71,6 @@ CREATE TABLE counterpart_account_type
 
 );
 
-CREATE TYPE role AS ENUM ('Chief', 'Admin', 'Sales', 'Accountant');
 CREATE TABLE employee
 (
    employee_id    SERIAL PRIMARY KEY,
@@ -84,7 +83,8 @@ CREATE TABLE employee
    created_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (counterpart_id) REFERENCES counterpart (counterpart_id)
-      ON DELETE CASCADE ON UPDATE CASCADE
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   CONSTRAINT valid_update_time CHECK (updated_at >= created_at)
 );
 
 -- !! 8. move counterparties' keys from counterpart_action relation directly to the action
@@ -289,7 +289,10 @@ CREATE TABLE back_from_factory
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
-      ON DELETE RESTRICT ON UPDATE CASCADE
+      ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT positive_weight CHECK (after_weight_ct > 0),
+    CONSTRAINT positive_dimensions CHECK (after_length > 0 AND after_width > 0 AND after_depth > 0),
+    CONSTRAINT non_negative_weight_loss CHECK (weight_loss_ct >= 0),
 );
 
 
@@ -361,7 +364,6 @@ CREATE TABLE colored_gem_stone
 (
    lot_id   INTEGER PRIMARY KEY,
    gem_type  gem_type  NOT NULL,
-   shape     shape     NOT NULL,
    gem_color gem_color NOT NULL,
    treatment treatment NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
@@ -414,7 +416,9 @@ CREATE TABLE certificate
       ON DELETE RESTRICT ON UPDATE CASCADE,
    FOREIGN KEY (lot_id) REFERENCES item(lot_id)
       ON DELETE SET NULL ON UPDATE CASCADE,
-   CONSTRAINT valid_cert_update CHECK (updated_at >= created_at)
+   CONSTRAINT valid_cert_update CHECK (updated_at >= created_at),
+   CONSTRAINT positive_weight CHECK (weight_ct > 0),
+   CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
 

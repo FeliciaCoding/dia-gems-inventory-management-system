@@ -125,7 +125,7 @@ colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_col
     `lot_id` references `loose_stone.lot_id`
 
 
-colored_gem_stone (**lot_id**, gem_type, shape, gem_color, treatment) <br>
+colored_gem_stone (**lot_id**, gem_type, gem_color, treatment) <br>
     `lot_id` references `loose_stone.lot_id`
 
 
