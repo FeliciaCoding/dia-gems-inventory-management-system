@@ -203,19 +203,6 @@ CREATE TABLE return_memo_in
 );
 
 
-CREATE TABLE return_memo_in_items
-(
-   action_id INTEGER,
-   lot_id    INTEGER,
-   notes     TEXT,
-   PRIMARY KEY (action_id, lot_id),
-   FOREIGN KEY (action_id) REFERENCES return_memo_in (action_id)
-      ON DELETE CASCADE ON UPDATE CASCADE,
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-      ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
-
 CREATE TABLE memo_out
 (
    action_id            INTEGER PRIMARY KEY,
@@ -237,19 +224,6 @@ CREATE TABLE return_memo_out
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_memo_action_id) REFERENCES memo_out (action_id)
-      ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
-
-CREATE TABLE return_memo_out_items
-(
-   return_action_id INTEGER,
-   lot_id           INTEGER,
-   notes            TEXT,
-   PRIMARY KEY (return_action_id, lot_id),
-   FOREIGN KEY (return_action_id) REFERENCES return_memo_out (action_id)
-      ON DELETE CASCADE ON UPDATE CASCADE,
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
       ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -288,19 +262,6 @@ CREATE TABLE back_from_lab
 );
 
 
-CREATE TABLE back_from_lab_items
-(
-   action_id INTEGER,
-   lot_id    INTEGER,
-   notes     TEXT,
-   PRIMARY KEY (action_id, lot_id),
-   FOREIGN KEY (action_id) REFERENCES back_from_lab (action_id)
-      ON DELETE CASCADE ON UPDATE CASCADE,
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-      ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
-
 CREATE TABLE transfer_to_factory
 (
    action_id       INTEGER PRIMARY KEY,
@@ -318,16 +279,6 @@ CREATE TABLE back_from_factory
    orig_transfer_id  INTEGER NOT NULL,
    back_from_fac_num TEXT UNIQUE,
    back_date         DATE    NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-      ON DELETE CASCADE ON UPDATE CASCADE,
-   FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
-      ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
-CREATE TABLE back_from_factory_details
-(
-   action_id       INTEGER,
-   lot_id          INTEGER,
    after_weight_ct DECIMAL(5, 2),
    after_shape     shape,
    after_length    DECIMAL(4, 2),
@@ -335,19 +286,11 @@ CREATE TABLE back_from_factory_details
    after_depth     DECIMAL(4, 2),
    weight_loss_ct  DECIMAL(5, 2),
    note            TEXT,
-   PRIMARY KEY (action_id, lot_id),
-   FOREIGN KEY (action_id) REFERENCES back_from_factory (action_id)
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-      ON DELETE RESTRICT ON UPDATE CASCADE,
-   CONSTRAINT positive_after_measurements CHECK (
-      (after_weight_ct IS NULL OR after_weight_ct > 0) AND
-      (after_length IS NULL OR after_length > 0) AND
-      (after_width IS NULL OR after_width > 0) AND
-      (after_depth IS NULL OR after_depth > 0)
-      )
+   FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
 );
-
 
 
 CREATE TABLE sale
