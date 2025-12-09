@@ -4,380 +4,481 @@ SET search_path TO project;
 
 BEGIN;
 
+--ENUM TYPE
+
 CREATE TYPE code AS ENUM ('USD', 'HKD', 'CHF', 'EUR', 'NTD');
+CREATE TYPE category AS ENUM ('Supplier', 'Client', 'Office', 'Lab', 'Manufacturer');
+CREATE TYPE role AS ENUM ('Chief', 'Admin', 'Sales', 'Accountant');
+CREATE TYPE shape AS ENUM ('Brilliant Cut', 'Pear Shape', 'Radiant Cut', 'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite', 'Marquise', 'Oval', 'Princess', 'Trillion');
+CREATE TYPE clarity AS ENUM ('I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS', 'VVS1', 'VVS2','FL', 'IF');
+CREATE TYPE gem_type AS ENUM ('Sapphire', 'Emerald', 'Ruby', 'Diamond');
+CREATE TYPE fancy_intensity AS ENUM ('Faint', 'Very Light', 'Light', 'Fancy light', 'Fancy','Fansy Vivid', 'Fancy intense', 'Fancy Deep', 'Fansy Dark');
+CREATE TYPE fancy_color AS ENUM ('Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Violet', 'Gray');
+CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring', 'Brooch', 'Bracelet');
+CREATE TYPE metal_type AS ENUM ('PT900', 'PT950', '18k white gold', '14k white gold', '18k white/yellow gold', '18k rose gold', '18k white gold + PT');
+CREATE TYPE update_type_enum AS ENUM ('Insert', 'Update', 'Delete');
+CREATE TYPE action_role_type AS ENUM ('Creator', 'Approver', 'Processor', 'Reviewer');
+CREATE TYPE office AS ENUM ('NY', 'HK', 'GVA');
+CREATE TYPE lab_purpose AS ENUM ('Certify', 'Re-certify');
+CREATE TYPE processing_type AS ENUM ('Remove oil', 'Recut');
+CREATE TYPE payment_status AS ENUM ('Partial paid', 'Unpaid', 'Paid');
+CREATE TYPE treatment AS ENUM ('No heat', 'heated', 'No oil', 'Minor Oil', 'Oiled');
+CREATE TYPE gem_color AS ENUM ('Red', 'Blue', 'Green', 'Pigeon blood', 'Royal Blue');
+CREATE TYPE white_scale AS ENUM ( 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+   'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+
+--Create tables
+
 CREATE TABLE currency
 (
-   code TEXT PRIMARY KEY,
-   name TEXT NOT NULL
+   code code PRIMARY KEY,
+   name TEXT NOT NULL UNIQUE
 );
 
 
 CREATE TABLE counterpart
 (
    counterpart_id SERIAL PRIMARY KEY,
-   name           TEXT UNIQUE NOT NULL,
+   name           TEXT UNIQUE                            NOT NULL,
    phone_number   TEXT,
    address_short  TEXT,
    city           TEXT,
    postal_code    TEXT,
    country        TEXT,
-   email          TEXT UNIQUE
+   email          TEXT UNIQUE,
+   is_active      BOOLEAN                                NOT NULL DEFAULT TRUE,
+   created_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   updated_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
-CREATE TYPE category AS ENUM ('Supplier', 'Client', 'Office', 'Labo', 'Manufactor');
 CREATE TABLE account_type
 (
    type_name   TEXT PRIMARY KEY,
-   category    TEXT    NOT NULL,
-   is_internal BOOLEAN NOT NULL DEFAULT FALSE
+   category    category NOT NULL,
+   is_internal BOOLEAN  NOT NULL DEFAULT FALSE
 );
 
 
 CREATE TABLE counterpart_account_type
 (
-   counterpart_id SERIAL,
+   counterpart_id INTEGER,
    type_name      TEXT,
    PRIMARY KEY (counterpart_id, type_name),
-   FOREIGN KEY (counterpart_id) REFERENCES counterpart (counterpart_id),
+   FOREIGN KEY (counterpart_id) REFERENCES counterpart (counterpart_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (type_name) REFERENCES account_type (type_name)
+      ON DELETE CASCADE ON UPDATE CASCADE
 
 );
 
-CREATE TYPE role AS ENUM ('Chief', 'Admin', 'Sales', 'Accountant');
+
 CREATE TABLE employee
 (
    employee_id    SERIAL PRIMARY KEY,
-   counterpart_id SERIAL      NOT NULL,
-   first_name     TEXT        NOT NULL,
-   last_name      TEXT        NOT NULL,
-   email          TEXT UNIQUE NOT NULL,
-   role           role,
-   is_active      BOOLEAN     NOT NULL DEFAULT TRUE,
+   counterpart_id INTEGER                                NOT NULL,
+   first_name     TEXT                                   NOT NULL,
+   last_name      TEXT                                   NOT NULL,
+   email          TEXT UNIQUE                            NOT NULL,
+   role           role                                   NOT NULL,
+   is_active      BOOLEAN                                NOT NULL DEFAULT TRUE,
+   created_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   updated_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (counterpart_id) REFERENCES counterpart (counterpart_id)
+      ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
+-- !! 8. move counterparties' keys from counterpart_action relation directly to the action
 CREATE TABLE action
 (
-   action_id     SERIAL PRIMARY KEY,
-   terms         TEXT,
-   remarks       TEXT,
-   creation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   last_update   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
-      CHECK (last_update >= creation_date)
+   action_id           SERIAL PRIMARY KEY,
+   from_counterpart_id INTEGER,
+   to_counterpart_id   INTEGER,
+   terms               TEXT,
+   remarks             TEXT,
+   created_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   updated_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   FOREIGN KEY (from_counterpart_id) REFERENCES counterpart (counterpart_id)
+      ON DELETE SET NULL ON UPDATE CASCADE,
+   FOREIGN KEY (to_counterpart_id) REFERENCES counterpart (counterpart_id)
+      ON DELETE SET NULL ON UPDATE CASCADE,
+   CONSTRAINT valid_update_time CHECK (updated_at >= created_at),
+   CONSTRAINT different_counterparts CHECK (
+      from_counterpart_id IS NULL OR
+      to_counterpart_id IS NULL OR
+      from_counterpart_id != to_counterpart_id
+      )
 );
 
+-- !! employee_action with meaningful role
 CREATE TABLE employee_action
 (
-   employee_id SERIAL,
-   action_id   SERIAL,
-   PRIMARY KEY (employee_id, action_id),
-   FOREIGN KEY (employee_id) REFERENCES employee (employee_id),
+   employee_id INTEGER,
+   action_id   INTEGER,
+   action_role action_role_type NOT NULL,
+   PRIMARY KEY (employee_id, action_id, action_role),
+   FOREIGN KEY (employee_id) REFERENCES employee (employee_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
+-- !! 6. update_log is maybe a weak entity with action as its strong entity
 CREATE TABLE update_log
 (
-   log_id      SERIAL PRIMARY KEY,
-   action_id   SERIAL                                 NOT NULL,
-   employee_id SERIAL                                 NOT NULL,
-   update_type TEXT                                   NOT NULL,
-   log_time    TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id),
+   log_sequence INTEGER                                NOT NULL,
+   action_id    INTEGER                                NOT NULL,
+   employee_id  INTEGER                                NOT NULL,
+   update_type  update_type_enum                       NOT NULL,
+   old_value    jsonb,
+   new_value    jsonb,
+   log_time     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   PRIMARY KEY (action_id, log_sequence),
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (employee_id) REFERENCES employee (employee_id)
+      ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-
-
-CREATE TABLE counterpart_action
-(
-   from_counterpart_id SERIAL,
-   to_counterpart_id   SERIAL,
-   action_id           SERIAL,
-   PRIMARY KEY (from_counterpart_id, to_counterpart_id, action_id),
-   FOREIGN KEY (from_counterpart_id) REFERENCES counterpart (counterpart_id),
-   FOREIGN KEY (to_counterpart_id) REFERENCES counterpart (counterpart_id),
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-);
-
-
-CREATE TABLE action_item
-(
-   action_id     SERIAL,
-   lot_id        SERIAL,
-   line_no       INT           NOT NULL,
-   qty           INT           NOT NULL,
-   unit_price    DECIMAL(10.2) NOT NULL,
-   currency_code TEXT          NOT NULL,
-   PRIMARY KEY (action_id, lot_id),
-   UNIQUE (action_id, line_no),
-   FOREIGN KEY (action_id) REFERENCES action (action_id),
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id),
-   FOREIGN KEY (currency_code) REFERENCES currency (code),
-   CHECK (qty > 0),
-   CHECK (unit_price >= 0)
-
-);
-
-
-CREATE TABLE purchase
-(
-   action_id    SERIAL PRIMARY KEY,
-   purchase_num TEXT,
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-);
-
-
-CREATE TABLE memo_in
-(
-   action_id   SERIAL PRIMARY KEY,
-   memo_in_num TEXT NOT NULL,
-   ship_date   DATE NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-);
-
-
-CREATE TABLE return_memo_in
-(
-   action_id           SERIAL PRIMARY KEY,
-   orig_memo_action_id SERIAL NOT NULL,
-   return_memo_in_num  TEXT,
-   back_date           DATE   NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id),
-   FOREIGN KEY (orig_memo_action_id) REFERENCES memo_in (action_id)
-);
-
-
-
-CREATE TABLE return_memo_in_items
-(
-   action_id SERIAL,
-   lot_id    SERIAL,
-   PRIMARY KEY (action_id, lot_id),
-   FOREIGN KEY (action_id) REFERENCES return_memo_in (action_id),
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id),
-);
-
-
-CREATE TABLE memo_out
-(
-   action_id    SERIAL PRIMARY KEY,
-   memo_out_num TEXT,
-   ship_date    DATE NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-);
-
-
-CREATE TABLE return_memo_out
-(
-   action_id           SERIAL PRIMARY KEY,
-   orig_memo_action_id SERIAL NOT NULL,
-   return_memo_out_num TEXT,
-   back_date           DATE   NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id),
-   FOREIGN KEY (orig_memo_action_id) REFERENCES memo_out (action_id)
-);
-
-
-CREATE TABLE return_memo_out_items
-(
-   return_action_id SERIAL,
-   lot_id           SERIAL NOT NULL,
-   PRIMARY KEY (return_action_id, lot_id),
-   FOREIGN KEY (return_action_id) REFERENCES return_memo_out (action_id),
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-);
-
-
-CREATE TABLE transfer_to_office
-(
-   action_id    SERIAL PRIMARY KEY,
-   transfer_num TEXT,
-   ship_date    DATE NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-);
-
-
-CREATE TABLE transfer_to_lab
-(
-   action_id    SERIAL PRIMARY KEY,
-   transfer_num TEXT,
-   ship_date    DATE NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-);
-
--- back_from_lab(**action_id, back_from_lab_num**, back_date)
-CREATE TABLE back_from_lab
-(
-   action_id         SERIAL PRIMARY KEY,
-   orig_transfer_id  SERIAL NOT NULL,
-   back_from_lab_num TEXT,
-   back_date         DATE   NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id),
-   FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_lab (action_id)
-);
-
-
-CREATE TABLE back_from_lab_items
-(
-   action_id SERIAL,
-   lot_id    SERIAL NOT NULL,
-   PRIMARY KEY (action_id, lot_id),
-   FOREIGN KEY (action_id) REFERENCES back_from_lab (action_id),
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-);
-
-
-
-CREATE TABLE transfer_to_factory
-(
-   action_id    SERIAL PRIMARY KEY,
-   transfer_num TEXT,
-   ship_date    DATE NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-);
-
-
-CREATE TABLE back_from_factory
-(
-   action_id         SERIAL PRIMARY KEY,
-   orig_transfer_id  SERIAL NOT NULL,
-   back_from_fac_num TEXT,
-   back_date         DATE   NOT NULL,
-   FOREIGN KEY (action_id) REFERENCES action (action_id),
-   FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
-);
-
--- QUESTION :  can i update the items using FK? how to update the item after being repolished ?
-CREATE TABLE back_from_factory_details
-(
-   action_id       SERIAL PRIMARY KEY,
-   lot_id          SERIAL NOT NULL,
-   after_weight_ct DECIMAL(10, 2),
-   after_shape     shape,
-   after_length    DECIMAL(10, 2),
-   after_width     DECIMAL(10, 2),
-   after_depth     DECIMAL(10, 2),
-   FOREIGN KEY (action_id) REFERENCES back_from_factory (action_id),
-   FOREIGN KEY (lot_id) REFERENCES item (lot_id),
-   FOREIGN KEY (after_shape) REFERENCES loose_stone (shape),
-   FOREIGN KEY (after_length) REFERENCES loose_stone (length),
-   FOREIGN KEY (after_width) REFERENCES loose_stone (width),
-   FOREIGN KEY (after_depth) REFERENCES loose_stone (depth)
-);
-
-CREATE TABLE sale
-(
-   action_id SERIAL PRIMARY KEY,
-   sale_num  TEXT,
-   FOREIGN KEY (action_id) REFERENCES action (action_id)
-);
-
 
 
 -- item (**lot_id**, stock_name,
---    purchase_date, supplier, sale_unit, cost_unit, 
+--    purchase_date, supplier, sale_unit, cost_unit,
 --    origin)
 CREATE TABLE item
 (
    lot_id        SERIAL PRIMARY KEY,
    stock_name    TEXT                                   NOT NULL,
    purchase_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   supplier      SERIAL                                 NOT NULL,
+   supplier      INTEGER                              NOT NULL,
    origin        TEXT                                   NOT NULL,
-   creation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   last_update   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-
-   FOREIGN KEY (supplier) REFERENCES counterpart (counterpart_id)
+   responsible_office office NOT NULL,
+   --location_type
+   --current_office office,
+   --current_counterpart_id INTEGER,
+   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   is_available BOOLEAN NOT NULL DEFAULT TRUE,
+   FOREIGN KEY (supplier) REFERENCES counterpart(counterpart_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE,
+   CONSTRAINT valid_item_update CHECK (updated_at >= created_at)
 );
+
+
+CREATE TABLE action_item
+(
+   action_id     INTEGER,
+   lot_id        INTEGER,
+   line_no       INTEGER        NOT NULL,
+   qty           INTEGER        NOT NULL,
+   unit_price    DECIMAL(10, 2) NOT NULL,
+   currency_code code           NOT NULL,
+   PRIMARY KEY (action_id, lot_id),
+   UNIQUE (action_id, line_no),
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE,
+   FOREIGN KEY (currency_code) REFERENCES currency (code)
+      ON DELETE RESTRICT ON UPDATE CASCADE,
+   CONSTRAINT positive_qty CHECK (qty > 0),
+   CONSTRAINT non_negative_price CHECK (unit_price >= 0)
+);
+
+
+-- Actions tables
+CREATE TABLE purchase
+(
+   action_id     INTEGER PRIMARY KEY,
+   purchase_num  TEXT UNIQUE,
+   purchase_date DATE DEFAULT CURRENT_DATE,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE memo_in
+(
+   action_id            INTEGER PRIMARY KEY,
+   memo_in_num          TEXT NOT NULL UNIQUE,
+   ship_date            DATE NOT NULL,
+   expected_return_date DATE,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   CONSTRAINT valid_return_date CHECK (expected_return_date IS NULL OR expected_return_date >= ship_date)
+);
+
+
+CREATE TABLE return_memo_in
+(
+   action_id           INTEGER PRIMARY KEY,
+   orig_memo_action_id INTEGER NOT NULL,
+   return_memo_in_num  TEXT UNIQUE,
+   back_date           DATE    NOT NULL,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (orig_memo_action_id) REFERENCES memo_in (action_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+
+
+CREATE TABLE return_memo_in_items
+(
+   action_id INTEGER,
+   lot_id    INTEGER,
+   notes     TEXT,
+   PRIMARY KEY (action_id, lot_id),
+   FOREIGN KEY (action_id) REFERENCES return_memo_in (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+
+CREATE TABLE memo_out
+(
+   action_id            INTEGER PRIMARY KEY,
+   memo_out_num         TEXT UNIQUE,
+   ship_date            DATE NOT NULL,
+   expected_return_date DATE,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   CONSTRAINT valid_return_date CHECK (expected_return_date IS NULL OR expected_return_date >= ship_date)
+);
+
+
+CREATE TABLE return_memo_out
+(
+   action_id           INTEGER PRIMARY KEY,
+   orig_memo_action_id INTEGER NOT NULL,
+   return_memo_out_num TEXT UNIQUE,
+   back_date           DATE    NOT NULL,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (orig_memo_action_id) REFERENCES memo_out (action_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+
+CREATE TABLE return_memo_out_items
+(
+   return_action_id INTEGER,
+   lot_id           INTEGER,
+   notes            TEXT,
+   PRIMARY KEY (return_action_id, lot_id),
+   FOREIGN KEY (return_action_id) REFERENCES return_memo_out (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+
+CREATE TABLE transfer_to_office
+(
+   action_id          INTEGER PRIMARY KEY,
+   transfer_num       TEXT UNIQUE,
+   ship_date          DATE NOT NULL,
+   destination_office office,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE transfer_to_lab
+(
+   action_id    INTEGER PRIMARY KEY,
+   transfer_num TEXT UNIQUE,
+   ship_date    DATE        NOT NULL,
+   lab_id       INTEGER,
+   lab_purpose  lab_purpose NOT NULL,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
+      ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- back_from_lab(**action_id, back_from_lab_num**, back_date)
+CREATE TABLE back_from_lab
+(
+   action_id         INTEGER PRIMARY KEY,
+   orig_transfer_id  INTEGER NOT NULL,
+   back_from_lab_num TEXT UNIQUE,
+   back_date         DATE    NOT NULL,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_lab (action_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+
+CREATE TABLE back_from_lab_items
+(
+   action_id INTEGER,
+   lot_id    INTEGER,
+   notes     TEXT,
+   PRIMARY KEY (action_id, lot_id),
+   FOREIGN KEY (action_id) REFERENCES back_from_lab (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+
+
+CREATE TABLE transfer_to_factory
+(
+   action_id       INTEGER PRIMARY KEY,
+   transfer_num    TEXT UNIQUE,
+   ship_date       DATE NOT NULL,
+   factory_id      INTEGER,
+   processing_type processing_type,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (factory_id) REFERENCES counterpart (counterpart_id)
+      ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+
+CREATE TABLE back_from_factory
+(
+   action_id         INTEGER PRIMARY KEY,
+   orig_transfer_id  INTEGER NOT NULL,
+   back_from_fac_num TEXT UNIQUE,
+   back_date         DATE    NOT NULL,
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+CREATE TABLE back_from_factory_details
+(
+   action_id       INTEGER,
+   lot_id          INTEGER,
+   after_weight_ct DECIMAL(10, 2),
+   after_shape     shape,
+   after_length    DECIMAL(10, 2),
+   after_width     DECIMAL(10, 2),
+   after_depth     DECIMAL(10, 2),
+   weight_loss_ct  DECIMAL(10, 2),
+   note            TEXT,
+   PRIMARY KEY (action_id, lot_id),
+   FOREIGN KEY (action_id) REFERENCES back_from_factory (action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE,
+   CONSTRAINT positive_after_measurements CHECK (
+      (after_weight_ct IS NULL OR after_weight_ct > 0) AND
+      (after_length IS NULL OR after_length > 0) AND
+      (after_width IS NULL OR after_width > 0) AND
+      (after_depth IS NULL OR after_depth > 0)
+      )
+);
+
+
+
+CREATE TABLE sale
+(
+   action_id INTEGER PRIMARY KEY,
+   sale_num  TEXT UNIQUE,
+   sale_date DATE DEFAULT CURRENT_DATE,
+   payment_method TEXT,
+   payment_status payment_status DEFAULT 'Unpaid',
+   FOREIGN KEY (action_id) REFERENCES action(action_id)
+      ON DELETE CASCADE ON UPDATE CASCADE
+  );
+
+
 
 
 -- loose_stone (**lot_id**, weight_ct, length, width, depth)
 --    loose_stone.lot_id references item.lot_id
 
-CREATE TYPE shape AS ENUM ('Brilliant Cut', 'Pear Shape', 'Radiant Cut', 'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite', 'Marquise', 'Oval', 'Princess', 'Trillion');
 CREATE TABLE loose_stone
 (
-   lot_id    SERIAL PRIMARY KEY,
+   lot_id    INTEGER PRIMARY KEY,
    weight_ct DECIMAL(10, 2) NOT NULL,
    shape     shape          NOT NULL,
    length    DECIMAL(10, 2) NOT NULL,
    width     DECIMAL(10, 2) NOT NULL,
    depth     DECIMAL(10, 2) NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+ON DELETE RESTRICT ON UPDATE CASCADE,
+      CONSTRAINT positive_weight CHECK (weight_ct > 0),
+   CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
+
 
 -- white_diamond (**lot_id**, white_level, shape, clarity)
 --     white_diamond.lot_id references loose_stone.lot_id
 
-CREATE TYPE clarity AS ENUM ('I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS', 'VVS1', 'VVS2','FL', 'IF');
 CREATE TABLE white_diamond
 (
-   lot_id      SERIAL PRIMARY KEY,
-   white_level INTEGER NOT NULL,
+   lot_id      INTEGER PRIMARY KEY,
+   white_scale white_scale NOT NULL,
    clarity     clarity NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
+ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, shape, clarity)
 --     colored_diamond.lot_id references loose_stone.lot_id
 
-CREATE TYPE gem_type AS ENUM ('Sapphire', 'Emerald', 'Ruby', 'Diamond');
-CREATE TYPE fancy_intensity AS ENUM ('Faint', 'Very Light', 'Light', 'Fancy light', 'Fancy','Fansy Vivid', 'Fancy intense', 'Fancy Deep', 'Fansy Dark');
-CREATE TYPE fancy_color AS ENUM ('Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Violet', 'Gray');
 
 CREATE TABLE colored_diamond
 (
-   lot_id          SERIAL PRIMARY KEY,
-   gem_type        TEXT            NOT NULL,
+   lot_id          INTEGER PRIMARY KEY,
+   gem_type        gem_type            NOT NULL,
    fancy_intensity fancy_intensity NOT NULL,
    fancy_overtone  TEXT            NOT NULL,
    fancy_color     fancy_color     NOT NULL,
    clarity         clarity         NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
+ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
 --     colored_gem_stone.lot_id references loose_stone.lot_id
 
-CREATE TYPE treatment AS ENUM ('No heat', 'heated', 'No oil', 'Minor Oil', 'Oiled');
-CREATE TYPE gem_color AS ENUM ('Red', 'Blue', 'Green', 'Pigeon blood', 'Royal Blue');
+
 CREATE TABLE colored_gem_stone
 (
-   lot_id    SERIAL PRIMARY KEY,
+   lot_id   INTEGER PRIMARY KEY,
    gem_type  gem_type  NOT NULL,
    shape     shape     NOT NULL,
    gem_color gem_color NOT NULL,
    treatment treatment NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
+ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
 --     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
 --    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
-CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring', 'Brooch', 'Bracelet');
-CREATE TYPE metal_type AS ENUM ('PT900', 'PT950', '18k white gold', '14k white gold', '18k white/yellow gold', '18k rose gold', '18k white gold + PT');
 CREATE TABLE jewelry
 (
-   lot_id                     SERIAL PRIMARY KEY,
+   lot_id                     INTEGER PRIMARY KEY,
    jewelry_type               jewelry_type   NOT NULL,
    gross_weight_gr            DECIMAL(10, 2) NOT NULL,
-   metal_type                 metal_type          NOT NULL,
+   metal_type                 metal_type     NOT NULL,
    metal_weight_gr            DECIMAL(10, 2) NOT NULL,
    total_side_stone_qty       INTEGER        NOT NULL,
    total_side_stone_weight_ct DECIMAL(10, 2) NOT NULL,
    side_stone_type            TEXT           NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
+ON DELETE CASCADE ON UPDATE CASCADE,
+      CONSTRAINT positive_weights CHECK (gross_weight_gr > 0 AND metal_weight_gr > 0),
+   CONSTRAINT metal_weight_check CHECK (metal_weight_gr <= gross_weight_gr)
+
 );
 
--- certificate(**certificate_id**, lab_id, issue_date, shape, weight_ct, length, width, depth, clarity, color, treatment, gem_type)
---     certificate.lab_id references counterpart.counterpart_id
+-- !! 9. certificate.item_id is missing
 CREATE TABLE certificate
 (
    certificate_id  SERIAL PRIMARY KEY,
-   lab_id          SERIAL                                 NOT NULL,
-   certificate_num TEXT                                   NOT NULL,
+   lot_id            INTEGER,
+   lab_id          INTEGER                                 NOT NULL,
+   certificate_num TEXT                                   NOT NULL UNIQUE,
    issue_date      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    shape           shape,
    weight_ct       DECIMAL(10, 2),
@@ -390,8 +491,31 @@ CREATE TABLE certificate
    gem_type        gem_type,
    creation_date   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    last_update     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   FOREIGN KEY (lab_id) REFERENCES counterpart(counterpart_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE,
+   FOREIGN KEY (lot_id) REFERENCES item(lot_id)
+      ON DELETE SET NULL ON UPDATE CASCADE,
+   CONSTRAINT valid_cert_update CHECK (last_update >= creation_date)
+);
 
-   FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
-); 
 
+-- trigger
+CREATE OR REPLACE FUNCTION update_stone_after_factory()
+RETURNS TRIGGER AS $$
+BEGIN
+   UPDATE loose_stone
+   SET
+      weight_ct = COALESCE(NEW.after_weight_ct, weight_ct),
+      shape = COALESCE(NEW.after_shape, shape),
+      length = COALESCE(NEW.after_length, length),
+      width = COALESCE(NEW.after_width, width),
+      depth = COALESCE(NEW.after_depth, depth)
+   WHERE lot_id = NEW.lot_id;
+   RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
+CREATE TRIGGER update_stone_measurements
+   AFTER INSERT ON back_from_factory_details
+   FOR EACH ROW
+   EXECUTE FUNCTION update_stone_after_factory();
