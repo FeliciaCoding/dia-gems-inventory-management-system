@@ -101,14 +101,8 @@ CREATE TABLE action
       ON DELETE SET NULL ON UPDATE CASCADE,
    FOREIGN KEY (to_counterpart_id) REFERENCES counterpart (counterpart_id)
       ON DELETE SET NULL ON UPDATE CASCADE,
-   FOREIGN KEY (employee_id) REFERENCES employee (employee_id)
-      ON DELETE SET NULL ON UPDATE CASCADE,
    CONSTRAINT valid_update_time CHECK (updated_at >= created_at),
-   CONSTRAINT different_counterparts CHECK (
-      from_counterpart_id IS NULL OR
-      to_counterpart_id IS NULL OR
-      from_counterpart_id != to_counterpart_id
-      )
+   CONSTRAINT different_counterparts CHECK (from_counterpart_id != to_counterpart_id)
 );
 
 
@@ -142,6 +136,7 @@ CREATE TABLE item
    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    is_available BOOLEAN NOT NULL DEFAULT TRUE,
    FOREIGN KEY (responsible_office_id) REFERENCES counterpart(counterpart_id)
+       ON DELETE RESTRICT ON UPDATE CASCADE,
    FOREIGN KEY (supplier_id) REFERENCES counterpart(counterpart_id)
       ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT valid_item_update CHECK (updated_at >= created_at)
@@ -245,7 +240,7 @@ CREATE TABLE transfer_to_lab
    ship_date    DATE        NOT NULL,
    lab_purpose  lab_purpose NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
-      ON DELETE CASCADE ON UPDATE CASCADE,
+      ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- back_from_lab(**action_id, back_from_lab_num**, back_date)
@@ -269,7 +264,7 @@ CREATE TABLE transfer_to_factory
    ship_date       DATE NOT NULL,
    processing_type processing_type,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
-      ON DELETE CASCADE ON UPDATE CASCADE,
+      ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -292,7 +287,7 @@ CREATE TABLE back_from_factory
       ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT positive_weight CHECK (after_weight_ct > 0),
     CONSTRAINT positive_dimensions CHECK (after_length > 0 AND after_width > 0 AND after_depth > 0),
-    CONSTRAINT non_negative_weight_loss CHECK (weight_loss_ct >= 0),
+    CONSTRAINT non_negative_weight_loss CHECK (weight_loss_ct >= 0)
 );
 
 
@@ -322,8 +317,8 @@ CREATE TABLE loose_stone
    width     DECIMAL(4, 2) NOT NULL,
    depth     DECIMAL(4, 2) NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-ON DELETE RESTRICT ON UPDATE CASCADE,
-      CONSTRAINT positive_weight CHECK (weight_ct > 0),
+       ON DELETE RESTRICT ON UPDATE CASCADE,
+   CONSTRAINT positive_weight CHECK (weight_ct > 0),
    CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
@@ -337,7 +332,7 @@ CREATE TABLE white_diamond
    white_scale white_scale NOT NULL,
    clarity     clarity NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
-ON DELETE RESTRICT ON UPDATE CASCADE
+       ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, shape, clarity)
@@ -353,7 +348,7 @@ CREATE TABLE colored_diamond
    fancy_color     fancy_color     NOT NULL,
    clarity         clarity         NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
-ON DELETE CASCADE ON UPDATE CASCADE
+       ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
@@ -367,7 +362,7 @@ CREATE TABLE colored_gem_stone
    gem_color gem_color NOT NULL,
    treatment treatment NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
-ON DELETE CASCADE ON UPDATE CASCADE
+       ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
@@ -387,8 +382,8 @@ CREATE TABLE jewelry
    total_side_stone_weight_ct   DECIMAL(5, 2) NOT NULL,
    side_stone_type              TEXT           NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-ON DELETE CASCADE ON UPDATE CASCADE,
-      CONSTRAINT positive_weights CHECK (gross_weight_gr > 0 AND metal_weight_gr > 0),
+       ON DELETE CASCADE ON UPDATE CASCADE,
+   CONSTRAINT positive_weights CHECK (gross_weight_gr > 0 AND metal_weight_gr > 0),
    CONSTRAINT metal_weight_check CHECK (metal_weight_gr <= gross_weight_gr)
 
 );
@@ -421,7 +416,8 @@ CREATE TABLE certificate
    CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
-
+-- --------------------
+-- NOT READY YET
 -- trigger
 CREATE OR REPLACE FUNCTION update_stone_after_factory()
 RETURNS TRIGGER AS $$
