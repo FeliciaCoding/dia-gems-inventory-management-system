@@ -361,7 +361,6 @@ CREATE TABLE colored_gem_stone
 (
    lot_id   INTEGER PRIMARY KEY,
    gem_type  gem_type  NOT NULL,
-   shape     shape     NOT NULL,
    gem_color gem_color NOT NULL,
    treatment treatment NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
