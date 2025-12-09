@@ -416,7 +416,9 @@ CREATE TABLE certificate
       ON DELETE RESTRICT ON UPDATE CASCADE,
    FOREIGN KEY (lot_id) REFERENCES item(lot_id)
       ON DELETE SET NULL ON UPDATE CASCADE,
-   CONSTRAINT valid_cert_update CHECK (updated_at >= created_at)
+   CONSTRAINT valid_cert_update CHECK (updated_at >= created_at),
+   CONSTRAINT positive_weight CHECK (weight_ct > 0),
+   CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
 
