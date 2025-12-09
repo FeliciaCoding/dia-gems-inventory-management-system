@@ -1,3 +1,4 @@
+--DROP SCHEMA IF EXISTS project;
 CREATE SCHEMA IF NOT EXISTS project;
 
 SET search_path TO project;
@@ -34,7 +35,6 @@ CREATE TABLE currency
    code code PRIMARY KEY,
    name TEXT NOT NULL UNIQUE
 );
-
 
 CREATE TABLE counterpart
 (
@@ -126,18 +126,18 @@ CREATE TABLE action_update_log
 
 CREATE TABLE item
 (
-   lot_id        SERIAL PRIMARY KEY,
-   stock_name    TEXT                                   NOT NULL,
-   purchase_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   supplier_id      INTEGER                              NOT NULL,
-   origin        TEXT                                   NOT NULL,
-   responsible_office_id INTEGER                           NOT NULL,
-   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   is_available BOOLEAN NOT NULL DEFAULT TRUE,
-   FOREIGN KEY (responsible_office_id) REFERENCES counterpart(counterpart_id)
-       ON DELETE RESTRICT ON UPDATE CASCADE,
-   FOREIGN KEY (supplier_id) REFERENCES counterpart(counterpart_id)
+   lot_id                SERIAL PRIMARY KEY,
+   stock_name            TEXT                                   NOT NULL,
+   purchase_date         TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   supplier_id           INTEGER                                NOT NULL,
+   origin                TEXT                                   NOT NULL,
+   responsible_office_id INTEGER                                NOT NULL,
+   created_at            TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   updated_at            TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   is_available          BOOLEAN                                NOT NULL DEFAULT TRUE,
+   FOREIGN KEY (responsible_office_id) REFERENCES counterpart (counterpart_id)
+      ON DELETE RESTRICT ON UPDATE CASCADE,
+   FOREIGN KEY (supplier_id) REFERENCES counterpart (counterpart_id)
       ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT valid_item_update CHECK (updated_at >= created_at)
 );
@@ -147,7 +147,7 @@ CREATE TABLE action_item
 (
    action_id     INTEGER,
    lot_id        INTEGER,
-   quantity           INTEGER        NOT NULL,
+   quantity      INTEGER        NOT NULL,
    unit_price    DECIMAL(15, 2) NOT NULL,
    currency_code code           NOT NULL,
    PRIMARY KEY (action_id, lot_id),
@@ -225,9 +225,9 @@ CREATE TABLE return_memo_out
 
 CREATE TABLE transfer_to_office
 (
-   action_id          INTEGER PRIMARY KEY,
-   transfer_num       TEXT UNIQUE,
-   ship_date          DATE NOT NULL,
+   action_id    INTEGER PRIMARY KEY,
+   transfer_num TEXT UNIQUE,
+   ship_date    DATE NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -249,7 +249,7 @@ CREATE TABLE back_from_lab
    action_id         INTEGER PRIMARY KEY,
    orig_transfer_id  INTEGER NOT NULL,
    back_from_lab_num TEXT UNIQUE,
-   back_date         DATE    NOT NULL,
+   back_date         DATE NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_lab (action_id)
@@ -274,34 +274,33 @@ CREATE TABLE back_from_factory
    orig_transfer_id  INTEGER NOT NULL,
    back_from_fac_num TEXT UNIQUE,
    back_date         DATE    NOT NULL,
-   after_weight_ct DECIMAL(5, 2),
-   after_shape     shape,
-   after_length    DECIMAL(4, 2),
-   after_width     DECIMAL(4, 2),
-   after_depth     DECIMAL(4, 2),
-   weight_loss_ct  DECIMAL(5, 2),
-   note            TEXT,
+   after_weight_ct   DECIMAL(5, 2),
+   after_shape       shape,
+   after_length      DECIMAL(4, 2),
+   after_width       DECIMAL(4, 2),
+   after_depth       DECIMAL(4, 2),
+   weight_loss_ct    DECIMAL(5, 2),
+   note              TEXT,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
       ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT positive_weight CHECK (after_weight_ct > 0),
-    CONSTRAINT positive_dimensions CHECK (after_length > 0 AND after_width > 0 AND after_depth > 0),
-    CONSTRAINT non_negative_weight_loss CHECK (weight_loss_ct >= 0)
+   CONSTRAINT positive_weight CHECK (after_weight_ct > 0),
+   CONSTRAINT positive_dimensions CHECK (after_length > 0 AND after_width > 0 AND after_depth > 0),
+   CONSTRAINT non_negative_weight_loss CHECK (weight_loss_ct >= 0)
 );
 
 
 CREATE TABLE sale
 (
-   action_id INTEGER PRIMARY KEY,
-   sale_num  TEXT UNIQUE,
-   sale_date DATE DEFAULT CURRENT_DATE,
+   action_id      INTEGER PRIMARY KEY,
+   sale_num       TEXT UNIQUE,
+   sale_date      DATE           DEFAULT CURRENT_DATE,
    payment_method TEXT,
    payment_status payment_status DEFAULT 'Unpaid',
-   FOREIGN KEY (action_id) REFERENCES action(action_id)
+   FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE
-  );
-
+);
 
 
 
@@ -312,12 +311,12 @@ CREATE TABLE loose_stone
 (
    lot_id    INTEGER PRIMARY KEY,
    weight_ct DECIMAL(5, 2) NOT NULL,
-   shape     shape          NOT NULL,
+   shape     shape         NOT NULL,
    length    DECIMAL(4, 2) NOT NULL,
    width     DECIMAL(4, 2) NOT NULL,
    depth     DECIMAL(4, 2) NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-       ON DELETE RESTRICT ON UPDATE CASCADE,
+      ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT positive_weight CHECK (weight_ct > 0),
    CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
@@ -330,9 +329,9 @@ CREATE TABLE white_diamond
 (
    lot_id      INTEGER PRIMARY KEY,
    white_scale white_scale NOT NULL,
-   clarity     clarity NOT NULL,
+   clarity     clarity     NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
-       ON DELETE RESTRICT ON UPDATE CASCADE
+      ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, shape, clarity)
@@ -342,13 +341,13 @@ CREATE TABLE white_diamond
 CREATE TABLE colored_diamond
 (
    lot_id          INTEGER PRIMARY KEY,
-   gem_type        gem_type            NOT NULL,
+   gem_type        gem_type        NOT NULL,
    fancy_intensity fancy_intensity NOT NULL,
    fancy_overtone  TEXT            NOT NULL,
    fancy_color     fancy_color     NOT NULL,
    clarity         clarity         NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
-       ON DELETE CASCADE ON UPDATE CASCADE
+      ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
@@ -357,12 +356,12 @@ CREATE TABLE colored_diamond
 
 CREATE TABLE colored_gem_stone
 (
-   lot_id   INTEGER PRIMARY KEY,
+   lot_id    INTEGER PRIMARY KEY,
    gem_type  gem_type  NOT NULL,
    gem_color gem_color NOT NULL,
    treatment treatment NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES loose_stone (lot_id)
-       ON DELETE CASCADE ON UPDATE CASCADE
+      ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
@@ -371,18 +370,18 @@ CREATE TABLE colored_gem_stone
 CREATE TABLE jewelry
 (
    lot_id                       INTEGER PRIMARY KEY,
-   jewelry_type                 jewelry_type   NOT NULL,
+   jewelry_type                 jewelry_type  NOT NULL,
    gross_weight_gr              DECIMAL(5, 2) NOT NULL,
-   metal_type                   metal_type     NOT NULL,
+   metal_type                   metal_type    NOT NULL,
    metal_weight_gr              DECIMAL(5, 2) NOT NULL,
-   total_center_stone_qty       INTEGER        NOT NULL,
+   total_center_stone_qty       INTEGER       NOT NULL,
    total_center_stone_weight_ct DECIMAL(5, 2) NOT NULL,
-   centered_stone_type          TEXT           NOT NULL,
-   total_side_stone_qty         INTEGER        NOT NULL,
+   centered_stone_type          TEXT          NOT NULL,
+   total_side_stone_qty         INTEGER       NOT NULL,
    total_side_stone_weight_ct   DECIMAL(5, 2) NOT NULL,
-   side_stone_type              TEXT           NOT NULL,
+   side_stone_type              TEXT          NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
-       ON DELETE CASCADE ON UPDATE CASCADE,
+      ON DELETE CASCADE ON UPDATE CASCADE,
    CONSTRAINT positive_weights CHECK (gross_weight_gr > 0 AND metal_weight_gr > 0),
    CONSTRAINT metal_weight_check CHECK (metal_weight_gr <= gross_weight_gr)
 
@@ -419,22 +418,8 @@ CREATE TABLE certificate
 -- --------------------
 -- NOT READY YET
 -- trigger
-CREATE OR REPLACE FUNCTION update_stone_after_factory()
-RETURNS TRIGGER AS $$
-BEGIN
-   UPDATE loose_stone
-   SET
-      weight_ct = COALESCE(NEW.after_weight_ct, weight_ct),
-      shape = COALESCE(NEW.after_shape, shape),
-      length = COALESCE(NEW.after_length, length),
-      width = COALESCE(NEW.after_width, width),
-      depth = COALESCE(NEW.after_depth, depth)
-   WHERE lot_id = NEW.lot_id;
-   RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_stone_measurements
-   AFTER INSERT ON back_from_factory_details
-   FOR EACH ROW
-   EXECUTE FUNCTION update_stone_after_factory();
+
+
+--ROLLBACK ;
+COMMIT ;
