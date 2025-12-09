@@ -30,14 +30,13 @@ employee (**employee_id**, counterpart_id, first_name, last_name, email, role, i
 
 ### `action`
 
-action (**action_id**, from_counterpart_id, to_counterpart_id, employee_id, terms, remarks, created_at, updated_at) <br>
+action (**action_id**, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) <br>
     `from_counterpart_id` references `counterpart.counterpart_id` NOT NULL <br>
     `to_counterpart_id` references `counterpart.counterpart_id` NOT NULL <br>
-    `employee_id` references `employee.employee_id` NOT NULL
     
 ---
 
-### `update_log`
+### `action_update_log`
 
 update_log (**log_sequence, action_id**, employee_id, update_type, old_value, new_value, log_time) <br>
     `action_id` references `action.action_id` <br>
@@ -47,8 +46,9 @@ update_log (**log_sequence, action_id**, employee_id, update_type, old_value, ne
 
 ### `item`
 
-item (**lot_id**, stock_name, purchase_date, supplier_id, origin, responsible_office, created_at, updated_at, is_available) <br>
+item (**lot_id**, stock_name, purchase_date, supplier_id, origin, responsible_office_id, created_at, updated_at, is_available) <br>
     `supplier_id` references `counterpart.counterpart_id` NOT NULL
+    `responsible_office_id` references `counterpart.counterpart_id` NOT NULL
 
 
 action_item(**action_id, lot_id**, quantity, unit_price, currency_code) <br>

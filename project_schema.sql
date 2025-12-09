@@ -18,7 +18,6 @@ CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring', 'Brooch', 'Bra
 CREATE TYPE metal_type AS ENUM ('PT900', 'PT950', '18k white gold', '14k white gold', '18k white/yellow gold', '18k rose gold', '18k white gold + PT');
 CREATE TYPE update_type_enum AS ENUM ('Insert', 'Update', 'Delete');
 CREATE TYPE action_role_type AS ENUM ('Creator', 'Approver', 'Processor', 'Reviewer');
-CREATE TYPE office AS ENUM ('NY', 'HK', 'GVA');
 CREATE TYPE lab_purpose AS ENUM ('Certify', 'Re-certify');
 CREATE TYPE processing_type AS ENUM ('Remove oil', 'Recut');
 CREATE TYPE payment_status AS ENUM ('Partial paid', 'Unpaid', 'Paid');
@@ -94,7 +93,6 @@ CREATE TABLE action
    action_id           SERIAL PRIMARY KEY,
    from_counterpart_id INTEGER,
    to_counterpart_id   INTEGER,
-   employee_id         INTEGER,
    terms               TEXT,
    remarks             TEXT,
    created_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -113,25 +111,9 @@ CREATE TABLE action
       )
 );
 
--- !! employee_action with meaningful role
--- NOTE:
--- I would remove it, since an action physically could be issued by one person. Am I right?
--- When someone updates it should add new row to the `update_log` table
--- So I would add employee_id to the action table
--- CREATE TABLE employee_action
--- (
---    employee_id INTEGER,
---    action_id   INTEGER,
---    action_role action_role_type NOT NULL,
---    PRIMARY KEY (employee_id, action_id, action_role),
---    FOREIGN KEY (employee_id) REFERENCES employee (employee_id)
---       ON DELETE CASCADE ON UPDATE CASCADE,
---    FOREIGN KEY (action_id) REFERENCES action (action_id)
---       ON DELETE CASCADE ON UPDATE CASCADE
--- );
 
 -- !! 6. update_log is maybe a weak entity with action as its strong entity
-CREATE TABLE update_log
+CREATE TABLE action_update_log
 (
    log_sequence INTEGER                                NOT NULL,
    action_id    INTEGER                                NOT NULL,
@@ -148,10 +130,6 @@ CREATE TABLE update_log
 );
 
 
--- item (**lot_id**, stock_name,
---    purchase_date, supplier, sale_unit, cost_unit,
---    origin)
- -- NOTE: Why we have `reponsible_office` ?
 CREATE TABLE item
 (
    lot_id        SERIAL PRIMARY KEY,
@@ -159,33 +137,25 @@ CREATE TABLE item
    purchase_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    supplier_id      INTEGER                              NOT NULL,
    origin        TEXT                                   NOT NULL,
-   responsible_office office NOT NULL,
-   --location_type
-   --current_office office,
-   --current_counterpart_id INTEGER,
+   responsible_office_id INTEGER                           NOT NULL,
    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    is_available BOOLEAN NOT NULL DEFAULT TRUE,
+   FOREIGN KEY (responsible_office_id) REFERENCES counterpart(counterpart_id)
    FOREIGN KEY (supplier_id) REFERENCES counterpart(counterpart_id)
       ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT valid_item_update CHECK (updated_at >= created_at)
 );
 
 
--- NOTE:
--- If we are agreed on having 1 physical item per 1 (abstract) item in DB,
--- why we still have line_no ?
--- If action_id is PK so is unique by default?
 CREATE TABLE action_item
 (
    action_id     INTEGER,
    lot_id        INTEGER,
---    line_no       INTEGER        NOT NULL,
    quantity           INTEGER        NOT NULL,
    unit_price    DECIMAL(10, 2) NOT NULL,
    currency_code code           NOT NULL,
    PRIMARY KEY (action_id, lot_id),
---    UNIQUE (action_id, line_no),
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
@@ -233,9 +203,6 @@ CREATE TABLE return_memo_in
 );
 
 
--- NOTE:
--- We were talking about getting rid of this kind of table
--- why have you decided to keep it?
 CREATE TABLE return_memo_in_items
 (
    action_id INTEGER,
@@ -287,34 +254,24 @@ CREATE TABLE return_memo_out_items
 );
 
 
--- NOTE:
--- Almost the same question as for `item`
--- Why we have destination_office here? 
--- Could we compute it from `to_counterpart_id`?
 CREATE TABLE transfer_to_office
 (
    action_id          INTEGER PRIMARY KEY,
    transfer_num       TEXT UNIQUE,
    ship_date          DATE NOT NULL,
---    destination_office office,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
--- NOTE:
--- Isn't `lab_id` always equals `to_counterpart_id`?
 CREATE TABLE transfer_to_lab
 (
    action_id    INTEGER PRIMARY KEY,
    transfer_num TEXT UNIQUE,
    ship_date    DATE        NOT NULL,
---    lab_id       INTEGER,
    lab_purpose  lab_purpose NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
---    FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
---       ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- back_from_lab(**action_id, back_from_lab_num**, back_date)
@@ -344,20 +301,14 @@ CREATE TABLE back_from_lab_items
 );
 
 
--- NOTE:
--- The same question as per `transfer_to_lab`
--- Isn't `factory_id` always equals `to_counterpart_id` for this case?
 CREATE TABLE transfer_to_factory
 (
    action_id       INTEGER PRIMARY KEY,
    transfer_num    TEXT UNIQUE,
    ship_date       DATE NOT NULL,
---    factory_id      INTEGER,
    processing_type processing_type,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
---    FOREIGN KEY (factory_id) REFERENCES counterpart (counterpart_id)
---       ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 
@@ -477,20 +428,19 @@ ON DELETE CASCADE ON UPDATE CASCADE
 -- jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
 --     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
 --    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
--- NOTE:
--- Why without `total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type`?
-CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring', 'Brooch', 'Bracelet');
-CREATE TYPE metal_type AS ENUM ('PT900', 'PT950', '18k white gold', '14k white gold', '18k white/yellow gold', '18k rose gold', '18k white gold + PT');
 CREATE TABLE jewelry
 (
-   lot_id                     INTEGER PRIMARY KEY,
-   jewelry_type               jewelry_type   NOT NULL,
-   gross_weight_gr            DECIMAL(10, 2) NOT NULL,
-   metal_type                 metal_type     NOT NULL,
-   metal_weight_gr            DECIMAL(10, 2) NOT NULL,
-   total_side_stone_qty       INTEGER        NOT NULL,
-   total_side_stone_weight_ct DECIMAL(10, 2) NOT NULL,
-   side_stone_type            TEXT           NOT NULL,
+   lot_id                       INTEGER PRIMARY KEY,
+   jewelry_type                 jewelry_type   NOT NULL,
+   gross_weight_gr              DECIMAL(5, 2) NOT NULL,
+   metal_type                   metal_type     NOT NULL,
+   metal_weight_gr              DECIMAL(5, 2) NOT NULL,
+   total_center_stone_qty       INTEGER        NOT NULL, 
+   total_center_stone_weight_ct DECIMAL(5, 2) NOT NULL, 
+   centered_stone_type          TEXT           NOT NULL,
+   total_side_stone_qty         INTEGER        NOT NULL,
+   total_side_stone_weight_ct   DECIMAL(5, 2) NOT NULL,
+   side_stone_type              TEXT           NOT NULL,
    FOREIGN KEY (lot_id) REFERENCES item (lot_id)
 ON DELETE CASCADE ON UPDATE CASCADE,
       CONSTRAINT positive_weights CHECK (gross_weight_gr > 0 AND metal_weight_gr > 0),
@@ -507,10 +457,10 @@ CREATE TABLE certificate
    certificate_num TEXT                                   NOT NULL UNIQUE,
    issue_date      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    shape           shape,
-   weight_ct       DECIMAL(10, 2),
-   length          DECIMAL(10, 2),
-   width           DECIMAL(10, 2),
-   depth           DECIMAL(10, 2),
+   weight_ct       DECIMAL(5, 2),
+   length          DECIMAL(5, 2),
+   width           DECIMAL(5, 2),
+   depth           DECIMAL(5, 2),
    clarity         clarity,
    color           fancy_color,
    treatment       treatment,
