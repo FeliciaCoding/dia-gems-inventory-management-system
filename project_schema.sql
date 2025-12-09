@@ -83,7 +83,8 @@ CREATE TABLE employee
    created_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (counterpart_id) REFERENCES counterpart (counterpart_id)
-      ON DELETE CASCADE ON UPDATE CASCADE
+      ON DELETE CASCADE ON UPDATE CASCADE,
+   CONSTRAINT valid_update_time CHECK (updated_at >= created_at)
 );
 
 -- !! 8. move counterparties' keys from counterpart_action relation directly to the action
