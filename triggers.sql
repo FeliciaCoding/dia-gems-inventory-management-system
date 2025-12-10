@@ -74,20 +74,7 @@ EXECUTE FUNCTION trig_b_i_update_log();
 -- Purchase:
 -- When inserting into Purchase table from_counterpart_id should be equal
 -- to the supplier_id in corresponding Item (connected via Action Item relationship)
-
--- What is the order of row insertion when new item is bought?
--- let's say it is a white_diamond
--- 1) insert a row into item
--- 2) insert a row into white_diamond
--- 3) insert a row into action
--- ??? then it's either
--- 4) insert a row into action_item
--- 5) insert a row into purchase
--- ?? or
--- 4) insert a row into purchase
--- 5) insert a row into action_item
--- Which way to go?
--- Supposing it's 1st approach
+-- If it is not - update and raise a warning
 
 CREATE OR REPLACE FUNCTION trig_b_i_purchase()
     RETURNS TRIGGER AS
@@ -112,9 +99,14 @@ BEGIN
         WHERE ai.action_id = new.action_id
         LIMIT 1
     );
+
     IF counterpart_id <> supplier_id THEN
+        UPDATE action
+        SET from_counterpart_id = supplier_id
+        WHERE action.action_id = new.action_id;
         RAISE WARNING 'action.from_counterpart_id does not equal supplier_id. Updating action.from_counterpart_id from supplier_id';
     END IF;
+
     RETURN new;
 END;
 $$ LANGUAGE plpgsql;
