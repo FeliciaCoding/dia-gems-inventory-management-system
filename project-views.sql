@@ -1,0 +1,202 @@
+CREATE VIEW complete_inventory AS
+SELECT i.lot_id,
+       i.stock_name,
+       i.origin,
+       i.purchase_date,
+       i.is_available,
+       i.supplier_id,
+       s.name     AS supplier_name,
+       i.responsible_office_id,
+       o.name     AS responsible_office,
+
+       -- Physical location (where item actually is)
+       (SELECT c.name
+          FROM action_item ai
+               JOIN action a
+               ON ai.action_id = a.action_id
+               JOIN counterpart c
+               ON a.to_counterpart_id = c.counterpart_id
+         WHERE ai.lot_id = i.lot_id
+         ORDER BY a.created_at DESC
+         LIMIT 1) AS physical_location,
+
+       CASE
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN sale s
+                              ON ai.action_id = s.action_id
+                        WHERE ai.lot_id = i.lot_id) THEN 'Sold'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN memo_out mo
+                              ON ai.action_id = mo.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM return_memo_out rmo
+                                           WHERE rmo.orig_memo_action_id = mo.action_id)) THEN 'On memo'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_factory ttf
+                              ON ai.action_id = ttf.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_factory bff
+                                           WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_lab ttl
+                              ON ai.action_id = ttl.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_lab bfl
+                                           WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
+          ELSE 'In stock'
+          END     AS location_status,
+
+       CASE
+          WHEN wd.lot_id IS NOT NULL THEN 'White Diamond'
+          WHEN cd.lot_id IS NOT NULL THEN 'Colored Diamond'
+          WHEN cgs.lot_id IS NOT NULL THEN 'Colored Gemstone'
+          WHEN j.lot_id IS NOT NULL THEN 'Jewelry'
+          ELSE 'Unknown'
+          END     AS item_type,
+
+       ls.weight_ct,
+       ls.shape,
+       wd.white_scale,
+       cd.fancy_intensity,
+       cd.fancy_overtone,
+       cd.fancy_color,
+       cgs.gem_color,
+       cd.clarity,
+       cgs.treatment,
+       i.created_at,
+       i.updated_at,
+       lab.name   AS lab_name,
+       c.certificate_num
+
+  FROM item i
+       LEFT JOIN counterpart s
+       ON i.supplier_id = s.counterpart_id
+       LEFT JOIN counterpart o
+       ON i.responsible_office_id = o.counterpart_id
+       LEFT JOIN loose_stone ls
+       ON i.lot_id = ls.lot_id
+       LEFT JOIN white_diamond wd
+       ON ls.lot_id = wd.lot_id
+       LEFT JOIN colored_diamond cd
+       ON ls.lot_id = cd.lot_id
+       LEFT JOIN colored_gem_stone cgs
+       ON ls.lot_id = cgs.lot_id
+       LEFT JOIN jewelry j
+       ON i.lot_id = j.lot_id
+       LEFT JOIN certificate c
+       ON i.lot_id = c.lot_id
+       LEFT JOIN counterpart lab
+       ON c.lab_id = lab.counterpart_id
+
+ ORDER BY i.lot_id DESC;
+
+
+
+CREATE VIEW available_inventory AS
+SELECT i.lot_id,
+       i.stock_name,
+       i.origin,
+       o.name     AS responsible_office,
+
+       (SELECT c.name
+          FROM action_item ai
+               JOIN action a
+               ON ai.action_id = a.action_id
+               JOIN counterpart c
+               ON a.to_counterpart_id = c.counterpart_id
+         WHERE ai.lot_id = i.lot_id
+         ORDER BY a.created_at DESC
+         LIMIT 1) AS physical_location_name,
+
+       CASE
+          -- Check most recent transaction type
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN sale s
+                              ON ai.action_id = s.action_id
+                        WHERE ai.lot_id = i.lot_id) THEN 'Sold'
+
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN memo_out mo
+                              ON ai.action_id = mo.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM return_memo_out rmo
+                                           WHERE rmo.orig_memo_action_id = mo.action_id)) THEN 'On memo'
+
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_factory ttf
+                              ON ai.action_id = ttf.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_factory bff
+                                           WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
+
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_lab ttl
+                              ON ai.action_id = ttl.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_lab bfl
+                                           WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
+
+          ELSE 'In stock'
+          END     AS location_status,
+
+       CASE
+          WHEN wd.lot_id IS NOT NULL THEN 'White Diamond'
+          WHEN cd.lot_id IS NOT NULL THEN 'Colored Diamond'
+          WHEN cgs.lot_id IS NOT NULL THEN 'Colored Gemstone'
+          WHEN j.lot_id IS NOT NULL THEN 'Jewelry'
+          ELSE 'Unknown'
+          END     AS item_type,
+
+       ls.weight_ct,
+       ls.shape,
+       wd.white_scale,
+       cd.fancy_intensity,
+       cd.fancy_overtone,
+       cd.fancy_color,
+       cgs.gem_color,
+       cd.clarity,
+       cgs.treatment,
+       i.created_at,
+       i.updated_at,
+       lab.name   AS lab_name,
+       c.certificate_num
+
+  FROM item i
+       LEFT JOIN counterpart o
+       ON i.responsible_office_id = o.counterpart_id
+       LEFT JOIN loose_stone ls
+       ON i.lot_id = ls.lot_id
+       LEFT JOIN white_diamond wd
+       ON ls.lot_id = wd.lot_id
+       LEFT JOIN colored_diamond cd
+       ON ls.lot_id = cd.lot_id
+       LEFT JOIN colored_gem_stone cgs
+       ON ls.lot_id = cgs.lot_id
+       LEFT JOIN jewelry j
+       ON i.lot_id = j.lot_id
+       LEFT JOIN certificate c
+       ON i.lot_id = c.lot_id
+       LEFT JOIN counterpart lab
+       ON c.lab_id = lab.counterpart_id
+
+ WHERE i.is_available = TRUE
+
+ ORDER BY item_type, ls.weight_ct DESC;
+
+--test
+SELECT * FROM complete_inventory LIMIT 10;
+SELECT * FROM available_inventory LIMIT 10;
