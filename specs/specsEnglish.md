@@ -95,7 +95,6 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 	
 	- **Actions** in DB : 
 		- creates new goods in DB
-		- Create ownership as "supplier"
 		- updates status as “MI stock”
 		- set location = receiving office
 		- append history log for creation and status change.
@@ -161,7 +160,6 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 	
 	- **Actions** in DB : 
 		- Set status as "Sold"
-		- Set Ownership = client
 		- Set location = client
 		- creates an **AR** (accounts receivable) entry linked to the invoice
 		- Append history log
