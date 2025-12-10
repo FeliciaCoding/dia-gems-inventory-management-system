@@ -68,5 +68,66 @@ EXECUTE FUNCTION trig_b_i_update_log();
 
 -- END TRIGGER #4
 
+-- BEGIN TRIGGER #6
+
+-- Purchase:
+-- When inserting into Purchase table from_counterpart_id should be equal
+-- to the supplier_id in corresponding Item (connected via Action Item relationship)
+
+-- What is the order of row insertion when new item is bought?
+-- let's say it is a white_diamond
+-- 1) insert a row into item
+-- 2) insert a row into white_diamond
+-- 3) insert a row into action
+-- ??? then it's either
+-- 4) insert a row into action_item
+-- 5) insert a row into purchase
+-- ?? or
+-- 4) insert a row into purchase
+-- 5) insert a row into action_item
+-- Which way to go?
+-- Supposing it's 1st approach
+
+CREATE OR REPLACE FUNCTION trig_b_i_purchase()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    counterpart_id INTEGER;
+    supplier_id INTEGER;
+BEGIN
+    -- action.from_counterpart_id == item.supplier_id
+    counterpart_id := (
+        SELECT from_counterpart_id
+        FROM action a
+        WHERE a.action_id = new.action_id
+        LIMIT 1
+    );
+
+    supplier_id := (
+        SELECT supplier_id
+        FROM action_item ai
+            INNER JOIN item it
+            ON it.lot_id = ai.lot_id
+        WHERE ai.action_id = new.action_id
+        LIMIT 1
+    );
+    IF counterpart_id <> supplier_id THEN
+        -- NOTE:
+        -- That's strange
+        -- Action is already created
+        -- but only while creating Purchase we have a right
+        -- to check this condition
+        RAISE EXCEPTION 'action.from_counterpart_id does not equal supplier_id';
+    END IF;
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER verify_supplier_on_purchase_trigger
+    BEFORE INSERT
+    ON purchase
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_purchase();
 
 
+-- END TRIGGER #6
