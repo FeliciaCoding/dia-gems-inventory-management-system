@@ -27,13 +27,13 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - Language : English
 - User roles :
     - Administrator : Tracking goods' overall status, generating inventory list, following shipment
-    - Sales : Checking availability / price / location and eventually issueing invoices. Need fast, accuate search with up-to-date status and media.
+    - Sales : Checking availability / price / location and eventually issueing invoices. Need fast, accuate search with up-to-date status.
     - Accountant : Handle AR/AP and reconsiliation. Need consistent documents, clean links between goods and invoice + reliable exports/ import.
 
 ---
 # Analysis of needs
 
-- The company manages **lots** of **Diamonds**, **Gem Stones**, **Jewellry**, and **Metal**. In this project a single company is modeled, but the solution must scale to **multiple offices and partners** (suppliers, laboratories, factories).
+- The company manages **lots** of **Diamonds**, **Gem Stones**,and **Jewellry**. In this project a single company is modeled, but the solution must scale to **multiple offices and partners** (suppliers, laboratories, factories).
     
 - A **Lot** is identified by **LotId (Unique)** and **Stock Name**. It carries a controlled **Lot Status** (validated by **Lot Status DB**), a **Location** (office/partner/lab/factory), an **Item Type**, a **Quantity**, a **Purchase Date** and optional **Sold Date**, a **Supplier**, and totals (**T. Cost Price**, **T. Sale Price**).
     
@@ -41,9 +41,7 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
     
 - A **Gem Stones** lot records **Gem Type**, **Shape**, **Gem Color**, **Treatment**, **Origin** (if known), **Lab** with **Certificate No.**, and **Dimension**.
     
-- A **Jewellry** lot records **Jewellry Type**; **Total center stone quantity**, **Total centered stone weight in ct**, **centered stone type**; **Total side stone quantity**, **Total sided stone weight in ct**, **side stone type**; plus **Gross Weight**, **Metal Type**, and **Metal Weight**. Stones can be **mounted/unmounted** with full component traceability.
-    
-- A **Metal** lot (managed as an Item Type) records **Metal Type** and **Metal Weight** for valuation.
+- A **Jewellry** lot records **Jewellry Type**; **Total center stone quantity**, **Total centered stone weight in ct**, **centered stone type**; **Total side stone quantity**, **Total sided stone weight in ct**, **side stone type**; plus **Gross Weight**, **Metal Type**, and **Metal Weight**.
     
 - **Accounts/Parties** include **Supplier Account**, **Client Account**, and **Office Account**; each party stores legal name, contact details, and operational identifiers needed for B2B transactions.
     
@@ -61,7 +59,7 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
         
     - **Return memo out** records the return from approval; it restores **Location = receiving office** and **Lot Status = In stock** (or prior status).
         
-    - **Transfer** moves lots between **Office / Partner / Laboratory / Factory** (tests, recut, (un)mount); it records ship-from/to, service type, and tracking, and sets **Lot Status = In Process** until receipt.
+    - **Transfer** moves lots between **Office / Partner / Laboratory / Factory** (tests, recut); it records ship-from/to, service type, and tracking, and sets **Lot Status = In Process** until receipt.
         
     - **Return transfer** confirms receipt from service; it sets **Location = received-by office**, updates attributes as needed (e.g., new **Certificate**, **weight**, **clarity**), and sets **In stock** (or **Post-Recut**).
         
@@ -105,19 +103,18 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - **Return Memo In** :
 	- **Purpose :** Send back goods to the supplier/partner without purchasing.
 	
-	- **Store data :** Counterparty, sent office, doc/date/number, items/lots, shipped-from/to, carrier, condition notes.
+	- **Store data :** Counterparty, sent office, doc/date/number, items/lots, shipped-from/to, condition notes.
 	
 	- **Actions** in DB : 
 		- Change locations = Counterparty
 		- set status = Returned to supplier
 		- append history log
-		- update quality control
 	
 	
 - **Memo Out** : 
 	- **Purpose :** Sends goods on approval to a client/partner without a sale.
 	
-	- **Store data :** Send office, Counterparty, doc/date/number, items, date, carrier, memo price
+	- **Store data :** Send office, Counterparty, doc/date/number, items, date, memo price
 
 	- **Actions** in DB : 
 		- Change locations = Counterparty
@@ -129,18 +126,17 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - **Return Memo Out** : 
 	- **Purpose :** Receive our goods from partner/client without a sale.
 	
-	- **Store data :** Counterparty, received-by office,  doc/date/number, items, date, carrier, memo price
+	- **Store data :** Counterparty, received-by office,  doc/date/number, items, date, memo price
 	
 	- **Actions** in DB : 
 		- Set location = receiving office
-		- update status = in stock 
-		- update quality control
+		- update status = in stock
 		- append history log
 	
 - **Transfers** between **Office / Partner / Laboratory / Factory** 
 	- **Purpose :** Send goods to internal offices or to external parties for services (e.g., lab testing, recut stone, unmount/ mount center stones from/to a jewellry piece ).
 	
-	- **Store data :** Counterparty, ship-to office, date, items, service type, carrier and tracking
+	- **Store data :** Counterparty, ship-to office, date, items, service type and tracking
 	
 	- **Actions** in DB : 
 		- Updates location =  Counterparty
@@ -150,7 +146,7 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - **Return Transfers** between **Office / Partner / Laboratory / Factory** 
 	- **Purpose :** Receive goods from internal offices or from external parties for services (e.g., lab testing, recut stone, unmount/ mount center stones from/to a jewellry piece ).
 	
-	- **Store data :** Counterparty, ship-to office, date, items, service type, carrier and tracking
+	- **Store data :** Counterparty, ship-to office, date, items, service type and tracking
 	
 	- **Actions** in DB : 
 		- Update location = received-by offic
@@ -181,7 +177,6 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - Allow to track the status before and after recut.
 - Manage statuses and locations using a controlled lifecycle.
 - Link and version certificates, the system should support re-certification without data loss.
-- Allow to store / update photos and the URL of videos
 - Generate and export shipping reports in excel
 ### Accountant :
 - Allow to extract Receviables / Payables based on purchase note and invoice
@@ -189,5 +184,5 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 ### Sale :
 - Consult real-time item status, location, and pricing
 - issue invoices and mark items sold.
-- Share goods' info/ media with clients
+- Share goods' info with clients
 
