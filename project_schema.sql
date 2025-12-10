@@ -419,7 +419,40 @@ CREATE TABLE certificate
 -- NOT READY YET
 -- trigger
 
+-- locations
+-- responsible_office_id
+-- is_available : ture / false
+-- updated_az
+-- trigger after insert
+-- La localisation actuelle peut être dérivée en consultant la dernière action dans l'historique
+
+
+-- item location -> outbound
+CREATE OR REPLACE FUNCTION update_responsible_office_after_purchase()
+RETURNS TRIGGER AS
+$$
+   BEGIN
+    UPDATE item
+    SET responsible_office_id = (
+        SELECT to_counterpart_id
+        FROM action
+        WHERE action_id = NEW.action_id
+    ),
+    updated_at = NOW()
+    WHERE lot_id IN (
+        SELECT lot_id
+        FROM action_item
+        WHERE action_id = NEW.action_id
+    );
+
+    RETURN NEW;
+    END;
+$$ LANGUAGE  plpgsql;
+
+CREATE TRIGGER trigger_responsible_office_after_purchase
+   AFTER INSERT ON purchase
+   FOR EACH ROW EXECUTE FUNCTION update_responsible_office_after_purchase()
 
 
 --ROLLBACK ;
-COMMIT ;
+--COMMIT ;
