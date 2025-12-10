@@ -7,33 +7,34 @@ SET search_path TO project;
 -- automatically update the loose_stone table with the new weight, dimensions,
 -- and shape.
 
--- How to do it?
--- 1) back_from_factory is an action
--- actions are being connected with items by action_item
--- so the trigger needs to act on action_item
--- 2) it retrieves info from back_from_factory using action_item.action_id
--- 3) it sets this info into ... [problem]
--- [problem]:
--- if trigger acts on action_item table, it doesn't know
--- what is the underlying table (deep down in the inheritance hierarchy)
--- What to do then? Trigger could query
--- white_diamond, colored_diamond, colored_gem_stone and jewerly
--- one by one to check the "type" that belongs to action_item.log_id
--- Or we need to store underlying "type" in item table in the form of enum
--- but, it ruins generalization (inheritance)
-
 CREATE OR REPLACE FUNCTION trig_a_i_back_from_fac()
     RETURNS TRIGGER AS
 $$
+DECLARE
+    item_id INTEGER;
 BEGIN
-    -- to be done
+    item_id := (
+        SELECT lot_id
+        FROM action_item
+        WHERE new.action_id = action_item.action_id
+        LIMIT 1
+    );
+
+    UPDATE loose_stone
+    SET weight_ct = new.after_weight_ct,
+        shape = new.after_shape,
+        length = new.after_length,
+        width = new.after_width,
+        depth = new.after_depth
+    WHERE lot_id = item_id;
+
     RETURN new;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER after_factory_processing_trigger
     AFTER INSERT
-    ON action_item
+    ON back_from_factory
     FOR EACH ROW
 EXECUTE FUNCTION trig_a_i_back_from_fac();
 
@@ -112,12 +113,7 @@ BEGIN
         LIMIT 1
     );
     IF counterpart_id <> supplier_id THEN
-        -- NOTE:
-        -- That's strange
-        -- Action is already created
-        -- but only while creating Purchase we have a right
-        -- to check this condition
-        RAISE EXCEPTION 'action.from_counterpart_id does not equal supplier_id';
+        RAISE WARNING 'action.from_counterpart_id does not equal supplier_id. Updating action.from_counterpart_id from supplier_id';
     END IF;
     RETURN new;
 END;
