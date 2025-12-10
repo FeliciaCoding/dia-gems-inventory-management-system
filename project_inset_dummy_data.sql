@@ -29,51 +29,51 @@ INSERT INTO account_type (type_name, category, is_internal) VALUES
 
 
 -- Offices (Internal)
-INSERT INTO counterpart (name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
-('New York Office', '+1-212-555-0101', '580 5th Ave', 'New York', '10036', 'USA', 'ny@gemcompany.com', TRUE),
-('Hong Kong Office', '+852-2345-6789', '88 Queensway', 'Hong Kong', '999077', 'Hong Kong', 'hk@gemcompany.com', TRUE),
-('Geneva Office', '+41-44-555-0102', 'Bahnhofstrasse 45', 'Geneva', '1201', 'Switzerland', 'geneva@gemcompany.com', TRUE),
-('Tokyo Office', '+81-3-5555-1234', '1-2-3 Ginza', 'Tokyo', '104-0061', 'Japan', 'tokyo@gemcompany.com', TRUE);
+INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
+(1, 'New York Office', '+1-212-555-0101', '580 5th Ave', 'New York', '10036', 'USA', 'ny@gemcompany.com', TRUE),
+(2, 'Hong Kong Office', '+852-2345-6789', '88 Queensway', 'Hong Kong', '999077', 'Hong Kong', 'hk@gemcompany.com', TRUE),
+(3, 'Geneva Office', '+41-44-555-0102', 'Bahnhofstrasse 45', 'Geneva', '1201', 'Switzerland', 'geneva@gemcompany.com', TRUE),
+(4, 'Tokyo Office', '+81-3-5555-1234', '1-2-3 Ginza', 'Tokyo', '104-0061', 'Japan', 'tokyo@gemcompany.com', TRUE);
 
 -- Diamond Suppliers
-INSERT INTO counterpart (name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
-('Antwerp Diamond Exchange', '+32-3-234-5678', 'Pelikaanstraat 62', 'Antwerp', '2018', 'Belgium', 'info@antwerpdiamonds.be', TRUE),
-('Mumbai Diamond House', '+91-22-2345-6789', 'Opera House', 'Mumbai', '400004', 'India', 'sales@mumbaidia.in', TRUE),
-('Tel Aviv Gem Co', '+972-3-517-8888', 'Ramat Gan', 'Tel Aviv', '5252100', 'Israel', 'contact@telavivgems.il', TRUE),
-('Botswana Diamond Corp', '+267-318-0000', 'Plot 64518', 'Gaborone', '00000', 'Botswana', 'export@bwdiamonds.bw', TRUE);
+INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
+(5, 'Antwerp Diamond Exchange', '+32-3-234-5678', 'Pelikaanstraat 62', 'Antwerp', '2018', 'Belgium', 'info@antwerpdiamonds.be', TRUE),
+(6, 'Mumbai Diamond House', '+91-22-2345-6789', 'Opera House', 'Mumbai', '400004', 'India', 'sales@mumbaidia.in', TRUE),
+(7, 'Tel Aviv Gem Co', '+972-3-517-8888', 'Ramat Gan', 'Tel Aviv', '5252100', 'Israel', 'contact@telavivgems.il', TRUE),
+(8, 'Botswana Diamond Corp', '+267-318-0000', 'Plot 64518', 'Gaborone', '00000', 'Botswana', 'export@bwdiamonds.bw', TRUE);
 
 -- Colored Gem Suppliers
-INSERT INTO counterpart (name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
-('Bangkok Ruby Traders', '+66-2-234-5678', '919 Silom Road', 'Bangkok', '10500', 'Thailand', 'sales@bangkokruby.th', TRUE),
-('Colombian Emerald Source', '+57-1-234-5678', 'Carrera 7', 'Bogota', '110111', 'Colombia', 'info@colombiaemeralds.co', TRUE),
-('Kashmir Sapphire Ltd', '+91-194-245-6789', 'Residency Road', 'Srinagar', '190001', 'India', 'contact@kashmirsapphire.in', TRUE),
-('Myanmar Ruby Export', '+95-1-234-567', 'Merchant Street', 'Yangon', '11182', 'Myanmar', 'export@myanmarruby.mm', TRUE);
+INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
+(9, 'Bangkok Ruby Traders', '+66-2-234-5678', '919 Silom Road', 'Bangkok', '10500', 'Thailand', 'sales@bangkokruby.th', TRUE),
+(10, 'Colombian Emerald Source', '+57-1-234-5678', 'Carrera 7', 'Bogota', '110111', 'Colombia', 'info@colombiaemeralds.co', TRUE),
+(11, 'Kashmir Sapphire Ltd', '+91-194-245-6789', 'Residency Road', 'Srinagar', '190001', 'India', 'contact@kashmirsapphire.in', TRUE),
+(12, 'Myanmar Ruby Export', '+95-1-234-567', 'Merchant Street', 'Yangon', '11182', 'Myanmar', 'export@myanmarruby.mm', TRUE);
 
 -- Retail Clients
-INSERT INTO counterpart (name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
-('Tiffany & Partners', '+1-212-755-8000', '727 5th Avenue', 'New York', '10022', 'USA', 'wholesale@tiffanypartners.com', TRUE),
-('Cartier Geneva SA', '+41-22-818-1010', 'Rue du Rhone 35', 'Geneva', '1204', 'Switzerland', 'orders@cartiergeneva.ch', TRUE),
-('Van Cleef Tokyo', '+81-3-5561-8888', '2-10-1 Ginza', 'Tokyo', '104-0061', 'Japan', 'purchasing@vancleeftokyo.jp', TRUE),
-('Bulgari Hong Kong', '+852-2524-6888', 'Canton Road 3', 'Hong Kong', '999077', 'Hong Kong', 'sales@bulgarihk.com', TRUE);
+INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
+(13, 'Tiffany & Partners', '+1-212-755-8000', '727 5th Avenue', 'New York', '10022', 'USA', 'wholesale@tiffanypartners.com', TRUE),
+(14, 'Cartier Geneva SA', '+41-22-818-1010', 'Rue du Rhone 35', 'Geneva', '1204', 'Switzerland', 'orders@cartiergeneva.ch', TRUE),
+(15, 'Van Cleef Tokyo', '+81-3-5561-8888', '2-10-1 Ginza', 'Tokyo', '104-0061', 'Japan', 'purchasing@vancleeftokyo.jp', TRUE),
+(16, 'Bulgari Hong Kong', '+852-2524-6888', 'Canton Road 3', 'Hong Kong', '999077', 'Hong Kong', 'sales@bulgarihk.com', TRUE);
 
 -- Certification Labs
-INSERT INTO counterpart (name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
-('GIA Laboratory', '+1-760-603-4500', '5345 Armada Drive', 'Carlsbad', '92008', 'USA', 'lab@gia.edu', TRUE),
-('IGI International', '+32-3-201-0581', 'Schupstraat 1', 'Antwerp', '2018', 'Belgium', 'info@igi.org', TRUE),
-('HRD Antwerp', '+32-3-222-0511', 'Hoveniersstraat 22', 'Antwerp', '2018', 'Belgium', 'info@hrdantwerp.com', TRUE),
-('AGS Laboratories', '+1-702-255-6757', '3309 Juanita Street', 'Las Vegas', '89102', 'USA', 'lab@ags.org', TRUE);
+INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
+(17, 'GIA Laboratory', '+1-760-603-4500', '5345 Armada Drive', 'Carlsbad', '92008', 'USA', 'lab@gia.edu', TRUE),
+(18, 'IGI International', '+32-3-201-0581', 'Schupstraat 1', 'Antwerp', '2018', 'Belgium', 'info@igi.org', TRUE),
+(19, 'HRD Antwerp', '+32-3-222-0511', 'Hoveniersstraat 22', 'Antwerp', '2018', 'Belgium', 'info@hrdantwerp.com', TRUE),
+(20, 'AGS Laboratories', '+1-702-255-6757', '3309 Juanita Street', 'Las Vegas', '89102', 'USA', 'lab@ags.org', TRUE);
 
 -- Processing Manufacturers
-INSERT INTO counterpart (name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
-('Surat Diamond Cutting', '+91-261-234-5678', 'Mini Bazaar', 'Surat', '395002', 'India', 'factory@suratcutting.in', TRUE),
-('Antwerp Precision Cut', '+32-3-232-8899', 'Lange Herentalsestraat', 'Antwerp', '2018', 'Belgium', 'production@antwerpcut.be', TRUE),
-('Bangkok Gem Processing', '+66-2-234-9999', 'Jewelry Trade Center', 'Bangkok', '10500', 'Thailand', 'service@bangkokprocess.th', TRUE);
+INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
+(21, 'Surat Diamond Cutting', '+91-261-234-5678', 'Mini Bazaar', 'Surat', '395002', 'India', 'factory@suratcutting.in', TRUE),
+(22, 'Antwerp Precision Cut', '+32-3-232-8899', 'Lange Herentalsestraat', 'Antwerp', '2018', 'Belgium', 'production@antwerpcut.be', TRUE),
+(23, 'Bangkok Gem Processing', '+66-2-234-9999', 'Jewelry Trade Center', 'Bangkok', '10500', 'Thailand', 'service@bangkokprocess.th', TRUE);
 
 -- Jewelry Wholesalers
-INSERT INTO counterpart (name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
-('Global Jewelry Distributors', '+1-213-622-1000', '650 S Hill Street', 'Los Angeles', '90014', 'USA', 'orders@globaljewelry.com', TRUE),
-('European Luxury Imports', '+49-89-2345-6789', 'Maximilianstrasse 12', 'Munich', '80539', 'Germany', 'sales@euluxury.de', TRUE),
-('Asian Fine Jewelry Co', '+852-2815-5555', 'Nathan Road 378', 'Hong Kong', '999077', 'Hong Kong', 'wholesale@asianfinejewelry.com', TRUE);
+INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
+(23, 'Global Jewelry Distributors', '+1-213-622-1000', '650 S Hill Street', 'Los Angeles', '90014', 'USA', 'orders@globaljewelry.com', TRUE),
+(24, 'European Luxury Imports', '+49-89-2345-6789', 'Maximilianstrasse 12', 'Munich', '80539', 'Germany', 'sales@euluxury.de', TRUE),
+(25, 'Asian Fine Jewelry Co', '+852-2815-5555', 'Nathan Road 378', 'Hong Kong', '999077', 'Hong Kong', 'wholesale@asianfinejewelry.com', TRUE);
 
 
 INSERT INTO counterpart_account_type (counterpart_id, type_name) VALUES
@@ -114,9 +114,9 @@ INSERT INTO employee (counterpart_id, first_name, last_name, email, role, is_act
 
 
 -- White Diamonds (15 items)
-INSERT INTO item (stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
-('WD-2024-001', '2024-01-15 10:00:00+00', 5, 'South Africa', 1, TRUE),
-('WD-2024-002', '2024-01-20 14:30:00+00', 5, 'Botswana', 1, TRUE),
+INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
+(1, 'WD-2024-001', '2024-01-15 10:00:00+00', 5, 'South Africa', 1, TRUE),
+(2, 'WD-2024-002', '2024-01-20 14:30:00+00', 5, 'Botswana', 1, TRUE),
 ('WD-2024-003', '2024-02-05 09:15:00+00', 6, 'India', 2, TRUE),
 ('WD-2024-004', '2024-02-10 11:45:00+00', 7, 'Russia', 3, TRUE),
 ('WD-2024-005', '2024-02-15 13:20:00+00', 8, 'Botswana', 1, TRUE),
