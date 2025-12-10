@@ -131,3 +131,50 @@ EXECUTE FUNCTION trig_b_i_purchase();
 
 
 -- END TRIGGER #6
+
+-- BEGIN TRIGGER #7
+-- Description based on an example:
+-- 4 items were put in Memo Out and send somewhere
+-- 2 items came back
+-- we want to register those 2 in Return Memo Out
+-- trigger should automatically verify that those 2 items were indeed put in memo out
+-- and nobody tries to trick the system by putting the wrong items there
+
+-- NOTE:
+-- I think we should have several triggers one per each:
+-- 1) Memo In - Return Memo IN
+-- 2) Memo Out - Return Memo Out
+-- 3) Transfer To Lab - Back From Lab
+-- 4) and for the factory we already have the trigger #2
+
+CREATE OR REPLACE FUNCTION trig_b_i_memo_in_items_check()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    -- extract ids of all memo in items
+    SELECT lot_id
+    FROM action_item ai
+    WHERE ai.action_id = new.orig_memo_action_id;
+
+    -- NOTE:
+    -- I think we've got another problem here
+    -- to find out ids of returned items
+    -- we need to use action_item table
+    -- so rows should have been inserted there already
+    -- but, it has been done already
+    -- what is the point of checking them here?
+
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_log_seq_num_trigger
+    BEFORE INSERT
+    ON return_memo_in
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_memo_in_items_check();
+
+-- END TRIGGER #7
+
+
+
