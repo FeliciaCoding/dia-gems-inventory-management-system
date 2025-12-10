@@ -249,7 +249,7 @@ CREATE TABLE back_from_lab
    action_id         INTEGER PRIMARY KEY,
    orig_transfer_id  INTEGER NOT NULL,
    back_from_lab_num TEXT UNIQUE,
-   back_date         DATE NOT NULL,
+   back_date         DATE    NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_lab (action_id)
@@ -391,8 +391,8 @@ CREATE TABLE jewelry
 CREATE TABLE certificate
 (
    certificate_id  SERIAL PRIMARY KEY,
-   lot_id            INTEGER,
-   lab_id          INTEGER                                 NOT NULL,
+   lot_id          INTEGER,
+   lab_id          INTEGER                                NOT NULL,
    certificate_num TEXT                                   NOT NULL UNIQUE,
    issue_date      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    shape           shape,
@@ -406,20 +406,15 @@ CREATE TABLE certificate
    gem_type        gem_type,
    created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   FOREIGN KEY (lab_id) REFERENCES counterpart(counterpart_id)
+   FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
       ON DELETE RESTRICT ON UPDATE CASCADE,
-   FOREIGN KEY (lot_id) REFERENCES item(lot_id)
+   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
       ON DELETE SET NULL ON UPDATE CASCADE,
    CONSTRAINT valid_cert_update CHECK (updated_at >= created_at),
    CONSTRAINT positive_weight CHECK (weight_ct > 0),
    CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
--- --------------------
--- NOT READY YET
--- trigger
 
 
 
---ROLLBACK ;
-COMMIT ;
