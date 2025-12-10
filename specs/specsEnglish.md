@@ -25,10 +25,11 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 - Company type : Colored stones / Dimond Dealer in B2B
 - Location : worldwide
 - Language : English
-- User roles :
-    - Administrator : Tracking goods' overall status, generating inventory list, following shipment
-    - Sales : Checking availability / price / location and eventually issueing invoices. Need fast, accuate search with up-to-date status.
-    - Accountant : Handle AR/AP and reconsiliation. Need consistent documents, clean links between goods and invoice + reliable exports/ import.
+  - User roles :
+      - Chief : Having full access to database.
+      - Administrator : Tracking goods' overall status, generating inventory list, following shipment
+      - Sales : Checking availability / price / location and eventually issueing invoices. Need fast, accuate search with up-to-date status.
+      - Accountant : Handle AR/AP and reconsiliation. Need consistent documents, clean links between goods and invoice + reliable exports/ import.
 
 ---
 # Analysis of needs
@@ -77,7 +78,6 @@ A secure inventory and traceability platform  for diamonds, colored stones and j
 
 - **Purchase Note** : 
 	- **Purpose :** Record goods received from a supplier (ownership transfers to us).
-	
 
 	- **Store data :** Supplier, receiving office, document/date/number, items/lots, qty, unit/total cost
 	
