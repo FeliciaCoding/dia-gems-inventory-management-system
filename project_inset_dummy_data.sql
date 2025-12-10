@@ -71,9 +71,9 @@ INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city
 
 -- Jewelry Wholesalers
 INSERT INTO counterpart (counterpart_id, name, phone_number, address_short, city, postal_code, country, email, is_active) VALUES
-(23, 'Global Jewelry Distributors', '+1-213-622-1000', '650 S Hill Street', 'Los Angeles', '90014', 'USA', 'orders@globaljewelry.com', TRUE),
-(24, 'European Luxury Imports', '+49-89-2345-6789', 'Maximilianstrasse 12', 'Munich', '80539', 'Germany', 'sales@euluxury.de', TRUE),
-(25, 'Asian Fine Jewelry Co', '+852-2815-5555', 'Nathan Road 378', 'Hong Kong', '999077', 'Hong Kong', 'wholesale@asianfinejewelry.com', TRUE);
+(24, 'Global Jewelry Distributors', '+1-213-622-1000', '650 S Hill Street', 'Los Angeles', '90014', 'USA', 'orders@globaljewelry.com', TRUE),
+(25, 'European Luxury Imports', '+49-89-2345-6789', 'Maximilianstrasse 12', 'Munich', '80539', 'Germany', 'sales@euluxury.de', TRUE),
+(26, 'Asian Fine Jewelry Co', '+852-2815-5555', 'Nathan Road 378', 'Hong Kong', '999077', 'Hong Kong', 'wholesale@asianfinejewelry.com', TRUE);
 
 
 INSERT INTO counterpart_account_type (counterpart_id, type_name) VALUES
@@ -93,23 +93,23 @@ INSERT INTO counterpart_account_type (counterpart_id, type_name) VALUES
 (24, 'Diamond Wholesaler'), (25, 'Jewelry Wholesaler'), (26, 'Jewelry Wholesaler');
 
 
-INSERT INTO employee (counterpart_id, first_name, last_name, email, role, is_active) VALUES
+INSERT INTO employee (employee_id, counterpart_id, first_name, last_name, email, role, is_active) VALUES
 -- NY Office Staff
-(1, 'John', 'Smith', 'john.smith@example.com', 'Chief', TRUE),
-(1, 'Sarah', 'Johnson', 'sarah.johnson@example.com', 'Admin', TRUE),
-(1, 'Michael', 'Williams', 'michael.williams@example.com', 'Sales', TRUE),
-(1, 'Emily', 'Brown', 'emily.brown@example.com', 'Accountant', TRUE),
+(1, 1, 'John', 'Smith', 'john.smith@example.com', 'Chief', TRUE),
+(2, 1, 'Sarah', 'Johnson', 'sarah.johnson@example.com', 'Admin', TRUE),
+(3, 1, 'Michael', 'Williams', 'michael.williams@example.com', 'Sales', TRUE),
+(4, 1, 'Emily', 'Brown', 'emily.brown@example.com', 'Accountant', TRUE),
 -- HK Office Staff
-(2, 'David', 'Chen', 'david.chen@example.com', 'Chief', TRUE),
-(2, 'Lisa', 'Wong', 'lisa.wong@example.com', 'Admin', TRUE),
-(2, 'Kevin', 'Lee', 'kevin.lee@example.com', 'Sales', TRUE),
+(5, 2, 'David', 'Chen', 'david.chen@example.com', 'Chief', TRUE),
+(6, 2, 'Lisa', 'Wong', 'lisa.wong@example.com', 'Admin', TRUE),
+(7, 2, 'Kevin', 'Lee', 'kevin.lee@example.com', 'Sales', TRUE),
 -- Geneva Office Staff
-(3, 'Hans', 'Mueller', 'hans.mueller@example.com', 'Chief', TRUE),
-(3, 'Anna', 'Schmidt', 'anna.schmidt@example.com', 'Sales', TRUE),
-(3, 'Thomas', 'Weber', 'thomas.weber@example.comm', 'Accountant', TRUE),
+(8, 3, 'Hans', 'Mueller', 'hans.mueller@example.com', 'Chief', TRUE),
+(9, 3, 'Anna', 'Schmidt', 'anna.schmidt@example.com', 'Sales', TRUE),
+(10, 3, 'Thomas', 'Weber', 'thomas.weber@example.comm', 'Accountant', TRUE),
 -- Tokyo Office Staff
-(4, 'Yuki', 'Tanaka', 'yuki.tanaka@example.com', 'Chief', TRUE),
-(4, 'Sakura', 'Yamamoto', 'sakura.yamamoto@example.com', 'Sales', TRUE);
+(11, 4, 'Yuki', 'Tanaka', 'yuki.tanaka@example.com', 'Chief', TRUE),
+(12, 4, 'Sakura', 'Yamamoto', 'sakura.yamamoto@example.com', 'Sales', TRUE);
 
 
 
@@ -117,79 +117,79 @@ INSERT INTO employee (counterpart_id, first_name, last_name, email, role, is_act
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
 (1, 'WD-2024-001', '2024-01-15 10:00:00+00', 5, 'South Africa', 1, TRUE),
 (2, 'WD-2024-002', '2024-01-20 14:30:00+00', 5, 'Botswana', 1, TRUE),
-('WD-2024-003', '2024-02-05 09:15:00+00', 6, 'India', 2, TRUE),
-('WD-2024-004', '2024-02-10 11:45:00+00', 7, 'Russia', 3, TRUE),
-('WD-2024-005', '2024-02-15 13:20:00+00', 8, 'Botswana', 1, TRUE),
-('WD-2024-006', '2024-03-01 10:30:00+00', 5, 'South Africa', 1, TRUE),
-('WD-2024-007', '2024-03-10 15:00:00+00', 6, 'Australia', 2, TRUE),
-('WD-2024-008', '2024-03-15 09:45:00+00', 7, 'Canada', 3, TRUE),
-('WD-2024-009', '2024-04-01 14:15:00+00', 5, 'South Africa', 1, TRUE),
-('WD-2024-010', '2024-04-10 11:30:00+00', 8, 'Botswana', 1, TRUE),
-('WD-2024-011', '2024-04-20 10:00:00+00', 6, 'India', 2, TRUE),
-('WD-2024-012', '2024-05-05 13:45:00+00', 7, 'Russia', 3, TRUE),
-('WD-2024-013', '2024-05-15 09:30:00+00', 5, 'South Africa', 1, TRUE),
-('WD-2024-014', '2024-05-25 14:20:00+00', 8, 'Botswana', 1, TRUE),
-('WD-2024-015', '2024-06-01 10:15:00+00', 6, 'Australia', 2, TRUE);
+(3, 'WD-2024-003', '2024-02-05 09:15:00+00', 6, 'India', 2, TRUE),
+(4, 'WD-2024-004', '2024-02-10 11:45:00+00', 7, 'Russia', 3, TRUE),
+(5, 'WD-2024-005', '2024-02-15 13:20:00+00', 8, 'Botswana', 1, TRUE),
+(6, 'WD-2024-006', '2024-03-01 10:30:00+00', 5, 'South Africa', 1, TRUE),
+(7, 'WD-2024-007', '2024-03-10 15:00:00+00', 6, 'Australia', 2, TRUE),
+(8, 'WD-2024-008', '2024-03-15 09:45:00+00', 7, 'Canada', 3, TRUE),
+(9, 'WD-2024-009', '2024-04-01 14:15:00+00', 5, 'South Africa', 1, TRUE),
+(10, 'WD-2024-010', '2024-04-10 11:30:00+00', 8, 'Botswana', 1, TRUE),
+(11, 'WD-2024-011', '2024-04-20 10:00:00+00', 6, 'India', 2, TRUE),
+(12, 'WD-2024-012', '2024-05-05 13:45:00+00', 7, 'Russia', 3, TRUE),
+(13, 'WD-2024-013', '2024-05-15 09:30:00+00', 5, 'South Africa', 1, TRUE),
+(14, 'WD-2024-014', '2024-05-25 14:20:00+00', 8, 'Botswana', 1, TRUE),
+(15, 'WD-2024-015', '2024-06-01 10:15:00+00', 6, 'Australia', 2, TRUE);
 
 -- Colored Diamonds (10 items)
-INSERT INTO item (stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
-('CD-2024-001', '2024-01-25 11:00:00+00', 5, 'South Africa', 1, TRUE),
-('CD-2024-002', '2024-02-12 15:30:00+00', 7, 'Australia', 3, TRUE),
-('CD-2024-003', '2024-03-08 10:45:00+00', 6, 'India', 2, TRUE),
-('CD-2024-004', '2024-03-22 14:00:00+00', 5, 'South Africa', 1, TRUE),
-('CD-2024-005', '2024-04-15 09:20:00+00', 8, 'Botswana', 1, TRUE),
-('CD-2024-006', '2024-04-28 13:50:00+00', 7, 'Russia', 3, TRUE),
-('CD-2024-007', '2024-05-10 11:15:00+00', 6, 'Australia', 2, TRUE),
-('CD-2024-008', '2024-05-20 15:40:00+00', 5, 'South Africa', 1, TRUE),
-('CD-2024-009', '2024-06-05 10:30:00+00', 8, 'Botswana', 1, TRUE),
-('CD-2024-010', '2024-06-15 14:10:00+00', 7, 'Canada', 3, TRUE);
+INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
+(16, 'CD-2024-001', '2024-01-25 11:00:00+00', 5, 'South Africa', 1, TRUE),
+(17, 'CD-2024-002', '2024-02-12 15:30:00+00', 7, 'Australia', 3, TRUE),
+(18, 'CD-2024-003', '2024-03-08 10:45:00+00', 6, 'India', 2, TRUE),
+(19, 'CD-2024-004', '2024-03-22 14:00:00+00', 5, 'South Africa', 1, TRUE),
+(20, 'CD-2024-005', '2024-04-15 09:20:00+00', 8, 'Botswana', 1, TRUE),
+(21, 'CD-2024-006', '2024-04-28 13:50:00+00', 7, 'Russia', 3, TRUE),
+(22, 'CD-2024-007', '2024-05-10 11:15:00+00', 6, 'Australia', 2, TRUE),
+(23, 'CD-2024-008', '2024-05-20 15:40:00+00', 5, 'South Africa', 1, TRUE),
+(24, 'CD-2024-009', '2024-06-05 10:30:00+00', 8, 'Botswana', 1, TRUE),
+(25, 'CD-2024-010', '2024-06-15 14:10:00+00', 7, 'Canada', 3, TRUE);
 
 -- Rubies (8 items)
-INSERT INTO item (stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
-('RB-2024-001', '2024-01-18 09:30:00+00', 9, 'Thailand', 2, TRUE),
-('RB-2024-002', '2024-02-08 14:45:00+00', 12, 'Myanmar', 2, TRUE),
-('RB-2024-003', '2024-03-12 10:20:00+00', 9, 'Thailand', 2, TRUE),
-('RB-2024-004', '2024-04-05 15:15:00+00', 12, 'Myanmar', 2, TRUE),
-('RB-2024-005', '2024-04-25 11:40:00+00', 9, 'Madagascar', 2, TRUE),
-('RB-2024-006', '2024-05-12 13:25:00+00', 12, 'Myanmar', 2, TRUE),
-('RB-2024-007', '2024-05-28 09:50:00+00', 9, 'Thailand', 2, TRUE),
-('RB-2024-008', '2024-06-10 14:35:00+00', 12, 'Myanmar', 2, TRUE);
+INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
+(26, 'RB-2024-001', '2024-01-18 09:30:00+00', 9, 'Thailand', 2, TRUE),
+(27, 'RB-2024-002', '2024-02-08 14:45:00+00', 12, 'Myanmar', 2, TRUE),
+(28, 'RB-2024-003', '2024-03-12 10:20:00+00', 9, 'Thailand', 2, TRUE),
+(29, 'RB-2024-004', '2024-04-05 15:15:00+00', 12, 'Myanmar', 2, TRUE),
+(30, 'RB-2024-005', '2024-04-25 11:40:00+00', 9, 'Madagascar', 2, TRUE),
+(31, 'RB-2024-006', '2024-05-12 13:25:00+00', 12, 'Myanmar', 2, TRUE),
+(32, 'RB-2024-007', '2024-05-28 09:50:00+00', 9, 'Thailand', 2, TRUE),
+(33, 'RB-2024-008', '2024-06-10 14:35:00+00', 12, 'Myanmar', 2, TRUE);
 
 -- Sapphires (8 items)
-INSERT INTO item (stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
-('SP-2024-001', '2024-01-22 10:15:00+00', 11, 'Kashmir', 2, TRUE),
-('SP-2024-002', '2024-02-14 15:30:00+00', 9, 'Sri Lanka', 2, TRUE),
-('SP-2024-003', '2024-03-05 09:45:00+00', 11, 'Kashmir', 2, TRUE),
-('SP-2024-004', '2024-03-28 14:20:00+00', 9, 'Madagascar', 2, TRUE),
-('SP-2024-005', '2024-04-18 11:10:00+00', 11, 'Kashmir', 2, TRUE),
-('SP-2024-006', '2024-05-08 13:55:00+00', 9, 'Sri Lanka', 2, TRUE),
-('SP-2024-007', '2024-05-22 10:40:00+00', 11, 'Kashmir', 2, TRUE),
-('SP-2024-008', '2024-06-12 15:25:00+00', 9, 'Australia', 2, TRUE);
+INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
+(34, 'SP-2024-001', '2024-01-22 10:15:00+00', 11, 'Kashmir', 2, TRUE),
+(35, 'SP-2024-002', '2024-02-14 15:30:00+00', 9, 'Sri Lanka', 2, TRUE),
+(36, 'SP-2024-003', '2024-03-05 09:45:00+00', 11, 'Kashmir', 2, TRUE),
+(37, 'SP-2024-004', '2024-03-28 14:20:00+00', 9, 'Madagascar', 2, TRUE),
+(38, 'SP-2024-005', '2024-04-18 11:10:00+00', 11, 'Kashmir', 2, TRUE),
+(39, 'SP-2024-006', '2024-05-08 13:55:00+00', 9, 'Sri Lanka', 2, TRUE),
+(40, 'SP-2024-007', '2024-05-22 10:40:00+00', 11, 'Kashmir', 2, TRUE),
+(41, 'SP-2024-008', '2024-06-12 15:25:00+00', 9, 'Australia', 2, TRUE);
 
 -- Emeralds (6 items)
-INSERT INTO item (stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
-('EM-2024-001', '2024-02-01 11:20:00+00', 10, 'Colombia', 1, TRUE),
-('EM-2024-002', '2024-03-15 14:40:00+00', 10, 'Colombia', 1, TRUE),
-('EM-2024-003', '2024-04-08 09:55:00+00', 10, 'Zambia', 1, TRUE),
-('EM-2024-004', '2024-04-30 13:15:00+00', 10, 'Colombia', 1, TRUE),
-('EM-2024-005', '2024-05-18 10:45:00+00', 10, 'Brazil', 1, TRUE),
-('EM-2024-006', '2024-06-08 15:10:00+00', 10, 'Colombia', 1, TRUE);
+INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
+(42, 'EM-2024-001', '2024-02-01 11:20:00+00', 10, 'Colombia', 1, TRUE),
+(43, 'EM-2024-002', '2024-03-15 14:40:00+00', 10, 'Colombia', 1, TRUE),
+(44, 'EM-2024-003', '2024-04-08 09:55:00+00', 10, 'Zambia', 1, TRUE),
+(45, 'EM-2024-004', '2024-04-30 13:15:00+00', 10, 'Colombia', 1, TRUE),
+(46, 'EM-2024-005', '2024-05-18 10:45:00+00', 10, 'Brazil', 1, TRUE),
+(47, 'EM-2024-006', '2024-06-08 15:10:00+00', 10, 'Colombia', 1, TRUE);
 
 -- Jewelry Items (13 items)
-INSERT INTO item (stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
-('JW-2024-001', '2024-01-10 09:00:00+00', 13, 'USA', 1, TRUE),
-('JW-2024-002', '2024-01-28 14:30:00+00', 14, 'Switzerland', 3, TRUE),
-('JW-2024-003', '2024-02-18 11:15:00+00', 15, 'Japan', 4, TRUE),
-('JW-2024-004', '2024-03-02 15:45:00+00', 16, 'Italy', 3, TRUE),
-('JW-2024-005', '2024-03-20 10:20:00+00', 13, 'USA', 1, TRUE),
-('JW-2024-006', '2024-04-12 13:40:00+00', 14, 'Switzerland', 3, TRUE),
-('JW-2024-007', '2024-04-22 09:25:00+00', 15, 'Japan', 4, TRUE),
-('JW-2024-008', '2024-05-03 14:50:00+00', 16, 'France', 3, TRUE),
-('JW-2024-009', '2024-05-16 11:35:00+00', 13, 'USA', 1, TRUE),
-('JW-2024-010', '2024-05-30 15:05:00+00', 14, 'Switzerland', 3, TRUE),
-('JW-2024-011', '2024-06-06 10:50:00+00', 15, 'Japan', 4, TRUE),
-('JW-2024-012', '2024-06-14 13:20:00+00', 16, 'Italy', 3, TRUE),
-('JW-2024-013', '2024-06-20 09:40:00+00', 13, 'USA', 1, TRUE);
+INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
+(48, 'JW-2024-001', '2024-01-10 09:00:00+00', 13, 'USA', 1, TRUE),
+(49, 'JW-2024-002', '2024-01-28 14:30:00+00', 14, 'Switzerland', 3, TRUE),
+(50, 'JW-2024-003', '2024-02-18 11:15:00+00', 15, 'Japan', 4, TRUE),
+(51, 'JW-2024-004', '2024-03-02 15:45:00+00', 16, 'Italy', 3, TRUE),
+(52, 'JW-2024-005', '2024-03-20 10:20:00+00', 13, 'USA', 1, TRUE),
+(53, 'JW-2024-006', '2024-04-12 13:40:00+00', 14, 'Switzerland', 3, TRUE),
+(54, 'JW-2024-007', '2024-04-22 09:25:00+00', 15, 'Japan', 4, TRUE),
+(55, 'JW-2024-008', '2024-05-03 14:50:00+00', 16, 'France', 3, TRUE),
+(56, 'JW-2024-009', '2024-05-16 11:35:00+00', 13, 'USA', 1, TRUE),
+(57, 'JW-2024-010', '2024-05-30 15:05:00+00', 14, 'Switzerland', 3, TRUE),
+(58, 'JW-2024-011', '2024-06-06 10:50:00+00', 15, 'Japan', 4, TRUE),
+(59, 'JW-2024-012', '2024-06-14 13:20:00+00', 16, 'Italy', 3, TRUE),
+(60, 'JW-2024-013', '2024-06-20 09:40:00+00', 13, 'USA', 1, TRUE);
 
 
 -- White Diamonds (15 loose stones)
@@ -336,19 +336,19 @@ INSERT INTO jewelry (lot_id, jewelry_type, gross_weight_gr, metal_type, metal_we
 (60, 'Ring', 5.95, '18k white gold + PT', 4.35, 1, 1.75, 'White Diamond', 14, 0.42, 'White Diamond');
 
 
-INSERT INTO action (from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
+INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
 -- Purchases from diamond suppliers
-(5, 1, 'Payment: 30 days net', 'Batch of white diamonds from Antwerp', '2024-01-15 10:00:00+00', '2024-01-15 10:00:00+00'),
-(6, 2, 'Payment: 60 days net', 'Premium Indian diamonds', '2024-02-05 09:15:00+00', '2024-02-05 09:15:00+00'),
-(9, 2, 'Payment: 45 days net', 'Thai rubies, high quality', '2024-01-18 09:30:00+00', '2024-01-18 09:30:00+00'),
-(11, 2, 'Payment: 30 days net', 'Kashmir sapphires, rare collection', '2024-01-22 10:15:00+00', '2024-01-22 10:15:00+00'),
-(10, 1, 'Payment: 60 days net', 'Colombian emeralds, AA grade', '2024-02-01 11:20:00+00', '2024-02-01 11:20:00+00');
+(1, 5, 1, 'Payment: 30 days net', 'Batch of white diamonds from Antwerp', '2024-01-15 10:00:00+00', '2024-01-15 10:00:00+00'),
+(2, 6, 2, 'Payment: 60 days net', 'Premium Indian diamonds', '2024-02-05 09:15:00+00', '2024-02-05 09:15:00+00'),
+(3, 9, 2, 'Payment: 45 days net', 'Thai rubies, high quality', '2024-01-18 09:30:00+00', '2024-01-18 09:30:00+00'),
+(4, 11, 2, 'Payment: 30 days net', 'Kashmir sapphires, rare collection', '2024-01-22 10:15:00+00', '2024-01-22 10:15:00+00'),
+(5, 10, 1, 'Payment: 60 days net', 'Colombian emeralds, AA grade', '2024-02-01 11:20:00+00', '2024-02-01 11:20:00+00');
 
 -- Sales to clients
-INSERT INTO action (from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
-(1, 13, 'Payment: Upon delivery', 'Premium engagement ring order', '2024-03-15 14:00:00+00', '2024-03-15 14:00:00+00'),
-(3, 14, 'Payment: 15 days net', 'Luxury jewelry collection', '2024-04-10 11:30:00+00', '2024-04-10 11:30:00+00'),
-(2, 15, 'Payment: Upon delivery', 'Special order sapphire pieces', '2024-05-05 10:45:00+00', '2024-05-05 10:45:00+00');
+INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
+(6, 1, 13, 'Payment: Upon delivery', 'Premium engagement ring order', '2024-03-15 14:00:00+00', '2024-03-15 14:00:00+00'),
+(7, 3, 14, 'Payment: 15 days net', 'Luxury jewelry collection', '2024-04-10 11:30:00+00', '2024-04-10 11:30:00+00'),
+(8, 2, 15, 'Payment: Upon delivery', 'Special order sapphire pieces', '2024-05-05 10:45:00+00', '2024-05-05 10:45:00+00');
 
 
 INSERT INTO purchase (action_id, purchase_num, purchase_date) VALUES
@@ -420,9 +420,9 @@ INSERT INTO certificate (lot_id, lab_id, certificate_num, issue_date, shape, wei
 (45, 20, 'AGS-123456790', '2024-05-08 09:15:00+00', 'Emerald Cut', 4.58, 11.45, 8.95, 6.28, NULL, 'Emerald');
 
 
-INSERT INTO action (from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
-(1, 13, 'Return within 14 days', 'Client review - engagement ring selection', '2024-02-10 10:00:00+00', '2024-02-10 10:00:00+00'),
-(2, 15, 'Return within 7 days', 'Client approval for custom necklace', '2024-03-15 14:30:00+00', '2024-03-15 14:30:00+00');
+INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
+(9, 1, 13, 'Return within 14 days', 'Client review - engagement ring selection', '2024-02-10 10:00:00+00', '2024-02-10 10:00:00+00'),
+(10, 2, 15, 'Return within 7 days', 'Client approval for custom necklace', '2024-03-15 14:30:00+00', '2024-03-15 14:30:00+00');
 
 INSERT INTO memo_out (action_id, memo_out_num, ship_date, expected_return_date) VALUES
 (9, 'MO-2024-0001', '2024-02-10', '2024-02-24'),
@@ -435,8 +435,8 @@ INSERT INTO action_update_log (log_sequence, action_id, employee_id, update_type
 (1, 6, 3, 'Insert', NULL, '{"status": "sale_created", "user": "Michael Williams"}', '2024-03-15 14:00:00+00'),
 (2, 6, 1, 'Update', '{"payment_status": "Unpaid"}', '{"payment_status": "Paid", "payment_date": "2024-03-15"}', '2024-03-15 16:00:00+00');
 
---ROLLBACK;
---COMMIT;
+-- ROLLBACK;
+COMMIT;
 
 -- Display summary
 SELECT COUNT(*) AS total_items FROM item;
