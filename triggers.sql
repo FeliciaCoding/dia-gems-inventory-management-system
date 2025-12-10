@@ -129,7 +129,7 @@ EXECUTE FUNCTION trig_b_i_purchase();
 -- and nobody tries to trick the system by putting the wrong items there
 
 -- NOTE:
--- I think we should have several triggers one per each:
+-- We should have several triggers one per each:
 -- 1) Memo In - Return Memo IN
 -- 2) Memo Out - Return Memo Out
 -- 3) Transfer To Lab - Back From Lab
@@ -138,19 +138,36 @@ EXECUTE FUNCTION trig_b_i_purchase();
 CREATE OR REPLACE FUNCTION trig_b_i_memo_in_items_check()
     RETURNS TRIGGER AS
 $$
+DECLARE
+    mistaken_item_id INTEGER;
 BEGIN
-    -- extract ids of all memo in items
-    SELECT lot_id
-    FROM action_item ai
-    WHERE ai.action_id = new.orig_memo_action_id;
-
     -- NOTE:
-    -- I think we've got another problem here
-    -- to find out ids of returned items
-    -- we need to use action_item table
-    -- so rows should have been inserted there already
-    -- but, it has been done already
-    -- what is the point of checking them here?
+    -- Since `return_memo_in` inherits attributes from `action`
+    -- it has FK to its parent entity
+    -- In this trigger we suppose that corresponding row has been already inserted into `action`
+    -- and corresponding links to the items that are being returned have been created as well in `action_item`
+    -- Here we will simply verify that these links (rows from `action_item`) correctly point
+    -- to the items that were indeed memo in once
+
+    FOR mistaken_item_id IN
+        WITH orig_memo_in_items_ids AS (
+            SELECT lot_id
+              FROM action_item ai
+             WHERE ai.action_id = new.orig_memo_action_id
+        ), returned_items_ids AS (
+            SELECT lot_id
+            FROM action_item ai
+            WHERE ai.action_id = new.action_id
+        )
+        SELECT lot_id
+        FROM returned_items_ids
+        EXCEPT
+        SELECT lot_id
+        FROM orig_memo_in_items_ids
+    LOOP
+        RAISE WARNING 'Some of returned items were issued in original memo in (%) : %',
+            new.orig_memo_action_id, mistaken_item_id;
+    END LOOP;
 
     RETURN new;
 END;
