@@ -249,7 +249,7 @@ CREATE TABLE back_from_lab
    action_id         INTEGER PRIMARY KEY,
    orig_transfer_id  INTEGER NOT NULL,
    back_from_lab_num TEXT UNIQUE,
-   back_date         DATE NOT NULL,
+   back_date         DATE    NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_lab (action_id)
@@ -391,8 +391,8 @@ CREATE TABLE jewelry
 CREATE TABLE certificate
 (
    certificate_id  SERIAL PRIMARY KEY,
-   lot_id            INTEGER,
-   lab_id          INTEGER                                 NOT NULL,
+   lot_id          INTEGER,
+   lab_id          INTEGER                                NOT NULL,
    certificate_num TEXT                                   NOT NULL UNIQUE,
    issue_date      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    shape           shape,
@@ -406,9 +406,9 @@ CREATE TABLE certificate
    gem_type        gem_type,
    created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   FOREIGN KEY (lab_id) REFERENCES counterpart(counterpart_id)
+   FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
       ON DELETE RESTRICT ON UPDATE CASCADE,
-   FOREIGN KEY (lot_id) REFERENCES item(lot_id)
+   FOREIGN KEY (lot_id) REFERENCES item (lot_id)
       ON DELETE SET NULL ON UPDATE CASCADE,
    CONSTRAINT valid_cert_update CHECK (updated_at >= created_at),
    CONSTRAINT positive_weight CHECK (weight_ct > 0),
@@ -416,43 +416,141 @@ CREATE TABLE certificate
 );
 
 -- --------------------
--- NOT READY YET
--- trigger
-
--- locations
--- responsible_office_id
--- is_available : ture / false
--- updated_az
--- trigger after insert
--- La localisation actuelle peut être dérivée en consultant la dernière action dans l'historique
+-- trigger : according to action, update updated_at / responsible_office_id / is_available
 
 
--- item location -> outbound
-CREATE OR REPLACE FUNCTION update_responsible_office_after_purchase()
-RETURNS TRIGGER AS
+BEGIN ;
+
+-- purchase, memo in , returns , back form
+CREATE OR REPLACE FUNCTION update_responsible_office_after_inbound()
+   RETURNS TRIGGER AS
 $$
-   BEGIN
-    UPDATE item
-    SET responsible_office_id = (
-        SELECT to_counterpart_id
-        FROM action
-        WHERE action_id = NEW.action_id
-    ),
-    updated_at = NOW()
-    WHERE lot_id IN (
-        SELECT lot_id
-        FROM action_item
-        WHERE action_id = NEW.action_id
-    );
+BEGIN
+   UPDATE item
+      SET responsible_office_id = (SELECT to_counterpart_id
+                                     FROM action
+                                    WHERE action_id = new.action_id),
+          updated_at            = NOW(),
+          is_available = TRUE
+    WHERE lot_id IN (SELECT lot_id
+                       FROM action_item
+                      WHERE action_id = new.action_id);
 
-    RETURN NEW;
-    END;
-$$ LANGUAGE  plpgsql;
+   RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+-- sold, memo out, transfer to lab/factory
+CREATE OR REPLACE FUNCTION update_responsible_office_after_outbound()
+   RETURNS TRIGGER AS
+$$
+BEGIN
+   UPDATE item
+      SET responsible_office_id = (SELECT from_counterpart_id
+                                     FROM action
+                                    WHERE action_id = new.action_id),
+          updated_at            = NOW(),
+          is_available = FALSE
+    WHERE lot_id IN (SELECT lot_id
+                       FROM action_item
+                      WHERE action_id = new.action_id);
+
+   RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+-- between offices - is_available is always true
+CREATE OR REPLACE FUNCTION update_responsible_office_after_transfer_office()
+   RETURNS TRIGGER AS
+$$
+BEGIN
+   UPDATE item
+      SET responsible_office_id = (SELECT from_counterpart_id
+                                     FROM action
+                                    WHERE action_id = new.action_id),
+          updated_at            = NOW(),
+          is_available = TRUE
+    WHERE lot_id IN (SELECT lot_id
+                       FROM action_item
+                      WHERE action_id = new.action_id);
+
+   RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+
 
 CREATE TRIGGER trigger_responsible_office_after_purchase
-   AFTER INSERT ON purchase
-   FOR EACH ROW EXECUTE FUNCTION update_responsible_office_after_purchase()
+   AFTER INSERT
+   ON purchase
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_inbound();
 
+CREATE TRIGGER trigger_responsible_office_after_memo_in
+   AFTER INSERT
+   ON memo_in
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_inbound();
+
+CREATE TRIGGER trigger_responsible_office_after_return_memo_in
+   AFTER INSERT
+   ON return_memo_in
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_outbound();
+
+
+CREATE TRIGGER trigger_responsible_office_after_memo_out
+   AFTER INSERT
+   ON memo_out
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_outbound();
+
+CREATE TRIGGER trigger_responsible_office_after_return_memo_out
+   AFTER INSERT
+   ON return_memo_out
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_inbound();
+
+CREATE TRIGGER trigger_responsible_office_after_transfer_to_factory
+   AFTER INSERT
+   ON transfer_to_factory
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_outbound();
+
+CREATE TRIGGER trigger_responsible_office_after_back_from_factory
+   AFTER INSERT
+   ON back_from_factory
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_inbound();
+
+
+CREATE TRIGGER trigger_responsible_office_after_transfer_to_lab
+   AFTER INSERT
+   ON transfer_to_lab
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_outbound();
+
+
+CREATE TRIGGER trigger_responsible_office_after_back_from_lab
+   AFTER INSERT
+   ON back_from_lab
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_inbound();
+
+
+CREATE TRIGGER trigger_responsible_office_after_transfer_to_office
+   AFTER INSERT
+   ON transfer_to_office
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_transfer_office();
+
+
+CREATE TRIGGER trigger_responsible_office_after_sale
+   AFTER INSERT
+   ON sale
+   FOR EACH ROW
+EXECUTE FUNCTION update_responsible_office_after_outbound();
 
 --ROLLBACK ;
---COMMIT ;
+
+
