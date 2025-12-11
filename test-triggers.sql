@@ -1,12 +1,45 @@
 SET search_path TO project;
 
 
+-- BEGIN TEST CASE TRIGGER #1
+BEGIN;
+
+--Set disponsibility = false && responsible office = 1
+INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
+(99,'testing', '2025-12-10 10:00:00+00', 5, 'South Africa', 1, FALSE);
+
+SELECT * FROM item where stock_name = 'testing';
+
+-- Testing responsible office : responsible office should set to 2 as to_counterpart_id = 2
+INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks) VALUES
+(99, 5, 2,'Payment: Upon delivery', 'testing purchase');
+
+SELECT * FROM action where remarks = 'testing purchase';
+
+INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
+(99, 99, 1, 18500.00, 'USD');
+SELECT * FROM action_item where action_id = 88;
+
+
+-- Testing : Availability should be Ture
+INSERT INTO purchase (action_id, purchase_num, purchase_date) VALUES
+(99, 'PO-testing_id99', '2025-01-15');
+SELECT * FROM purchase where action_id = 99;
+
+SELECT * FROM item where lot_id = 99;
+SELECT lot_id, responsible_office_id, is_available FROM item where stock_name = 'testing';
+
+ROLLBACK ;
+
+-- END TEST CASE TRIGGER #1
+
 -- BEGIN TEST CASE TRIGGER #2
 -- Description:
 -- after registering return from factory
 -- loose_stone should be updated
 
 BEGIN;
+
 
 -- 1. Create colored diamond
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available)
