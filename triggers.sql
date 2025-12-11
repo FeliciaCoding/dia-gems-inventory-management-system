@@ -202,6 +202,9 @@ EXECUTE FUNCTION trig_b_i_update_log();
 
 -- BEGIN TRIGGER #6
 
+-- DROP TRIGGER IF EXISTS verify_supplier_on_purchase_trigger ON purchase;
+-- DROP FUNCTION IF EXISTS trig_b_i_purchase;
+
 -- Purchase:
 -- When inserting into Purchase table from_counterpart_id should be equal
 -- to the supplier_id in corresponding Item (connected via Action Item relationship)
@@ -223,7 +226,7 @@ BEGIN
     );
 
     supplier_id := (
-        SELECT supplier_id
+        SELECT it.supplier_id
         FROM action_item ai
             INNER JOIN item it
             ON it.lot_id = ai.lot_id
