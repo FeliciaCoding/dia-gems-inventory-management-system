@@ -3,7 +3,7 @@ SET search_path TO diamonds_are_forever;
 -- BEGIN VIEW
 -- Description:
 -- Status for every jewelry registered in the system
-CREATE VIEW complete_inventory_jewelry AS
+CREATE OR REPLACE VIEW complete_inventory_jewelry AS
 SELECT i.lot_id,
        i.stock_name,
        i.origin,
@@ -26,52 +26,56 @@ SELECT i.lot_id,
          LIMIT 1) AS physical_location,
 
        CASE
-          WHEN EXISTS (SELECT 1
-                         FROM action_item ai
-                              JOIN sale s
-                              ON ai.action_id = s.action_id
-                        WHERE ai.lot_id = i.lot_id) THEN 'Sold'
-          WHEN EXISTS (SELECT 1
-                         FROM action_item ai
-                              JOIN memo_out mo
-                              ON ai.action_id = mo.action_id
-                        WHERE ai.lot_id = i.lot_id
-                          AND NOT EXISTS (SELECT 1
-                                            FROM return_memo_out rmo
-                                           WHERE rmo.orig_memo_action_id = mo.action_id)) THEN 'On memo'
-          WHEN EXISTS (SELECT 1
-                         FROM action_item ai
-                              JOIN transfer_to_factory ttf
-                              ON ai.action_id = ttf.action_id
-                        WHERE ai.lot_id = i.lot_id
-                          AND NOT EXISTS (SELECT 1
-                                            FROM back_from_factory bff
-                                           WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
-          WHEN EXISTS (SELECT 1
-                         FROM action_item ai
-                              JOIN transfer_to_lab ttl
-                              ON ai.action_id = ttl.action_id
-                        WHERE ai.lot_id = i.lot_id
-                          AND NOT EXISTS (SELECT 1
-                                            FROM back_from_lab bfl
-                                           WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
-          ELSE 'In stock'
-          END     AS location_status,
+           WHEN EXISTS (SELECT 1
+                          FROM action_item ai
+                               JOIN sale s
+                               ON ai.action_id = s.action_id
+                         WHERE ai.lot_id = i.lot_id) THEN 'Sold'
+           WHEN EXISTS (SELECT 1
+                          FROM action_item ai
+                               JOIN memo_out mo
+                               ON ai.action_id = mo.action_id
+                         WHERE ai.lot_id = i.lot_id
+                           AND NOT EXISTS (SELECT 1
+                                             FROM return_memo_out rmo
+                                            WHERE rmo.orig_memo_action_id = mo.action_id)) THEN 'On memo'
+           WHEN EXISTS (SELECT 1
+                          FROM action_item ai
+                               JOIN transfer_to_factory ttf
+                               ON ai.action_id = ttf.action_id
+                         WHERE ai.lot_id = i.lot_id
+                           AND NOT EXISTS (SELECT 1
+                                             FROM back_from_factory bff
+                                            WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
+           WHEN EXISTS (SELECT 1
+                          FROM action_item ai
+                               JOIN transfer_to_lab ttl
+                               ON ai.action_id = ttl.action_id
+                         WHERE ai.lot_id = i.lot_id
+                           AND NOT EXISTS (SELECT 1
+                                             FROM back_from_lab bfl
+                                            WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
+           ELSE 'In stock'
+           END    AS location_status,
 
        i.created_at,
        i.updated_at,
        c.certificate_num,
-       lab.name AS certification_lab
+       lab.name   AS certification_lab
 
   FROM item i
+       JOIN jewelry j
+       ON i.lot_id = j.lot_id
+
        LEFT JOIN counterpart s
        ON i.supplier_id = s.counterpart_id
+
        LEFT JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
-       LEFT JOIN jewelry j
-       ON i.lot_id = j.lot_id
+
        LEFT JOIN certificate c
        ON i.lot_id = c.lot_id
+
        LEFT JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
@@ -82,7 +86,7 @@ SELECT i.lot_id,
 -- BEGIN VIEW
 -- Description:
 -- Status on all colored gemstones
-CREATE VIEW complete_inventory_colored_gem_stones AS
+CREATE OR REPLACE VIEW complete_inventory_colored_gem_stones AS
 SELECT i.lot_id,
        i.stock_name,
        i.origin,
@@ -135,7 +139,7 @@ SELECT i.lot_id,
                                              FROM back_from_lab bfl
                                             WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
            ELSE 'In stock'
-           END     AS location_status,
+           END    AS location_status,
 
        ls.weight_ct,
        ls.shape,
@@ -144,19 +148,24 @@ SELECT i.lot_id,
        i.created_at,
        i.updated_at,
        c.certificate_num,
-       lab.name AS certification_lab
+       lab.name   AS certification_lab
 
   FROM item i
+       JOIN loose_stone ls
+       ON i.lot_id = ls.lot_id
+
+       JOIN colored_gem_stone cgs
+       ON ls.lot_id = cgs.lot_id
+
        LEFT JOIN counterpart s
        ON i.supplier_id = s.counterpart_id
+
        LEFT JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
-       LEFT JOIN loose_stone ls
-       ON i.lot_id = ls.lot_id
-       LEFT JOIN colored_gem_stone cgs
-       ON ls.lot_id = cgs.lot_id
+
        LEFT JOIN certificate c
        ON i.lot_id = c.lot_id
+
        LEFT JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
@@ -167,7 +176,7 @@ SELECT i.lot_id,
 -- BEGIN VIEW
 -- Description:
 -- Status on all white diamonds
-CREATE VIEW complete_inventory_white_diamonds AS
+CREATE OR REPLACE VIEW complete_inventory_white_diamonds AS
 SELECT i.lot_id,
        i.stock_name,
        i.origin,
@@ -220,7 +229,7 @@ SELECT i.lot_id,
                                              FROM back_from_lab bfl
                                             WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
            ELSE 'In stock'
-           END     AS location_status,
+           END    AS location_status,
 
        ls.weight_ct,
        ls.shape,
@@ -228,19 +237,24 @@ SELECT i.lot_id,
        i.created_at,
        i.updated_at,
        c.certificate_num,
-       lab.name AS certification_lab
+       lab.name   AS certification_lab
 
   FROM item i
+       JOIN loose_stone ls
+       ON i.lot_id = ls.lot_id
+
+       JOIN white_diamond wd
+       ON ls.lot_id = wd.lot_id
+
        LEFT JOIN counterpart s
        ON i.supplier_id = s.counterpart_id
+
        LEFT JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
-       LEFT JOIN loose_stone ls
-       ON i.lot_id = ls.lot_id
-       LEFT JOIN white_diamond wd
-       ON ls.lot_id = wd.lot_id
+
        LEFT JOIN certificate c
        ON i.lot_id = c.lot_id
+
        LEFT JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
@@ -251,7 +265,7 @@ SELECT i.lot_id,
 -- BEGIN VIEW
 -- Description:
 -- Status on all the colored diamonds
-CREATE VIEW complete_inventory_colored_diamonds AS
+CREATE OR REPLACE VIEW complete_inventory_colored_diamonds AS
 SELECT i.lot_id,
        i.stock_name,
        i.origin,
@@ -304,7 +318,7 @@ SELECT i.lot_id,
                                              FROM back_from_lab bfl
                                             WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
            ELSE 'In stock'
-           END     AS location_status,
+           END    AS location_status,
 
        ls.weight_ct,
        ls.shape,
@@ -315,19 +329,24 @@ SELECT i.lot_id,
        i.created_at,
        i.updated_at,
        c.certificate_num,
-       lab.name AS certification_lab
+       lab.name   AS certification_lab
 
   FROM item i
+       JOIN loose_stone ls
+       ON i.lot_id = ls.lot_id
+
+       JOIN colored_diamond cd
+       ON ls.lot_id = cd.lot_id
+
        LEFT JOIN counterpart s
        ON i.supplier_id = s.counterpart_id
+
        LEFT JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
-       LEFT JOIN loose_stone ls
-       ON i.lot_id = ls.lot_id
-       LEFT JOIN colored_diamond cd
-       ON ls.lot_id = cd.lot_id
+
        LEFT JOIN certificate c
        ON i.lot_id = c.lot_id
+
        LEFT JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
