@@ -1,6 +1,6 @@
 -- Dummy data was generated with a help of ChatGPT
 
-SET search_path TO project;
+SET search_path TO diamonds_are_forever;
 
 BEGIN;
 
@@ -429,11 +429,11 @@ INSERT INTO memo_out (action_id, memo_out_num, ship_date, expected_return_date) 
 (10, 'MO-2024-0002', '2024-03-15', '2024-03-22');
 
 
-INSERT INTO action_update_log (log_sequence, action_id, employee_id, update_type, old_value, new_value, log_time) VALUES
-(1, 1, 1, 'Insert', NULL, '{"status": "created", "user": "John Smith"}', '2024-01-15 10:00:00+00'),
-(2, 1, 4, 'Update', '{"status": "pending"}', '{"status": "approved", "approver": "Emily Brown"}', '2024-01-15 14:30:00+00'),
-(1, 6, 3, 'Insert', NULL, '{"status": "sale_created", "user": "Michael Williams"}', '2024-03-15 14:00:00+00'),
-(2, 6, 1, 'Update', '{"payment_status": "Unpaid"}', '{"payment_status": "Paid", "payment_date": "2024-03-15"}', '2024-03-15 16:00:00+00');
+INSERT INTO action_update_log (log_time, action_id, employee_id, update_type, old_value, new_value) VALUES
+('2024-01-15 10:00:00+00', 1, 1, 'Insert', NULL, '{"status": "created", "user": "John Smith"}'),
+('2024-01-15 14:30:00+00', 1, 4, 'Update', '{"status": "pending"}', '{"status": "approved", "approver": "Emily Brown"}'),
+('2024-03-15 14:00:00+00', 6, 3, 'Insert', NULL, '{"status": "sale_created", "user": "Michael Williams"}'),
+('2024-03-15 16:00:00+00', 6, 1, 'Update', '{"payment_status": "Unpaid"}', '{"payment_status": "Paid", "payment_date": "2024-03-15"}');
 
 -- ROLLBACK;
 COMMIT;

@@ -38,7 +38,7 @@ action (**action_id**, from_counterpart_id, to_counterpart_id, terms, remarks, c
 
 ### `action_update_log`
 
-update_log (**log_sequence, action_id**, employee_id, update_type, old_value, new_value, log_time) <br>
+update_log (**log_time, action_id**, employee_id, update_type, old_value, new_value, log_time) <br>
     `action_id` references `action.action_id` <br>
     `employee_id` references `employee.employee_id` NOT NULL
 
