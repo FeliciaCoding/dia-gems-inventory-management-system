@@ -1,134 +1,119 @@
 SET search_path TO diamonds_are_forever;
 
 -- BEGIN TRIGGER #1
--- purchase, memo in , returns , back form
-CREATE OR REPLACE FUNCTION update_responsible_office_after_inbound()
+-- Description: responsible_office_id should be updated everytime
+-- item has been 'moved' as well as its availability
+
+CREATE OR REPLACE FUNCTION trig_a_i_keep_track_responsible_office()
     RETURNS TRIGGER AS
 $$
+DECLARE
+    counterpart_col_name text;
+    item_availability bool;
+    dynamic_sql text;
 BEGIN
-    UPDATE item
-       SET responsible_office_id = (SELECT to_counterpart_id
-                                      FROM action
-                                     WHERE action_id = new.action_id),
-           updated_at            = NOW(),
-           is_available          = TRUE
-     WHERE lot_id IN (SELECT lot_id
-                        FROM action_item
-                       WHERE action_id = new.action_id);
+    IF TG_TABLE_NAME IN ('return_memo_out', 'back_from_factory', 'back_from_lab') THEN
+        counterpart_col_name := 'to_counterpart_id';
+        item_availability := TRUE;
+    ELSIF TG_TABLE_NAME IN ('return_memo_in', 'memo_out', 'transfer_to_factory', 'transfer_to_lab', 'sale') THEN
+        counterpart_col_name := 'from_counterpart_id';
+        item_availability := FALSE;
+    ELSE -- transfer_to_office
+        counterpart_col_name := 'from_counterpart_id';
+        item_availability := TRUE;
+    END IF;
+
+    dynamic_sql := FORMAT(
+          $sql$
+        UPDATE item
+           SET responsible_office_id = (
+                   SELECT %I
+                     FROM action
+                    WHERE action_id = $1
+               ),
+               updated_at   = NOW(),
+               is_available = $2
+         WHERE lot_id IN (
+               SELECT lot_id
+                 FROM action_item
+                WHERE action_id = $1
+         )
+        $sql$,
+          counterpart_col_name
+                   );
+
+    EXECUTE dynamic_sql
+        USING NEW.action_id, item_availability;
 
     RETURN new;
 END;
 $$ LANGUAGE plpgsql;
 
--- sold, memo out, transfer to lab/factory
-CREATE OR REPLACE FUNCTION update_responsible_office_after_outbound()
-    RETURNS TRIGGER AS
-$$
-BEGIN
-    UPDATE item
-       SET responsible_office_id = (SELECT from_counterpart_id
-                                      FROM action
-                                     WHERE action_id = new.action_id),
-           updated_at            = NOW(),
-           is_available = FALSE
-     WHERE lot_id IN (SELECT lot_id
-                        FROM action_item
-                       WHERE action_id = new.action_id);
-
-    RETURN new;
-END;
-$$ LANGUAGE plpgsql;
-
--- between offices - is_available is always true
-CREATE OR REPLACE FUNCTION update_responsible_office_after_transfer_office()
-    RETURNS TRIGGER AS
-$$
-BEGIN
-    UPDATE item
-       SET responsible_office_id = (SELECT from_counterpart_id
-                                      FROM action
-                                     WHERE action_id = new.action_id),
-           updated_at            = NOW(),
-           is_available = TRUE
-     WHERE lot_id IN (SELECT lot_id
-                        FROM action_item
-                       WHERE action_id = new.action_id);
-
-    RETURN new;
-END;
-$$ LANGUAGE plpgsql;
-
-
-
-CREATE TRIGGER trigger_responsible_office_after_purchase
+CREATE TRIGGER responsible_office_after_purchase_trigger
     AFTER INSERT
     ON purchase
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_inbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-CREATE TRIGGER trigger_responsible_office_after_memo_in
+CREATE TRIGGER responsible_office_after_memo_in_trigger
     AFTER INSERT
     ON memo_in
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_inbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-CREATE TRIGGER trigger_responsible_office_after_return_memo_in
+CREATE TRIGGER responsible_office_after_return_memo_in_trigger
     AFTER INSERT
     ON return_memo_in
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_outbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-
-CREATE TRIGGER trigger_responsible_office_after_memo_out
+CREATE TRIGGER responsible_office_after_memo_out_trigger
     AFTER INSERT
     ON memo_out
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_outbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-CREATE TRIGGER trigger_responsible_office_after_return_memo_out
+CREATE TRIGGER responsible_office_after_return_memo_out_trigger
     AFTER INSERT
     ON return_memo_out
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_inbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-CREATE TRIGGER trigger_responsible_office_after_transfer_to_factory
+CREATE TRIGGER responsible_office_after_transfer_to_factory_trigger
     AFTER INSERT
     ON transfer_to_factory
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_outbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-CREATE TRIGGER trigger_responsible_office_after_back_from_factory
+CREATE TRIGGER responsible_office_after_back_from_factory_trigger
     AFTER INSERT
     ON back_from_factory
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_inbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-
-CREATE TRIGGER trigger_responsible_office_after_transfer_to_lab
+CREATE TRIGGER responsible_office_after_transfer_to_lab_trigger
     AFTER INSERT
     ON transfer_to_lab
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_outbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-
-CREATE TRIGGER trigger_responsible_office_after_back_from_lab
+CREATE TRIGGER responsible_office_after_back_from_lab_trigger
     AFTER INSERT
     ON back_from_lab
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_inbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-
-CREATE TRIGGER trigger_responsible_office_after_transfer_to_office
+CREATE TRIGGER responsible_office_after_transfer_to_office_trigger
     AFTER INSERT
     ON transfer_to_office
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_transfer_office();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
-CREATE TRIGGER trigger_responsible_office_after_sale
+CREATE TRIGGER responsible_office_after_sale_trigger
     AFTER INSERT
     ON sale
     FOR EACH ROW
-EXECUTE FUNCTION update_responsible_office_after_outbound();
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 -- END TRIGGER #1
 
 -- BEGIN TRIGGER #2

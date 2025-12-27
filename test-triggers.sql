@@ -8,7 +8,7 @@ BEGIN;
 -- item.responsible_office_id should be updated to the one
 -- that sent this item as well as item.updated_at and item.is_available
 
---Set disponsibility = false && responsible office = 1
+-- Set availability to false and responsible office id to 1
 -- set up the env
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, is_available) VALUES
 (99,'testing', '2025-12-10 10:00:00+00', 5, 'South Africa', 1, FALSE);
