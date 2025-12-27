@@ -415,6 +415,6 @@ CREATE TABLE certificate
    CONSTRAINT positive_dimensions CHECK (length > 0 AND width > 0 AND depth > 0)
 );
 
-
+END;
 
 
