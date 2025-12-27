@@ -1,4 +1,4 @@
---DROP SCHEMA IF EXISTS project;
+-- DROP SCHEMA IF EXISTS project CASCADE;
 CREATE SCHEMA IF NOT EXISTS project;
 
 SET search_path TO project;
