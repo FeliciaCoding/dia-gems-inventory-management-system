@@ -1,7 +1,7 @@
 -- DROP SCHEMA IF EXISTS project CASCADE;
-CREATE SCHEMA IF NOT EXISTS project;
+CREATE SCHEMA IF NOT EXISTS diamonds_are_forever;
 
-SET search_path TO project;
+SET search_path TO diamonds_are_forever;
 
 BEGIN;
 
