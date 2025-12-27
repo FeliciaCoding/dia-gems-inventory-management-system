@@ -1,4 +1,4 @@
--- DROP SCHEMA IF EXISTS project CASCADE;
+-- DROP SCHEMA IF EXISTS diamonds_are_forever CASCADE;
 CREATE SCHEMA IF NOT EXISTS diamonds_are_forever;
 
 SET search_path TO diamonds_are_forever;
@@ -109,14 +109,13 @@ CREATE TABLE action
 -- !! 6. update_log is maybe a weak entity with action as its strong entity
 CREATE TABLE action_update_log
 (
-   log_sequence INTEGER                                NOT NULL,
+   log_time     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    action_id    INTEGER                                NOT NULL,
    employee_id  INTEGER                                NOT NULL,
    update_type  update_type_enum                       NOT NULL,
    old_value    jsonb,
    new_value    jsonb,
-   log_time     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   PRIMARY KEY (action_id, log_sequence),
+   PRIMARY KEY (action_id, log_time),
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (employee_id) REFERENCES employee (employee_id)

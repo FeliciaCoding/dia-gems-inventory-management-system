@@ -1,5 +1,4 @@
-
-SET search_path TO project;
+SET search_path TO diamonds_are_forever;
 
 CREATE VIEW complete_inventory AS
 SELECT i.lot_id,

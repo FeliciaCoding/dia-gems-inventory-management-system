@@ -1,4 +1,4 @@
-SET search_path TO project;
+SET search_path TO diamonds_are_forever;
 
 -- BEGIN TRIGGER #1
 -- purchase, memo in , returns , back form
