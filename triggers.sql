@@ -235,9 +235,12 @@ BEGIN
     -- Since `return_memo_in` inherits attributes from `action`
     -- it has FK to its parent entity
     -- In this trigger we suppose that corresponding row has been already inserted into `action`
-    -- and corresponding links to the items that are being returned have been created as well in `action_item`
-    -- Here we will simply verify that these links (rows from `action_item`) correctly point
-    -- to the items that were indeed memo in once
+    -- and corresponding links to the items that are being returned have been created in `action_item` as well
+    -- So, here we will simply verify that these links (rows in `action_item`) point correctly
+    -- to the items that were indeed memo-in once
+    -- If there is an item that violates this check exception will be raised
+    -- and hopefully transaction fails
+    -- (we suppose that all necessary inserts to action-memoin-action_item happen in one transaction)
 
     FOR mistaken_item_id IN
         WITH orig_memo_in_items_ids AS (
@@ -255,7 +258,7 @@ BEGIN
         SELECT lot_id
         FROM orig_memo_in_items_ids
     LOOP
-        RAISE WARNING 'Some of returned items were issued in original memo in (%) : %',
+        RAISE EXCEPTION 'Some of returned items were issued in original memo in (%) : %',
             new.orig_memo_action_id, mistaken_item_id;
     END LOOP;
 
