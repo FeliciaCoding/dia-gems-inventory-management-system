@@ -389,12 +389,12 @@ BEGIN
                             ON s.action_id = ai.action_id
                       WHERE ai.lot_id = item_id);
 
-
     IF item_id IS NOT NULL AND prev_sale_id IS NOT NULL THEN
         RAISE EXCEPTION 'Item (%) has been already sold in action (%)',
             item_id, prev_sale_id;
     END IF;
 
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -404,4 +404,52 @@ CREATE TRIGGER check_sold_twice_trigger
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_not_sold_twice();
 -- END TRIGGER #10
+
+
+-- BEGIN TRIGGER #10
+-- Description:
+-- update updated_at timestamp whenever records in action, item, certificate,
+-- counterpart, or employee tables are modified
+CREATE OR REPLACE FUNCTION trig_a_u_keep_updated_at_fresh()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    new.updated_at = NOW();
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER counterpart_updated_at_trigger
+    AFTER UPDATE
+    ON counterpart
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+CREATE TRIGGER employee_updated_at_trigger
+    AFTER UPDATE
+    ON employee
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+CREATE TRIGGER action_updated_at_trigger
+    AFTER UPDATE
+    ON action
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+CREATE TRIGGER item_updated_at_trigger
+    AFTER UPDATE
+    ON item
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+CREATE TRIGGER certificate_updated_at_trigger
+    AFTER UPDATE
+    ON certificate
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+-- END TRIGGER #10
+
+
 
