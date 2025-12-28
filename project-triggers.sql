@@ -320,9 +320,52 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER check_if_true_supplier_purchase_trigger
-    AFTER INSERT
+    BEFORE INSERT
     ON purchase
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_true_supplier_check();
 
 -- END TRIGGER #8
+
+
+-- BEGIN TRIGGER #9
+-- Description:
+-- Check that client-counterpart is involved in sale
+CREATE OR REPLACE FUNCTION trig_b_i_client_sale_check()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    client_id INTEGER;
+BEGIN
+    client_id := (
+        SELECT to_counterpart_id
+        FROM action
+        WHERE action_id = new.action_id
+        ORDER BY created_at DESC
+        LIMIT 1);
+
+    IF NOT EXISTS(
+        SELECT *
+        FROM counterpart_account_type cat
+            INNER JOIN account_type at
+            ON cat.type_name = at.type_name
+        WHERE cat.counterpart_id = client_id AND
+              at.category = 'Client'
+    ) THEN
+        RAISE EXCEPTION 'Trying to register sale for the counterpart (%) that is not a client', client_id;
+    END IF;
+
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_if_true_client_sale_trigger
+    BEFORE INSERT
+    ON sale
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_client_sale_check();
+
+-- END TRIGGER #9
+
+
+
