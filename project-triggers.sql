@@ -237,32 +237,18 @@ BEGIN
     -- and hopefully transaction fails
     -- (we suppose that all necessary inserts to action-memoin-action_item happen in one transaction)
 
-    IF tg_table_name IN ('return_memo_in', 'return_memo_out') THEN
-        original_action_id := new.orig_memo_action_id;
-    ELSIF tg_table_name = 'back_from_lab' THEN
-        original_action_id := new.orig_transfer_id;
-    END IF;
-
-    dynamic_sql :=
-    $sql$
-    WITH orig_action_items_ids AS (
-      SELECT lot_id
-      FROM action_item ai
-      WHERE ai.action_id = $1
-    ), returned_items_ids AS (
-      SELECT lot_id
-      FROM action_item ai
-      WHERE ai.action_id = $2
-    )
-    SELECT lot_id
-    FROM returned_items_ids
-    EXCEPT
-    SELECT lot_id
-    FROM orig_action_items_ids
-    $sql$;
-
     FOR mistaken_item_id IN
-        EXECUTE dynamic_sql USING original_action_id, new.action_id
+          WITH orig_action_items_ids AS (SELECT lot_id
+                                           FROM action_item ai
+                                          WHERE ai.action_id = new.orig_transfer_id),
+               returned_items_ids AS (SELECT lot_id
+                                        FROM action_item ai
+                                       WHERE ai.action_id = new.action_id)
+        SELECT lot_id
+          FROM returned_items_ids
+        EXCEPT
+        SELECT lot_id
+          FROM orig_action_items_ids
         LOOP
             RAISE EXCEPTION 'Some of returned items were not listed in the original action (%) : %',
                 original_action_id, mistaken_item_id;
@@ -296,7 +282,5 @@ CREATE TRIGGER check_returning_items_back_from_factory_trigger
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_return_items_check();
 
-
--- END TRIGGER #7.2
-
+-- END TRIGGER #7
 

@@ -187,12 +187,12 @@ CREATE TABLE memo_in
 CREATE TABLE return_memo_in
 (
    action_id           INTEGER PRIMARY KEY,
-   orig_memo_action_id INTEGER NOT NULL,
+   orig_transfer_id    INTEGER NOT NULL,
    return_memo_in_num  TEXT UNIQUE,
    back_date           DATE    NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
-   FOREIGN KEY (orig_memo_action_id) REFERENCES memo_in (action_id)
+   FOREIGN KEY (orig_transfer_id) REFERENCES memo_in (action_id)
       ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -212,12 +212,12 @@ CREATE TABLE memo_out
 CREATE TABLE return_memo_out
 (
    action_id           INTEGER PRIMARY KEY,
-   orig_memo_action_id INTEGER NOT NULL,
+   orig_transfer_id    INTEGER NOT NULL,
    return_memo_out_num TEXT UNIQUE,
    back_date           DATE    NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
-   FOREIGN KEY (orig_memo_action_id) REFERENCES memo_out (action_id)
+   FOREIGN KEY (orig_transfer_id) REFERENCES memo_out (action_id)
       ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
