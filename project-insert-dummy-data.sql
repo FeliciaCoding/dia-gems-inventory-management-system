@@ -484,20 +484,46 @@ INSERT INTO memo_out (action_id, memo_out_num, ship_date, expected_return_date) 
 (9, 'MO-2024-0001', '2024-02-10', '2024-02-24'),
 (10, 'MO-2024-0002', '2024-03-15', '2024-03-22');
 
+-- Purchases from jewelry wholesalers
+INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
+(11, 24, 3, 'Payment: 30 days net', 'Batch of jewelries from Global Jewelry Distributors', '2024-01-15 10:00:00+00', '2024-01-15 10:00:00+00'),
+(12, 25, 3, 'Payment: 60 days net', 'Different jewelries from European Luxury Imports', '2024-02-05 10:00:00+00', '2024-02-05 10:00:00+00');
+
+INSERT INTO purchase (action_id, purchase_num, purchase_date) VALUES
+(11, 'PO-2024-0006', '2024-01-15'),
+(12, 'PO-2024-0007', '2024-02-05');
+
+INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
+(11, 48, 1, 10500.00, 'USD'),
+(11, 49, 1, 8500.00, 'USD'),
+(11, 50, 1, 11500.00, 'USD'),
+(11, 51, 1, 3500.00, 'USD'),
+(11, 52, 1, 20100.00, 'USD'),
+(11, 53, 1, 18500.00, 'USD'),
+(12, 54, 1, 9200.00, 'USD'),
+(12, 55, 1, 15100.00, 'USD'),
+(12, 56, 1, 9500.00, 'USD'),
+(12, 57, 1, 21900.00, 'USD'),
+(12, 58, 1, 43000.00, 'USD'),
+(12, 59, 1, 4700.00, 'USD'),
+(12, 60, 1, 5800.00, 'USD');
+
 
 INSERT INTO action_update_log (log_time, action_id, employee_id, update_type, old_value, new_value) VALUES
 ('2024-01-15 10:00:00+00', 1, 1, 'Insert', NULL, NULL),
 ('2024-01-15 14:30:00+00', 1, 4, 'Update', '{"status": "pending"}', '{"status": "approved", "approver": "Emily Brown"}'),
 ('2024-01-15 10:00:00+00', 2, 1, 'Insert', NULL, NULL),
 ('2024-01-15 10:00:00+00', 3, 1, 'Insert', NULL, NULL),
-('2024-01-15 10:00:00+00', 4, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 4, 8, 'Insert', NULL, NULL),
 ('2024-01-15 10:00:00+00', 5, 1, 'Insert', NULL, NULL),
 ('2024-03-15 14:00:00+00', 6, 3, 'Insert', NULL, NULL),
 ('2024-03-15 16:00:00+00', 6, 1, 'Update', '{"payment_status": "Unpaid"}', '{"payment_status": "Paid", "payment_date": "2024-03-15"}'),
-('2024-01-15 10:00:00+00', 7, 1, 'Insert', NULL, NULL),
-('2024-01-15 10:00:00+00', 8, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 7, 3, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 8, 3, 'Insert', NULL, NULL),
 ('2024-01-15 10:00:00+00', 9, 1, 'Insert', NULL, NULL),
-('2024-01-15 10:00:00+00', 10, 1, 'Insert', NULL, NULL);
+('2024-01-15 10:00:00+00', 10, 9, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 11, 10, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 12, 1, 'Insert', NULL, NULL);
 
 -- ROLLBACK;
 COMMIT;
@@ -508,3 +534,4 @@ SELECT COUNT(*) AS total_loose_stones FROM loose_stone;
 SELECT COUNT(*) AS total_jewelry FROM jewelry;
 SELECT COUNT(*) AS total_actions FROM action;
 SELECT COUNT(*) AS total_certificates FROM certificate;
+
