@@ -69,18 +69,18 @@ memo_in (**action_id**, memo_in_num, ship_date, expected_return_date) <br>
     `action_id` references `action.action_id`
 
 
-return_memo_in (**action_id**, orig_memo_in_action_id, return_memo_in_num, back_date) <br>
+return_memo_in (**action_id**, orig_transfer_id, return_memo_in_num, back_date) <br>
     `action_id` references `action.action_id` <br>
-    `orig_memo_action_id` references `memo_in.action_id` NOT NULL
+    `orig_transfer_id` references `memo_in.action_id` NOT NULL
 
 
 memo_out(**action_id**, memo_out_num, ship_date, expected_return_date) <br>
     `action_id` references `action.action_id`
 
 
-return_memo_out(**action_id**, orig_memo_action_id, return_memo_out_num, back_date) <br>
+return_memo_out(**action_id**, orig_transfer_id, return_memo_out_num, back_date) <br>
     `action_id` references `action.action_id` <br>
-    `orig_memo_action_id` references `memo_out.action_id` NOT NULL
+    `orig_transfer_id` references `memo_out.action_id` NOT NULL
 
 
 transfer_to_office(**action_id**, transfer_num, ship_date) <br>

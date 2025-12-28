@@ -150,3 +150,43 @@ ROLLBACK;
 
 -- END TEST CASE TRIGGER #6
 
+
+-- BEGIN TEST CASE TRIGGER #6
+
+
+-- 1. Find item that was never listed in memo-in
+SELECT lot_id
+FROM memo_in mi
+    INNER JOIN action a
+    ON mi.action_id = a.action_id
+    INNER JOIN action_item ai
+    ON a.action_id = ai.action_id;
+
+-- 2. For the moment there is not any,
+-- so we would pick item with lot_id=60 for example,
+-- and try register return memo in with it
+
+BEGIN;
+-- But first we need to create some memo-in document, because there is nothing
+INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at)
+VALUES (99, 5, 3, 'Payment: Upon delivery', 'Kashmir sapphires, rare collection', '2024-06-24 14:00:00+00', '2024-06-24 14:00:00+00');
+INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code)
+VALUES (99, 59, 1, 25300.00, 'USD');
+INSERT INTO memo_in (action_id, memo_in_num, ship_date)
+VALUES (99, 'test-memo-in-num', '2024-09-24 14:00:00+00');
+
+-- Now try to return lot_id=60
+INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at)
+VALUES (98, 5, 3, 'Payment: Upon delivery', 'Kashmir sapphires, rare collection', '2024-06-24 14:00:00+00', '2024-06-24 14:00:00+00');
+INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code)
+VALUES (98, 60, 1, 25300.00, 'USD');
+INSERT INTO return_memo_in (action_id, orig_memo_action_id, return_memo_in_num, back_date)
+VALUES (98, 99, 'test-return-memo-in-num', '2024-10-24 14:00:00+00');
+
+
+ROLLBACK;
+
+
+-- END TEST CASE TRIGGER #6
+
+

@@ -216,20 +216,15 @@ EXECUTE FUNCTION trig_b_i_purchase();
 -- 2 items came back
 -- we want to register those 2 in Return Memo Out
 -- trigger should automatically verify that those 2 items were indeed put in memo out
--- and nobody tries to trick the system by putting the wrong items there
+-- and nobody tries to trick the system by returning the wrong items
 
--- NOTE:
--- We should have several triggers one per each:
--- 1) Memo In - Return Memo IN
--- 2) Memo Out - Return Memo Out
--- 3) Transfer To Lab - Back From Lab
--- 4) and for the factory we already have the trigger #2
-
-CREATE OR REPLACE FUNCTION trig_b_i_memo_in_items_check()
+CREATE OR REPLACE FUNCTION trig_b_i_return_items_check()
     RETURNS TRIGGER AS
 $$
 DECLARE
-    mistaken_item_id INTEGER;
+    mistaken_item_id   INTEGER;
+    original_action_id INTEGER;
+    dynamic_sql        TEXT;
 BEGIN
     -- NOTE:
     -- Since `return_memo_in` inherits attributes from `action`
@@ -242,37 +237,66 @@ BEGIN
     -- and hopefully transaction fails
     -- (we suppose that all necessary inserts to action-memoin-action_item happen in one transaction)
 
+    IF tg_table_name IN ('return_memo_in', 'return_memo_out') THEN
+        original_action_id := new.orig_memo_action_id;
+    ELSIF tg_table_name = 'back_from_lab' THEN
+        original_action_id := new.orig_transfer_id;
+    END IF;
+
+    dynamic_sql :=
+    $sql$
+    WITH orig_action_items_ids AS (
+      SELECT lot_id
+      FROM action_item ai
+      WHERE ai.action_id = $1
+    ), returned_items_ids AS (
+      SELECT lot_id
+      FROM action_item ai
+      WHERE ai.action_id = $2
+    )
+    SELECT lot_id
+    FROM returned_items_ids
+    EXCEPT
+    SELECT lot_id
+    FROM orig_action_items_ids
+    $sql$;
+
     FOR mistaken_item_id IN
-        WITH orig_memo_in_items_ids AS (
-            SELECT lot_id
-              FROM action_item ai
-             WHERE ai.action_id = new.orig_memo_action_id
-        ), returned_items_ids AS (
-            SELECT lot_id
-            FROM action_item ai
-            WHERE ai.action_id = new.action_id
-        )
-        SELECT lot_id
-        FROM returned_items_ids
-        EXCEPT
-        SELECT lot_id
-        FROM orig_memo_in_items_ids
-    LOOP
-        RAISE EXCEPTION 'Some of returned items were issued in original memo in (%) : %',
-            new.orig_memo_action_id, mistaken_item_id;
-    END LOOP;
+        EXECUTE dynamic_sql USING original_action_id, new.action_id
+        LOOP
+            RAISE EXCEPTION 'Some of returned items were not listed in the original action (%) : %',
+                original_action_id, mistaken_item_id;
+        END LOOP;
 
     RETURN new;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_log_seq_num_trigger
+CREATE TRIGGER check_returning_items_memo_in_trigger
     BEFORE INSERT
     ON return_memo_in
     FOR EACH ROW
-EXECUTE FUNCTION trig_b_i_memo_in_items_check();
+EXECUTE FUNCTION trig_b_i_return_items_check();
 
--- END TRIGGER #7
+CREATE TRIGGER check_returning_items_memo_out_trigger
+    BEFORE INSERT
+    ON return_memo_out
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_return_items_check();
 
+CREATE TRIGGER check_returning_items_back_from_lab_trigger
+    BEFORE INSERT
+    ON back_from_lab
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_return_items_check();
+
+CREATE TRIGGER check_returning_items_back_from_factory_trigger
+    BEFORE INSERT
+    ON back_from_factory
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_return_items_check();
+
+
+-- END TRIGGER #7.2
 
 
