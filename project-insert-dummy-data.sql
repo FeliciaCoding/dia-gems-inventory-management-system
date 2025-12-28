@@ -341,7 +341,8 @@ INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, re
 (1, 5, 1, 'Payment: 30 days net', 'White diamonds from Antwerp', '2024-01-15 10:00:00+00', '2024-01-15 10:00:00+00'),
 (2, 6, 2, 'Payment: 60 days net', 'Premium Indian diamonds', '2024-02-05 09:15:00+00', '2024-02-05 09:15:00+00'),
 (3, 9, 2, 'Payment: 45 days net', 'Thai rubies, high quality', '2024-01-18 09:30:00+00', '2024-01-18 09:30:00+00'),
-(4, 11, 2, 'Payment: 30 days net', 'Kashmir sapphires, rare collection', '2024-01-22 10:15:00+00', '2024-01-22 10:15:00+00');
+(4, 11, 2, 'Payment: 30 days net', 'Kashmir sapphires, rare collection', '2024-01-22 10:15:00+00', '2024-01-22 10:15:00+00'),
+(5, 10, 1, 'Payment: 60 days net', 'Colombian emeralds, AA grade', '2024-02-01 11:20:00+00', '2024-02-01 11:20:00+00');
 
 -- Sales to clients
 INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
@@ -362,28 +363,53 @@ INSERT INTO purchase (action_id, purchase_num, purchase_date) VALUES
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (1, 1, 1, 18500.00, 'USD'),
 (1, 2, 1, 32000.00, 'USD'),
-(1, 3, 1, 9200.00, 'USD');
+(1, 3, 1, 19200.00, 'USD'),
+(1, 6, 1, 8700.00, 'USD'),
+(1, 7, 1, 14900.00, 'USD'),
+(1, 12, 1, 17900.00, 'USD'),
+(1, 13, 1, 9000.00, 'USD'),
+(1, 14, 1, 14800.00, 'USD'),
+(1, 15, 1, 9900.00, 'USD');
 
 -- Diamonds from Mumbai
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (2, 4, 1, 52000.00, 'USD'),
-(2, 5, 1, 13500.00, 'USD');
+(2, 5, 1, 13500.00, 'USD'),
+(2, 8, 1, 28800.00, 'USD'),
+(2, 9, 1, 16500.00, 'USD'),
+(2, 10, 1, 25100.00, 'USD'),
+(2, 11, 1, 15500.00, 'USD');
 
 -- Rubies from Bangkok
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (3, 26, 1, 28500.00, 'USD'),
 (3, 27, 1, 58000.00, 'USD'),
-(3, 28, 1, 18900.00, 'USD');
+(3, 28, 1, 18900.00, 'USD'),
+(3, 29, 1, 11000.00, 'USD'),
+(3, 30, 1, 20100.00, 'USD'),
+(3, 31, 1, 10400.00, 'USD'),
+(3, 32, 1, 8100.00, 'USD'),
+(3, 33, 1, 17500.00, 'USD');
 
 -- Sapphires from Kashmir
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (4, 34, 1, 45000.00, 'USD'),
-(4, 35, 1, 28000.00, 'USD');
+(4, 35, 1, 28000.00, 'USD'),
+(4, 36, 1, 33000.00, 'USD'),
+(4, 37, 1, 58000.00, 'USD'),
+(4, 38, 1, 55000.00, 'USD'),
+(4, 39, 1, 11000.00, 'USD'),
+(4, 40, 1, 34000.00, 'USD'),
+(4, 41, 1, 20000.00, 'USD');
 
 -- Emeralds from Colombia
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (5, 42, 1, 32500.00, 'USD'),
-(5, 43, 1, 52000.00, 'USD');
+(5, 43, 1, 52000.00, 'USD'),
+(5, 44, 1, 18000.00, 'USD'),
+(5, 45, 1, 28000.00, 'USD'),
+(5, 46, 1, 24000.00, 'USD'),
+(5, 47, 1, 38000.00, 'USD');
 
 
 INSERT INTO sale (action_id, sale_num, sale_date, payment_method, payment_status) VALUES
@@ -460,10 +486,18 @@ INSERT INTO memo_out (action_id, memo_out_num, ship_date, expected_return_date) 
 
 
 INSERT INTO action_update_log (log_time, action_id, employee_id, update_type, old_value, new_value) VALUES
-('2024-01-15 10:00:00+00', 1, 1, 'Insert', NULL, '{"status": "created", "user": "John Smith"}'),
+('2024-01-15 10:00:00+00', 1, 1, 'Insert', NULL, NULL),
 ('2024-01-15 14:30:00+00', 1, 4, 'Update', '{"status": "pending"}', '{"status": "approved", "approver": "Emily Brown"}'),
-('2024-03-15 14:00:00+00', 6, 3, 'Insert', NULL, '{"status": "sale_created", "user": "Michael Williams"}'),
-('2024-03-15 16:00:00+00', 6, 1, 'Update', '{"payment_status": "Unpaid"}', '{"payment_status": "Paid", "payment_date": "2024-03-15"}');
+('2024-01-15 10:00:00+00', 2, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 3, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 4, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 5, 1, 'Insert', NULL, NULL),
+('2024-03-15 14:00:00+00', 6, 3, 'Insert', NULL, NULL),
+('2024-03-15 16:00:00+00', 6, 1, 'Update', '{"payment_status": "Unpaid"}', '{"payment_status": "Paid", "payment_date": "2024-03-15"}'),
+('2024-01-15 10:00:00+00', 7, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 8, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 9, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 10, 1, 'Insert', NULL, NULL);
 
 -- ROLLBACK;
 COMMIT;
