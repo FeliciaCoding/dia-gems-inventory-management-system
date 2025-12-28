@@ -373,12 +373,24 @@ INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code)
 
 -- Diamonds from Mumbai
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
+-- white diamonds
 (2, 4, 1, 52000.00, 'USD'),
 (2, 5, 1, 13500.00, 'USD'),
 (2, 8, 1, 28800.00, 'USD'),
 (2, 9, 1, 16500.00, 'USD'),
 (2, 10, 1, 25100.00, 'USD'),
-(2, 11, 1, 15500.00, 'USD');
+(2, 11, 1, 15500.00, 'USD'),
+-- colored diamonds
+(2, 16, 1, 56900.00, 'USD'),
+(2, 17, 1, 81100.00, 'USD'),
+(2, 18, 1, 39200.00, 'USD'),
+(2, 19, 1, 21500.00, 'USD'),
+(2, 20, 1, 13500.00, 'USD'),
+(2, 21, 1, 13200.00, 'USD'),
+(2, 22, 1, 92400.00, 'USD'),
+(2, 23, 1, 31300.00, 'USD'),
+(2, 24, 1, 42300.00, 'USD'),
+(2, 25, 1, 38900.00, 'USD');
 
 -- Rubies from Bangkok
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
