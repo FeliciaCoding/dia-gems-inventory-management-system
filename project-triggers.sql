@@ -284,3 +284,45 @@ EXECUTE FUNCTION trig_b_i_return_items_check();
 
 -- END TRIGGER #7
 
+-- BEGIN TRIGGER #8
+-- Description:
+-- On every purchase check if purchase-action is indeed
+-- involving a supplier counterpart
+CREATE OR REPLACE FUNCTION trig_b_i_true_supplier_check()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    supplier_id INTEGER;
+BEGIN
+    -- NOTE:
+    -- We suppose that purchase is the last row that is being inserted during
+    -- action-action_item-purchase suite
+
+    supplier_id := (SELECT from_counterpart_id
+                      FROM action
+                     WHERE action_id = new.action_id
+                     ORDER BY created_at DESC
+                     LIMIT 1);
+
+    IF NOT EXISTS(
+        SELECT *
+          FROM counterpart_account_type cat
+               INNER JOIN account_type at
+               ON cat.type_name = at.type_name
+         WHERE cat.counterpart_id = supplier_id AND
+             at.category = 'Supplier'
+    ) THEN
+        RAISE EXCEPTION 'Trying to register purchase from the counterpart (%) that is not a supplier', supplier_id;
+    END IF;
+
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_if_true_supplier_purchase_trigger
+    AFTER INSERT
+    ON purchase
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_true_supplier_check();
+
+-- END TRIGGER #8
