@@ -38,7 +38,7 @@ SELECT i.lot_id,
                          WHERE ai.lot_id = i.lot_id
                            AND NOT EXISTS (SELECT 1
                                              FROM return_memo_out rmo
-                                            WHERE rmo.orig_memo_action_id = mo.action_id)) THEN 'On memo'
+                                            WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
            WHEN EXISTS (SELECT 1
                           FROM action_item ai
                                JOIN transfer_to_factory ttf
@@ -121,7 +121,7 @@ SELECT i.lot_id,
                          WHERE ai.lot_id = i.lot_id
                            AND NOT EXISTS (SELECT 1
                                              FROM return_memo_out rmo
-                                            WHERE rmo.orig_memo_action_id = mo.action_id)) THEN 'On memo'
+                                            WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
            WHEN EXISTS (SELECT 1
                           FROM action_item ai
                                JOIN transfer_to_factory ttf
@@ -211,7 +211,7 @@ SELECT i.lot_id,
                          WHERE ai.lot_id = i.lot_id
                            AND NOT EXISTS (SELECT 1
                                              FROM return_memo_out rmo
-                                            WHERE rmo.orig_memo_action_id = mo.action_id)) THEN 'On memo'
+                                            WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
            WHEN EXISTS (SELECT 1
                           FROM action_item ai
                                JOIN transfer_to_factory ttf
@@ -300,7 +300,7 @@ SELECT i.lot_id,
                          WHERE ai.lot_id = i.lot_id
                            AND NOT EXISTS (SELECT 1
                                              FROM return_memo_out rmo
-                                            WHERE rmo.orig_memo_action_id = mo.action_id)) THEN 'On memo'
+                                            WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
            WHEN EXISTS (SELECT 1
                           FROM action_item ai
                                JOIN transfer_to_factory ttf
@@ -357,34 +357,38 @@ SELECT i.lot_id,
 --  Inventory by Type
 --  -> Count how many white diamonds, colored diamonds, gemstones, and jewelry pieces we have
 CREATE VIEW inventory_by_type AS
-SELECT
-
-    CASE
-        WHEN wd.lot_id IS NOT NULL THEN 'White Diamond'
-        WHEN cd.lot_id IS NOT NULL THEN 'Colored Diamond'
-        WHEN cgs.lot_id IS NOT NULL THEN 'Colored Gemstone'
-        WHEN j.lot_id IS NOT NULL THEN 'Jewelry'
-        ELSE 'Unknown'
-    END AS item_type,
+SELECT CASE
+           WHEN wd.lot_id IS NOT NULL THEN 'White Diamond'
+           WHEN cd.lot_id IS NOT NULL THEN 'Colored Diamond'
+           WHEN cgs.lot_id IS NOT NULL THEN 'Colored Gemstone'
+           WHEN j.lot_id IS NOT NULL THEN 'Jewelry'
+           ELSE 'Unknown'
+           END                                                 AS item_type,
 
 
-    COUNT(*) AS total_count,
-    SUM(CASE WHEN i.is_available = TRUE THEN 1 ELSE 0 END) AS available_count,
-    SUM(CASE WHEN i.is_available = FALSE THEN 1 ELSE 0 END) AS unavailable_count,
+       COUNT(*)                                                AS total_count,
+       SUM(CASE WHEN i.is_available = TRUE THEN 1 ELSE 0 END)  AS available_count,
+       SUM(CASE WHEN i.is_available = FALSE THEN 1 ELSE 0 END) AS unavailable_count,
 
-    -- for loose stones only
-    ROUND(SUM(COALESCE(ls.weight_ct, 0))::NUMERIC, 2) AS total_weight_ct,
-    ROUND(AVG(COALESCE(ls.weight_ct, 0))::NUMERIC, 2) AS avg_weight_ct
+       -- for loose stones only
+       ROUND(SUM(COALESCE(ls.weight_ct, 0))::NUMERIC,
+             2)                                                AS total_weight_ct,
+       ROUND(AVG(COALESCE(ls.weight_ct, 0))::NUMERIC, 2)       AS avg_weight_ct
 
-FROM item i
-LEFT JOIN loose_stone ls ON i.lot_id = ls.lot_id
-LEFT JOIN white_diamond wd ON ls.lot_id = wd.lot_id
-LEFT JOIN colored_diamond cd ON ls.lot_id = cd.lot_id
-LEFT JOIN colored_gem_stone cgs ON ls.lot_id = cgs.lot_id
-LEFT JOIN jewelry j ON i.lot_id = j.lot_id
+  FROM item i
+       LEFT JOIN loose_stone ls
+       ON i.lot_id = ls.lot_id
+       LEFT JOIN white_diamond wd
+       ON ls.lot_id = wd.lot_id
+       LEFT JOIN colored_diamond cd
+       ON ls.lot_id = cd.lot_id
+       LEFT JOIN colored_gem_stone cgs
+       ON ls.lot_id = cgs.lot_id
+       LEFT JOIN jewelry j
+       ON i.lot_id = j.lot_id
 
-GROUP BY item_type
-ORDER BY total_count DESC;
+ GROUP BY item_type
+ ORDER BY total_count DESC;
 
 --test
 SELECT * FROM complete_inventory_jewelry;

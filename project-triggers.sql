@@ -216,60 +216,240 @@ EXECUTE FUNCTION trig_b_i_purchase();
 -- 2 items came back
 -- we want to register those 2 in Return Memo Out
 -- trigger should automatically verify that those 2 items were indeed put in memo out
--- and nobody tries to trick the system by putting the wrong items there
+-- and nobody tries to trick the system by returning the wrong items
 
--- NOTE:
--- We should have several triggers one per each:
--- 1) Memo In - Return Memo IN
--- 2) Memo Out - Return Memo Out
--- 3) Transfer To Lab - Back From Lab
--- 4) and for the factory we already have the trigger #2
-
-CREATE OR REPLACE FUNCTION trig_b_i_memo_in_items_check()
+CREATE OR REPLACE FUNCTION trig_b_i_return_items_check()
     RETURNS TRIGGER AS
 $$
 DECLARE
-    mistaken_item_id INTEGER;
+    mistaken_item_id   INTEGER;
+    original_action_id INTEGER;
+    dynamic_sql        TEXT;
 BEGIN
     -- NOTE:
     -- Since `return_memo_in` inherits attributes from `action`
     -- it has FK to its parent entity
     -- In this trigger we suppose that corresponding row has been already inserted into `action`
-    -- and corresponding links to the items that are being returned have been created as well in `action_item`
-    -- Here we will simply verify that these links (rows from `action_item`) correctly point
-    -- to the items that were indeed memo in once
+    -- and corresponding links to the items that are being returned have been created in `action_item` as well
+    -- So, here we will simply verify that these links (rows in `action_item`) point correctly
+    -- to the items that were indeed memo-in once
+    -- If there is an item that violates this check exception will be raised
+    -- and hopefully transaction fails
+    -- (we suppose that all necessary inserts to action-memoin-action_item happen in one transaction)
 
     FOR mistaken_item_id IN
-        WITH orig_memo_in_items_ids AS (
-            SELECT lot_id
-              FROM action_item ai
-             WHERE ai.action_id = new.orig_memo_action_id
-        ), returned_items_ids AS (
-            SELECT lot_id
-            FROM action_item ai
-            WHERE ai.action_id = new.action_id
-        )
+          WITH orig_action_items_ids AS (SELECT lot_id
+                                           FROM action_item ai
+                                          WHERE ai.action_id = new.orig_transfer_id),
+               returned_items_ids AS (SELECT lot_id
+                                        FROM action_item ai
+                                       WHERE ai.action_id = new.action_id)
         SELECT lot_id
-        FROM returned_items_ids
+          FROM returned_items_ids
         EXCEPT
         SELECT lot_id
-        FROM orig_memo_in_items_ids
-    LOOP
-        RAISE WARNING 'Some of returned items were issued in original memo in (%) : %',
-            new.orig_memo_action_id, mistaken_item_id;
-    END LOOP;
+          FROM orig_action_items_ids
+        LOOP
+            RAISE EXCEPTION 'Some of returned items were not listed in the original action (%) : %',
+                original_action_id, mistaken_item_id;
+        END LOOP;
 
     RETURN new;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_log_seq_num_trigger
+CREATE TRIGGER check_returning_items_memo_in_trigger
     BEFORE INSERT
     ON return_memo_in
     FOR EACH ROW
-EXECUTE FUNCTION trig_b_i_memo_in_items_check();
+EXECUTE FUNCTION trig_b_i_return_items_check();
+
+CREATE TRIGGER check_returning_items_memo_out_trigger
+    BEFORE INSERT
+    ON return_memo_out
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_return_items_check();
+
+CREATE TRIGGER check_returning_items_back_from_lab_trigger
+    BEFORE INSERT
+    ON back_from_lab
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_return_items_check();
+
+CREATE TRIGGER check_returning_items_back_from_factory_trigger
+    BEFORE INSERT
+    ON back_from_factory
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_return_items_check();
 
 -- END TRIGGER #7
+
+-- BEGIN TRIGGER #8
+-- Description:
+-- On every purchase check if purchase-action is indeed
+-- involving a supplier counterpart
+CREATE OR REPLACE FUNCTION trig_b_i_true_supplier_check()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    supplier_id INTEGER;
+BEGIN
+    -- NOTE:
+    -- We suppose that purchase is the last row that is being inserted during
+    -- action-action_item-purchase suite
+
+    supplier_id := (SELECT from_counterpart_id
+                      FROM action
+                     WHERE action_id = new.action_id
+                     ORDER BY created_at DESC
+                     LIMIT 1);
+
+    IF NOT EXISTS(
+        SELECT *
+          FROM counterpart_account_type cat
+               INNER JOIN account_type at
+               ON cat.type_name = at.type_name
+         WHERE cat.counterpart_id = supplier_id AND
+             at.category = 'Supplier'
+    ) THEN
+        RAISE EXCEPTION 'Trying to register purchase from the counterpart (%) that is not a supplier', supplier_id;
+    END IF;
+
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_if_true_supplier_purchase_trigger
+    BEFORE INSERT
+    ON purchase
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_true_supplier_check();
+
+-- END TRIGGER #8
+
+
+-- BEGIN TRIGGER #9
+-- Description:
+-- Check that client-counterpart is involved in sale
+CREATE OR REPLACE FUNCTION trig_b_i_client_sale_check()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    client_id INTEGER;
+BEGIN
+    client_id := (
+        SELECT to_counterpart_id
+        FROM action
+        WHERE action_id = new.action_id
+        ORDER BY created_at DESC
+        LIMIT 1);
+
+    IF NOT EXISTS(
+        SELECT *
+        FROM counterpart_account_type cat
+            INNER JOIN account_type at
+            ON cat.type_name = at.type_name
+        WHERE cat.counterpart_id = client_id AND
+              at.category = 'Client'
+    ) THEN
+        RAISE EXCEPTION 'Trying to register sale for the counterpart (%) that is not a client', client_id;
+    END IF;
+
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_if_true_client_sale_trigger
+    BEFORE INSERT
+    ON sale
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_client_sale_check();
+
+-- END TRIGGER #9
+
+-- BEGIN TRIGGER #10
+-- Description: verify that item has not been already sold
+-- before registering a sale-action
+CREATE OR REPLACE FUNCTION trig_b_i_not_sold_twice()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    item_id INTEGER;
+    prev_sale_id INTEGER;
+BEGIN
+    item_id := (SELECT ai.lot_id
+                  FROM action_item ai
+                 WHERE ai.action_id = new.action_id);
+
+    prev_sale_id := (SELECT s.action_id
+                       FROM sale s
+                            INNER JOIN action a
+                            ON s.action_id = a.action_id
+                            INNER JOIN action_item ai
+                            ON s.action_id = ai.action_id
+                      WHERE ai.lot_id = item_id);
+
+    IF item_id IS NOT NULL AND prev_sale_id IS NOT NULL THEN
+        RAISE EXCEPTION 'Item (%) has been already sold in action (%)',
+            item_id, prev_sale_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_sold_twice_trigger
+    BEFORE INSERT
+    ON sale
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_not_sold_twice();
+-- END TRIGGER #10
+
+
+-- BEGIN TRIGGER #10
+-- Description:
+-- update updated_at timestamp whenever records in action, item, certificate,
+-- counterpart, or employee tables are modified
+CREATE OR REPLACE FUNCTION trig_a_u_keep_updated_at_fresh()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    new.updated_at = NOW();
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER counterpart_updated_at_trigger
+    AFTER UPDATE
+    ON counterpart
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+CREATE TRIGGER employee_updated_at_trigger
+    AFTER UPDATE
+    ON employee
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+CREATE TRIGGER action_updated_at_trigger
+    AFTER UPDATE
+    ON action
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+CREATE TRIGGER item_updated_at_trigger
+    AFTER UPDATE
+    ON item
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+CREATE TRIGGER certificate_updated_at_trigger
+    AFTER UPDATE
+    ON certificate
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
+
+-- END TRIGGER #10
 
 
 
