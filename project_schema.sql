@@ -48,7 +48,8 @@ CREATE TABLE counterpart
    email          TEXT UNIQUE,
    is_active      BOOLEAN                                NOT NULL DEFAULT TRUE,
    created_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   updated_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+   updated_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   CONSTRAINT valid_update_time CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE account_type
