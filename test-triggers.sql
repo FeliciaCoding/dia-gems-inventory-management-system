@@ -180,7 +180,7 @@ INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, re
 VALUES (98, 5, 3, 'Payment: Upon delivery', 'Kashmir sapphires, rare collection', '2024-06-24 14:00:00+00', '2024-06-24 14:00:00+00');
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code)
 VALUES (98, 60, 1, 25300.00, 'USD');
-INSERT INTO return_memo_in (action_id, orig_memo_action_id, return_memo_in_num, back_date)
+INSERT INTO return_memo_in (action_id, orig_transfer_id, return_memo_in_num, back_date)
 VALUES (98, 99, 'test-return-memo-in-num', '2024-10-24 14:00:00+00');
 
 
