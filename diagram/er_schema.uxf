@@ -58,7 +58,7 @@ after_depth
 weight_loss_ct
 note
 
-style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>750</x><y>300</y><w>100</w><h>130</h></coordinates><panel_attributes>lt=-
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>750</x><y>300</y><w>90</w><h>130</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
 arrived to ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1790</x><y>330</y><w>140</w><h>180</h></coordinates><panel_attributes>Item
@@ -203,8 +203,9 @@ bg=white
 style=wordwrap
 </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>310</x><y>400</y><w>80</w><h>60</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;60;40</additional_attributes></element><element><id>Relation</id><coordinates><x>870</x><y>460</y><w>940</w><h>40</h></coordinates><panel_attributes>lt=-
 m1=0..*
-m2=0..*</panel_attributes><additional_attributes>920;10;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1960</x><y>170</y><w>190</w><h>140</h></coordinates><panel_attributes>1) responsible_office_id is precomputed from appropiet action
+m2=0..*</panel_attributes><additional_attributes>920;10;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1960</x><y>160</y><w>190</w><h>150</h></coordinates><panel_attributes>1) responsible_office_id is precomputed from appropiet action
 2) supplier_id should be an id of the same counterpart from Purchase who sold an item to us
+3) jewerly does not have a dedicated certificate
 
 bg=white
 style=wordwrap
@@ -243,7 +244,7 @@ m1=0..*
 m2=1..1 lab
 &lt; is issued by</panel_attributes><additional_attributes>520;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1560</x><y>360</y><w>250</w><h>50</h></coordinates><panel_attributes>lt=-
 m1=1..1
-m2=1..1
+m2=0..1
 represents &gt;</panel_attributes><additional_attributes>230;20;10;20</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1120</x><y>0</y><w>190</w><h>80</h></coordinates><panel_attributes>Category of account type could be: Supplier, Client, Office, Lab, Manufacturer
 
 bg=white
