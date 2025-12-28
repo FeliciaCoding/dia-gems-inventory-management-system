@@ -59,9 +59,7 @@ SELECT i.lot_id,
            END    AS location_status,
 
        i.created_at,
-       i.updated_at,
-       c.certificate_num,
-       lab.name   AS certification_lab
+       i.updated_at
 
   FROM item i
        JOIN jewelry j
@@ -72,12 +70,6 @@ SELECT i.lot_id,
 
        LEFT JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
-
-       LEFT JOIN certificate c
-       ON i.lot_id = c.lot_id
-
-       LEFT JOIN counterpart lab
-       ON c.lab_id = lab.counterpart_id
 
  ORDER BY i.lot_id DESC;
 -- END VIEW
@@ -356,7 +348,7 @@ SELECT i.lot_id,
 
 --  Inventory by Type
 --  -> Count how many white diamonds, colored diamonds, gemstones, and jewelry pieces we have
-CREATE VIEW inventory_by_type AS
+CREATE OR REPLACE VIEW inventory_by_type AS
 SELECT CASE
            WHEN wd.lot_id IS NOT NULL THEN 'White Diamond'
            WHEN cd.lot_id IS NOT NULL THEN 'Colored Diamond'

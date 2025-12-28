@@ -338,7 +338,7 @@ INSERT INTO jewelry (lot_id, jewelry_type, gross_weight_gr, metal_type, metal_we
 
 INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
 -- Purchases from diamond suppliers
-(1, 5, 1, 'Payment: 30 days net', 'Batch of white diamonds from Antwerp', '2024-01-15 10:00:00+00', '2024-01-15 10:00:00+00'),
+(1, 5, 1, 'Payment: 30 days net', 'White diamonds from Antwerp', '2024-01-15 10:00:00+00', '2024-01-15 10:00:00+00'),
 (2, 6, 2, 'Payment: 60 days net', 'Premium Indian diamonds', '2024-02-05 09:15:00+00', '2024-02-05 09:15:00+00'),
 (3, 9, 2, 'Payment: 45 days net', 'Thai rubies, high quality', '2024-01-18 09:30:00+00', '2024-01-18 09:30:00+00'),
 (4, 11, 2, 'Payment: 30 days net', 'Kashmir sapphires, rare collection', '2024-01-22 10:15:00+00', '2024-01-22 10:15:00+00'),
@@ -363,28 +363,65 @@ INSERT INTO purchase (action_id, purchase_num, purchase_date) VALUES
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (1, 1, 1, 18500.00, 'USD'),
 (1, 2, 1, 32000.00, 'USD'),
-(1, 3, 1, 9200.00, 'USD');
+(1, 3, 1, 19200.00, 'USD'),
+(1, 6, 1, 8700.00, 'USD'),
+(1, 7, 1, 14900.00, 'USD'),
+(1, 12, 1, 17900.00, 'USD'),
+(1, 13, 1, 9000.00, 'USD'),
+(1, 14, 1, 14800.00, 'USD'),
+(1, 15, 1, 9900.00, 'USD');
 
 -- Diamonds from Mumbai
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
+-- white diamonds
 (2, 4, 1, 52000.00, 'USD'),
-(2, 5, 1, 13500.00, 'USD');
+(2, 5, 1, 13500.00, 'USD'),
+(2, 8, 1, 28800.00, 'USD'),
+(2, 9, 1, 16500.00, 'USD'),
+(2, 10, 1, 25100.00, 'USD'),
+(2, 11, 1, 15500.00, 'USD'),
+-- colored diamonds
+(2, 16, 1, 56900.00, 'USD'),
+(2, 17, 1, 81100.00, 'USD'),
+(2, 18, 1, 39200.00, 'USD'),
+(2, 19, 1, 21500.00, 'USD'),
+(2, 20, 1, 13500.00, 'USD'),
+(2, 21, 1, 13200.00, 'USD'),
+(2, 22, 1, 92400.00, 'USD'),
+(2, 23, 1, 31300.00, 'USD'),
+(2, 24, 1, 42300.00, 'USD'),
+(2, 25, 1, 38900.00, 'USD');
 
 -- Rubies from Bangkok
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (3, 26, 1, 28500.00, 'USD'),
 (3, 27, 1, 58000.00, 'USD'),
-(3, 28, 1, 18900.00, 'USD');
+(3, 28, 1, 18900.00, 'USD'),
+(3, 29, 1, 11000.00, 'USD'),
+(3, 30, 1, 20100.00, 'USD'),
+(3, 31, 1, 10400.00, 'USD'),
+(3, 32, 1, 8100.00, 'USD'),
+(3, 33, 1, 17500.00, 'USD');
 
 -- Sapphires from Kashmir
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (4, 34, 1, 45000.00, 'USD'),
-(4, 35, 1, 28000.00, 'USD');
+(4, 35, 1, 28000.00, 'USD'),
+(4, 36, 1, 33000.00, 'USD'),
+(4, 37, 1, 58000.00, 'USD'),
+(4, 38, 1, 55000.00, 'USD'),
+(4, 39, 1, 11000.00, 'USD'),
+(4, 40, 1, 34000.00, 'USD'),
+(4, 41, 1, 20000.00, 'USD');
 
 -- Emeralds from Colombia
 INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
 (5, 42, 1, 32500.00, 'USD'),
-(5, 43, 1, 52000.00, 'USD');
+(5, 43, 1, 52000.00, 'USD'),
+(5, 44, 1, 18000.00, 'USD'),
+(5, 45, 1, 28000.00, 'USD'),
+(5, 46, 1, 24000.00, 'USD'),
+(5, 47, 1, 38000.00, 'USD');
 
 
 INSERT INTO sale (action_id, sale_num, sale_date, payment_method, payment_status) VALUES
@@ -397,28 +434,59 @@ INSERT INTO certificate (lot_id, lab_id, certificate_num, issue_date, shape, wei
 -- White Diamond Certificates (GIA)
 (1, 17, 'GIA-2145678901', '2024-01-20 10:00:00+00', 'Brilliant Cut', 1.52, 7.45, 7.42, 4.58, 'VS1', 'Diamond'),
 (2, 17, 'GIA-2145678902', '2024-01-25 14:30:00+00', 'Brilliant Cut', 2.03, 8.15, 8.12, 5.02, 'VVS2', 'Diamond'),
-(4, 17, 'GIA-2145678903', '2024-02-15 11:00:00+00', 'Emerald Cut', 3.21, 10.12, 8.05, 5.67, 'VVS1', 'Diamond'),
-(9, 17, 'GIA-2145678904', '2024-04-05 15:20:00+00', 'Brilliant Cut', 4.15, 10.58, 10.55, 6.52, 'FL', 'Diamond'),
-(14, 17, 'GIA-2145678905', '2024-05-28 09:45:00+00', 'Oval', 3.42, 11.25, 8.45, 5.78, 'VVS2', 'Diamond'),
+(3, 17, 'GIA-2145678903', '2024-01-25 14:30:00+00', 'Princess',      0.75, 5.32, 5.29, 3.88, 'VS2', 'Diamond'),
+(4, 17, 'GIA-2145678904', '2024-02-15 11:00:00+00', 'Emerald Cut',   3.21, 10.12, 8.05, 5.67, 'VVS1', 'Diamond'),
+(5, 17, 'GIA-2145678905', '2024-02-15 11:00:00+00', 'Brilliant Cut', 1.08, 6.58, 6.55, 4.05, 'VS1', 'Diamond'),
+(6, 17, 'GIA-2145678906', '2024-02-15 11:00:00+00', 'Oval',          2.54, 9.85, 7.32, 4.95, 'IF', 'Diamond'),
+(7, 17, 'GIA-2145678907', '2024-02-15 11:00:00+00', 'Pear Shape',    0.92, 7.12, 5.48, 3.45, 'VS2', 'Diamond'),
+(8, 17, 'GIA-2145678908', '2024-02-15 11:00:00+00', 'Brilliant Cut', 1.75, 7.85, 7.82, 4.82, 'VVS2', 'Diamond'),
+(9, 17, 'GIA-2145678909', '2024-04-05 15:20:00+00', 'Brilliant Cut', 4.15, 10.58, 10.55, 6.52, 'FL', 'Diamond'),
+(10, 17, 'GIA-2145678910', '2024-04-05 15:20:00+00', 'Princess',     1.32, 6.25, 6.22, 4.32, 'VS1', 'Diamond'),
+(11, 17, 'GIA-2145678911', '2024-04-05 15:20:00+00', 'Brilliant Cut',0.58, 5.28, 5.25, 3.25, 'VS2', 'Diamond'),
+(12, 17, 'GIA-2145678912', '2024-04-05 15:20:00+00', 'Radiant Cut',  2.88, 8.95, 8.12, 5.35, 'VVS1', 'Diamond'),
+(13, 17, 'GIA-2145678913', '2024-04-05 15:20:00+00', 'Brilliant Cut',1.95, 8.05, 8.02, 4.95, 'VS1', 'Diamond'),
+(14, 17, 'GIA-2145678914', '2024-05-28 09:45:00+00', 'Oval',         3.42, 11.25, 8.45, 5.78, 'VVS2', 'Diamond'),
+(15, 17, 'GIA-2145678915', '2024-05-28 09:45:00+00', 'Heart Shape',  1.18, 7.05, 6.98, 4.15, 'VS2', 'Diamond'),
 
 -- Colored Diamond Certificates (IGI)
-(17, 18, 'IGI-456789123', '2024-02-18 13:00:00+00', 'Radiant Cut', 2.34, 8.45, 7.58, 4.92, 'VVS2', 'Diamond'),
-(20, 18, 'IGI-456789124', '2024-04-22 10:30:00+00', 'Brilliant Cut', 3.15, 9.85, 9.82, 6.08, 'VVS1', 'Diamond'),
+(16, 18, 'IGI-456789116', '2024-02-18 13:00:00+00', 'Brilliant Cut', 1.85, 7.92, 7.89, 4.88, 'VS1', 'Diamond'),
+(17, 18, 'IGI-456789117', '2024-02-18 13:00:00+00', 'Radiant Cut', 2.34, 8.45, 7.58, 4.92, 'VVS2', 'Diamond'),
+(18, 18, 'IGI-456789118', '2024-02-18 13:00:00+00', 'Princess', 0.88, 5.68, 5.65, 3.95,'VS2', 'Diamond'),
+(19, 18, 'IGI-456789119', '2024-02-18 13:00:00+00', 'Oval', 1.52, 8.15, 6.32, 4.25, 'VS1', 'Diamond'),
+(20, 18, 'IGI-456789120', '2024-02-18 13:00:00+00', 'Brilliant Cut', 3.15, 9.85, 9.82, 6.08,'VVS1', 'Diamond'),
+(21, 18, 'IGI-456789121', '2024-02-18 13:00:00+00', 'Pear Shape', 1.05, 7.45, 5.82, 3.68, 'VS2', 'Diamond'),
+(22, 18, 'IGI-456789122', '2024-02-18 13:00:00+00', 'Brilliant Cut', 2.08, 8.25, 8.22, 5.08, 'VS1', 'Diamond'),
+(23, 18, 'IGI-456789123', '2024-02-18 13:00:00+00', 'Radiant Cut', 1.42, 7.35, 6.82, 4.45, 'VVS2', 'Diamond'),
+(24, 18, 'IGI-456789124', '2024-02-18 13:00:00+00', 'Oval', 2.75, 9.45, 7.25, 4.88, 'VS1', 'Diamond'),
+(25, 18, 'IGI-456789125', '2024-02-18 13:00:00+00', 'Brilliant Cut', 1.68, 7.75, 7.72, 4.78, 'VS2', 'Diamond'),
 
 -- Ruby Certificates (HRD)
-(27, 19, 'HRD-789123456', '2024-02-12 14:00:00+00', 'Oval', 3.82, 10.25, 8.15, 5.35, NULL, 'Ruby'),
-(29, 19, 'HRD-789123457', '2024-04-10 11:30:00+00', 'Oval', 5.12, 11.85, 9.25, 6.15, NULL, 'Ruby'),
-(31, 19, 'HRD-789123458', '2024-05-18 15:45:00+00', 'Oval', 4.25, 10.95, 8.85, 5.75, NULL, 'Ruby'),
+(26, 19, 'HRD-789123426', '2024-02-12 14:00:00+00', 'Oval', 2.45, 8.85, 6.75, 4.52, NULL, 'Ruby'),
+(27, 19, 'HRD-789123427', '2024-02-12 14:00:00+00', 'Oval', 3.82, 10.25, 8.15, 5.35, NULL, 'Ruby'),
+(28, 19, 'HRD-789123428', '2024-02-12 14:00:00+00', 'Oval', 1.68, 7.95, 6.05, 4.08, NULL, 'Ruby'),
+(29, 19, 'HRD-789123429', '2024-04-10 11:30:00+00', 'Oval', 5.12, 11.85, 9.25, 6.15, NULL, 'Ruby'),
+(30, 19, 'HRD-789123430', '2024-02-12 14:00:00+00', 'Oval', 2.95, 9.35, 7.45, 4.88, NULL, 'Ruby'),
+(31, 19, 'HRD-789123431', '2024-05-18 15:45:00+00', 'Oval', 4.25, 10.95, 8.85, 5.75, NULL, 'Ruby'),
+(32, 19, 'HRD-789123432', '2024-02-12 14:00:00+00', 'Oval', 1.92, 8.15, 6.35, 4.25, NULL, 'Ruby'),
+(33, 19, 'HRD-789123433', '2024-02-12 14:00:00+00', 'Oval', 3.45, 10.05, 7.95, 5.25, NULL, 'Ruby'),
 
 -- Sapphire Certificates (GIA)
-(34, 17, 'GIA-3156789012', '2024-01-28 12:00:00+00', 'Oval', 3.15, 9.75, 7.85, 5.12, NULL, 'Sapphire'),
-(36, 17, 'GIA-3156789013', '2024-03-12 16:20:00+00', 'Oval', 4.52, 11.15, 9.05, 5.98, NULL, 'Sapphire'),
-(38, 17, 'GIA-3156789014', '2024-05-15 10:50:00+00', 'Oval', 5.35, 12.25, 9.85, 6.48, NULL, 'Sapphire'),
+(34, 17, 'GIA-3156789034', '2024-01-28 12:00:00+00', 'Oval', 3.15, 9.75, 7.85, 5.12, NULL, 'Sapphire'),
+(35, 17, 'GIA-3156789035', '2024-01-28 12:00:00+00', 'Oval', 2.28, 8.65, 6.95, 4.55, NULL, 'Sapphire'),
+(36, 17, 'GIA-3156789036', '2024-03-12 16:20:00+00', 'Oval', 4.52, 11.15, 9.05, 5.98, NULL, 'Sapphire'),
+(37, 17, 'GIA-3156789037', '2024-01-28 12:00:00+00', 'Oval', 1.85, 8.05, 6.45, 4.22, NULL, 'Sapphire'),
+(38, 17, 'GIA-3156789038', '2024-05-15 10:50:00+00', 'Oval', 5.35, 12.25, 9.85, 6.48, NULL, 'Sapphire'),
+(39, 17, 'GIA-3156789039', '2024-01-28 12:00:00+00', 'Oval', 2.75, 9.15, 7.35, 4.82, NULL, 'Sapphire'),
+(40, 17, 'GIA-3156789040', '2024-01-28 12:00:00+00', 'Oval', 3.88, 10.45, 8.45, 5.58, NULL, 'Sapphire'),
+(41, 17, 'GIA-3156789041', '2024-01-28 12:00:00+00', 'Oval', 2.05, 8.35, 6.65, 4.38, NULL, 'Sapphire'),
 
 -- Emerald Certificates (AGS)
-(43, 20, 'AGS-123456789', '2024-03-20 13:30:00+00', 'Emerald Cut', 3.95, 10.65, 8.25, 5.85, NULL, 'Emerald'),
-(45, 20, 'AGS-123456790', '2024-05-08 09:15:00+00', 'Emerald Cut', 4.58, 11.45, 8.95, 6.28, NULL, 'Emerald');
-
+(42, 20, 'AGS-123456742', '2024-03-20 13:30:00+00', 'Emerald Cut', 2.85, 9.25, 7.15, 5.05, NULL, 'Emerald'),
+(43, 20, 'AGS-123456743', '2024-03-20 13:30:00+00', 'Emerald Cut', 3.95, 10.65, 8.25, 5.85, NULL, 'Emerald'),
+(44, 20, 'AGS-123456744', '2024-03-20 13:30:00+00', 'Emerald Cut', 1.75, 7.85, 6.05, 4.35, NULL, 'Emerald'),
+(45, 20, 'AGS-123456745', '2024-05-08 09:15:00+00', 'Emerald Cut', 4.58, 11.45, 8.95, 6.28, NULL, 'Emerald'),
+(46, 20, 'AGS-123456746', '2024-03-20 13:30:00+00', 'Emerald Cut', 2.35, 8.75, 6.75, 4.75, NULL, 'Emerald'),
+(47, 20, 'AGS-123456747', '2024-03-20 13:30:00+00', 'Emerald Cut', 3.28, 9.95, 7.75, 5.48, NULL, 'Emerald');
 
 INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
 (9, 1, 13, 'Return within 14 days', 'Client review - engagement ring selection', '2024-02-10 10:00:00+00', '2024-02-10 10:00:00+00'),
@@ -428,12 +496,46 @@ INSERT INTO memo_out (action_id, memo_out_num, ship_date, expected_return_date) 
 (9, 'MO-2024-0001', '2024-02-10', '2024-02-24'),
 (10, 'MO-2024-0002', '2024-03-15', '2024-03-22');
 
+-- Purchases from jewelry wholesalers
+INSERT INTO action (action_id, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) VALUES
+(11, 24, 3, 'Payment: 30 days net', 'Batch of jewelries from Global Jewelry Distributors', '2024-01-15 10:00:00+00', '2024-01-15 10:00:00+00'),
+(12, 25, 3, 'Payment: 60 days net', 'Different jewelries from European Luxury Imports', '2024-02-05 10:00:00+00', '2024-02-05 10:00:00+00');
+
+INSERT INTO purchase (action_id, purchase_num, purchase_date) VALUES
+(11, 'PO-2024-0006', '2024-01-15'),
+(12, 'PO-2024-0007', '2024-02-05');
+
+INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
+(11, 48, 1, 10500.00, 'USD'),
+(11, 49, 1, 8500.00, 'USD'),
+(11, 50, 1, 11500.00, 'USD'),
+(11, 51, 1, 3500.00, 'USD'),
+(11, 52, 1, 20100.00, 'USD'),
+(11, 53, 1, 18500.00, 'USD'),
+(12, 54, 1, 9200.00, 'USD'),
+(12, 55, 1, 15100.00, 'USD'),
+(12, 56, 1, 9500.00, 'USD'),
+(12, 57, 1, 21900.00, 'USD'),
+(12, 58, 1, 43000.00, 'USD'),
+(12, 59, 1, 4700.00, 'USD'),
+(12, 60, 1, 5800.00, 'USD');
+
 
 INSERT INTO action_update_log (log_time, action_id, employee_id, update_type, old_value, new_value) VALUES
-('2024-01-15 10:00:00+00', 1, 1, 'Insert', NULL, '{"status": "created", "user": "John Smith"}'),
+('2024-01-15 10:00:00+00', 1, 1, 'Insert', NULL, NULL),
 ('2024-01-15 14:30:00+00', 1, 4, 'Update', '{"status": "pending"}', '{"status": "approved", "approver": "Emily Brown"}'),
-('2024-03-15 14:00:00+00', 6, 3, 'Insert', NULL, '{"status": "sale_created", "user": "Michael Williams"}'),
-('2024-03-15 16:00:00+00', 6, 1, 'Update', '{"payment_status": "Unpaid"}', '{"payment_status": "Paid", "payment_date": "2024-03-15"}');
+('2024-01-15 10:00:00+00', 2, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 3, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 4, 8, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 5, 1, 'Insert', NULL, NULL),
+('2024-03-15 14:00:00+00', 6, 3, 'Insert', NULL, NULL),
+('2024-03-15 16:00:00+00', 6, 1, 'Update', '{"payment_status": "Unpaid"}', '{"payment_status": "Paid", "payment_date": "2024-03-15"}'),
+('2024-01-15 10:00:00+00', 7, 3, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 8, 3, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 9, 1, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 10, 9, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 11, 10, 'Insert', NULL, NULL),
+('2024-01-15 10:00:00+00', 12, 1, 'Insert', NULL, NULL);
 
 -- ROLLBACK;
 COMMIT;
@@ -444,3 +546,4 @@ SELECT COUNT(*) AS total_loose_stones FROM loose_stone;
 SELECT COUNT(*) AS total_jewelry FROM jewelry;
 SELECT COUNT(*) AS total_actions FROM action;
 SELECT COUNT(*) AS total_certificates FROM certificate;
+

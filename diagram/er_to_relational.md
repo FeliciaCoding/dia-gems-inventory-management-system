@@ -141,7 +141,7 @@ total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)  <br>
 ### `certificate`
 
 certificate(**certificate_id**, lot_id, lab_id, certificate_num, issue_date, shape, weight_ct, length, width, depth, clarity, color, treatment, gem_type, created_at, updated_at) <br>
-    `lot_id` references `item.lot_id` NOT NULL <br>
+    `lot_id` references `item.lot_id` <br>
     `lab_id` references `counterpart.counterpart_id` NOT NULL
 
 

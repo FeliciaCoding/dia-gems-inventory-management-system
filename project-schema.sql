@@ -391,7 +391,7 @@ CREATE TABLE jewelry
 CREATE TABLE certificate
 (
    certificate_id  SERIAL PRIMARY KEY,
-   lot_id          INTEGER,
+   lot_id          INTEGER                                UNIQUE,
    lab_id          INTEGER                                NOT NULL,
    certificate_num TEXT                                   NOT NULL UNIQUE,
    issue_date      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
