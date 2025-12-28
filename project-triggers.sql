@@ -367,5 +367,41 @@ EXECUTE FUNCTION trig_b_i_client_sale_check();
 
 -- END TRIGGER #9
 
+-- BEGIN TRIGGER #10
+-- Description: verify that item has not been already sold
+-- before registering a sale-action
+CREATE OR REPLACE FUNCTION trig_b_i_not_sold_twice()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    item_id INTEGER;
+    prev_sale_id INTEGER;
+BEGIN
+    item_id := (SELECT ai.lot_id
+                  FROM action_item ai
+                 WHERE ai.action_id = new.action_id);
 
+    prev_sale_id := (SELECT s.action_id
+                       FROM sale s
+                            INNER JOIN action a
+                            ON s.action_id = a.action_id
+                            INNER JOIN action_item ai
+                            ON s.action_id = ai.action_id
+                      WHERE ai.lot_id = item_id);
+
+
+    IF item_id IS NOT NULL AND prev_sale_id IS NOT NULL THEN
+        RAISE EXCEPTION 'Item (%) has been already sold in action (%)',
+            item_id, prev_sale_id;
+    END IF;
+
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_sold_twice_trigger
+    BEFORE INSERT
+    ON sale
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_not_sold_twice();
+-- END TRIGGER #10
 
