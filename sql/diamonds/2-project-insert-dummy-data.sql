@@ -541,9 +541,9 @@ INSERT INTO action_update_log (log_time, action_id, employee_id, update_type, ol
 COMMIT;
 
 -- Display summary
-SELECT COUNT(*) AS total_items FROM item;
-SELECT COUNT(*) AS total_loose_stones FROM loose_stone;
-SELECT COUNT(*) AS total_jewelry FROM jewelry;
-SELECT COUNT(*) AS total_actions FROM action;
-SELECT COUNT(*) AS total_certificates FROM certificate;
+-- SELECT COUNT(*) AS total_items FROM item;
+-- SELECT COUNT(*) AS total_loose_stones FROM loose_stone;
+-- SELECT COUNT(*) AS total_jewelry FROM jewelry;
+-- SELECT COUNT(*) AS total_actions FROM action;
+-- SELECT COUNT(*) AS total_certificates FROM certificate;
 

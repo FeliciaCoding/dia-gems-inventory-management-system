@@ -1,0 +1,66 @@
+networks:
+  bdr-net:
+    driver: bridge
+
+volumes:
+  db-data:
+
+services:
+  postgresql:
+    image: 'postgres:18'
+    environment:
+      - POSTGRES_USER=diamonds
+      - POSTGRES_PASSWORD=diamonds
+      - POSTGRES_DB=diamonds
+    ports:
+      - 5432:5432
+    volumes:
+      - ./sql/diamonds:/docker-entrypoint-initdb.d:ro
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U diamonds"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
+  diamonds-ui:
+    build: .
+    ports:
+      - 8501:8501
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    develop:
+      # Create a `watch` configuration to update the app
+      # https://docs.docker.com/compose/file-watch/#compose-watch-versus-bind-mounts
+      watch:
+        # Sync the working directory with the `/app` directory in the container
+        - action: sync
+          path: .
+          target: /app
+          # Exclude the project virtual environment — it could be for a
+          # different platform in the container
+          ignore:
+            - .venv/
+        # Rebuild the image if dependencies change by checking uv.lock
+        - action: rebuild
+          path: ./uv.lock
+        # Rebuild the image if Dockerfile change
+        - action: rebuild
+          path: ./Dockerfile
+    configs:
+      - source: secret
+        target: /app/.streamlit/secrets.toml
+        mode: 0555
+
+configs:
+  secret:
+    content: |
+      [connections.postgresql]
+      type = "db.StreamlitPsycopgConnection"
+      host = "postgresql"
+      port = 5432
+      user = "diamonds"
+      password = "diamonds"
+      dbname = "diamonds"
+

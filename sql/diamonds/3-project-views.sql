@@ -383,8 +383,9 @@ SELECT CASE
  ORDER BY total_count DESC;
 
 --test
-SELECT * FROM complete_inventory_jewelry;
-SELECT * FROM complete_inventory_colored_gem_stones;
-SELECT * FROM complete_inventory_white_diamonds;
-SELECT * FROM complete_inventory_colored_diamonds;
-SELECT * FROM inventory_by_type;
+-- SELECT * FROM complete_inventory_jewelry;
+-- SELECT * FROM complete_inventory_colored_gem_stones;
+-- SELECT * FROM complete_inventory_white_diamonds;
+-- SELECT * FROM complete_inventory_colored_diamonds;
+-- SELECT * FROM inventory_by_type;
+
