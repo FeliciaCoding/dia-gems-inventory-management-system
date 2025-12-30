@@ -1,5 +1,8 @@
 import streamlit as st
 
+from diamonds_ui.auth import logout, user
+
+
 #
 # Pages configuration
 #
@@ -52,6 +55,22 @@ returns = st.Page(
 # )
 
 
+if user.is_logged:
+    # A logout page can be a callable; clicking it runs the logout function.
+    logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
+    # # Show the user's name in the profile title by reading the stored user object.
+    profile = st.Page(
+        "pages/profile.py",
+        title=f"Profile ({user.get().first_name} {user.get().last_name})",
+        icon=":material/account_circle:",
+    )
+else:
+    # When not logged in, present a login page.
+    login_page = st.Page(
+        "pages/login.py", title="Log in", icon=":material/login:"
+    )
+
+
 #
 # Display available pages in sidebar (depending on current user)
 #
@@ -62,6 +81,7 @@ page_dict = {
     "Transfers": [transfers],
     "Sales": [sales],
     "Returns": [returns],
+    "Account": [login_page] if not user.is_logged else [profile, logout_page],
 }
 # Create the navigation component from the dictionary above.
 pg = st.navigation(page_dict)
