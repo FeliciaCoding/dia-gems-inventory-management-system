@@ -16,7 +16,7 @@ if submit:
     error = user.login(email)
     if error is None:
         # On success, redirect the user to the stores inventory page.
-        st.switch_page("pages/inventory_white_diamonds.py")
+        st.switch_page("pages/about.py")
     else:
         # Show the error to the user (e.g., "Incorrect email.").
         st.error(error)

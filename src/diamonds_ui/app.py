@@ -8,7 +8,7 @@ from diamonds_ui.auth import logout, user
 #
 # Define top-level pages (these refer to other python files under pages/)
 white_diamonds = st.Page(
-    "pages/inventory_white_diamonds.py", title="White Diamonds", icon=":material/store:", default=True
+    "pages/inventory_white_diamonds.py", title="White Diamonds", icon=":material/store:"
 )
 
 colored_diamonds = st.Page(
@@ -43,16 +43,10 @@ returns = st.Page(
     "pages/returns.py", title="Returns", icon=":material/store:"
 )
 
+about = st.Page(
+    "pages/about.py", title="About", icon=":material/store:"
+)
 
-#
-# Shared content (shown on all pages)
-#
-# Place a large logo in the app header; these are static asset paths.
-# st.logo(
-#     "assets/images/horizontal_logo.svg",
-#     icon_image="assets/images/icon_logo.svg",
-#     size="large",
-# )
 
 
 if user.is_logged:
@@ -76,12 +70,12 @@ else:
 #
 # Build a simple mapping of section headers to page lists for the navigation helper.
 page_dict = {
-    "Inventory": [white_diamonds, colored_diamonds, colored_gemstones, jewelries],
+    "Inventory": [] if not user.is_logged else [white_diamonds, colored_diamonds, colored_gemstones, jewelries],
     "Purchases": [purchases],
     "Transfers": [transfers],
     "Sales": [sales],
     "Returns": [returns],
-    "Account": [login_page] if not user.is_logged else [profile, logout_page],
+    "Account": [login_page, about] if not user.is_logged else [profile, about, logout_page],
 }
 # Create the navigation component from the dictionary above.
 pg = st.navigation(page_dict)
