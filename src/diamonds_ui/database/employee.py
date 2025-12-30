@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from contextlib import contextmanager
 import psycopg
-from psycopg import sql
 from psycopg.rows import class_row
 
 
@@ -15,29 +14,25 @@ class Employee(BaseModel):
     counterpart: str
 
 
-@contextmanager
-def employee_cursor(
-    db: psycopg.Connection,
-    condition: sql.SQL = sql.SQL("TRUE"),
-    order: sql.SQL = sql.SQL("updated_at DESC"),
-    **other_params,
+def get_employee(
+        db: psycopg.Connection,
+        email: str
 ):
     with db.cursor(row_factory=class_row(Employee)) as cur:
-        q = sql.SQL(
+        return cur.execute(
             """
-            SELECT employee_id, first_name, last_name, 
-                   email, role, is_active, c.name
+            SELECT employee_id,
+                   first_name,
+                   last_name,
+                   e.email,
+                   role,
+                   e.is_active,
+                   c.name AS counterpart
             FROM diamonds_are_forever.employee e
-                INNER JOIN diamonds_are_forever.counterpart c
-                ON e.counterpart_id = c.counterpart_id
-            WHERE {condition}
-            ORDER BY {order}
-            """
-        ).format(
-            condition=condition,
-            order=order,
-        )
-        yield cur.execute(q, other_params)
-
-
+                     INNER JOIN diamonds_are_forever.counterpart c
+                     ON e.counterpart_id = c.counterpart_id
+            WHERE e.email = %s
+            """,
+            (email,),
+        ).fetchone()
 
