@@ -10,10 +10,7 @@ allows to register returns:
 import streamlit as st
 # from psycopg import sql
 
-st.header("Returns")
-# st.subheader("Details of an item and its lifecycle")
-
-st.html("<h1>Returns</h1>")
+st.header("Returns from labs")
 
 
 

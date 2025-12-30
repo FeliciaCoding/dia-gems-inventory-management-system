@@ -1,9 +1,9 @@
 """
 This page allows to register a new item that
-is either being purchased or memo-in.
+is either being purchased.
 It should have a chart what we buy where.
 And how it affects revenue.
-It should highlight personal purchases (or memo-in).
+It should highlight personal purchases.
 """
 
 import streamlit as st

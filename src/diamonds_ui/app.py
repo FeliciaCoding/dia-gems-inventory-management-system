@@ -6,25 +6,25 @@ from diamonds_ui.auth import logout, user
 #
 # Pages configuration
 #
-# Define top-level pages (these refer to other python files under pages/)
+
 white_diamonds = st.Page(
-    "pages/inventory_white_diamonds.py", title="White Diamonds", icon=":material/store:"
+    "pages/inventory/inventory_white_diamonds.py", title="White Diamonds", icon=":material/store:"
 )
 
 colored_diamonds = st.Page(
-    "pages/inventory_colored_diamonds.py", title="Colored Diamonds", icon=":material/store:"
+    "pages/inventory/inventory_colored_diamonds.py", title="Colored Diamonds", icon=":material/store:"
 )
 
 colored_gemstones = st.Page(
-    "pages/inventory_colored_gemstones.py", title="Colored Gemstones", icon=":material/store:"
+    "pages/inventory/inventory_colored_gemstones.py", title="Colored Gemstones", icon=":material/store:"
 )
 
 jewelries = st.Page(
-    "pages/inventory_jewelries.py", title="Jewelries", icon=":material/store:"
+    "pages/inventory/inventory_jewelries.py", title="Jewelries", icon=":material/store:"
 )
 
 item_details = st.Page(
-    "pages/item_details.py", title="Item Details", icon=":material/store:"
+    "pages/inventory/item_details.py", title="Item Details", icon=":material/store:"
 )
 
 purchases = st.Page(
@@ -36,11 +36,11 @@ sales = st.Page(
 )
 
 transfers = st.Page(
-    "pages/transfers.py", title="Transfers", icon=":material/store:"
+    "pages/transfers/transfers_to_office.py", title="Transfers", icon=":material/store:"
 )
 
 returns = st.Page(
-    "pages/returns.py", title="Returns", icon=":material/store:"
+    "pages/returns/return_from_lab.py", title="Returns", icon=":material/store:"
 )
 
 about = st.Page(
@@ -48,20 +48,32 @@ about = st.Page(
 )
 
 
-
 if user.is_logged:
+    if user.role == 'Chief':
+        # full control
+        pass
+    elif user.role == 'Admin':
+        # all the inventory and all the transfers and returns
+        pass
+    elif user.role == 'Sales':
+        # all the inventory and all the sales
+        pass
+    else: #'Accountant'
+        # all the purchases and all the sales
+        pass
+
     # A logout page can be a callable; clicking it runs the logout function.
     logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
     # # Show the user's name in the profile title by reading the stored user object.
     profile = st.Page(
-        "pages/profile.py",
+        "pages/account/profile.py",
         title=f"Profile ({user.get().first_name} {user.get().last_name})",
         icon=":material/account_circle:",
     )
 else:
     # When not logged in, present a login page.
     login_page = st.Page(
-        "pages/login.py", title="Log in", icon=":material/login:"
+        "pages/account/login.py", title="Log in", icon=":material/login:"
     )
 
 
@@ -70,10 +82,9 @@ else:
 #
 # Build a simple mapping of section headers to page lists for the navigation helper.
 page_dict = {
+    "": [purchases, sales],
     "Inventory": [] if not user.is_logged else [white_diamonds, colored_diamonds, colored_gemstones, jewelries],
-    "Purchases": [purchases],
     "Transfers": [transfers],
-    "Sales": [sales],
     "Returns": [returns],
     "Account": [login_page, about] if not user.is_logged else [profile, about, logout_page],
 }
