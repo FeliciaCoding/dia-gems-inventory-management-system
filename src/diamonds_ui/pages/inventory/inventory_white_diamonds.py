@@ -10,20 +10,29 @@ from psycopg import sql
 from diamonds_ui.auth import user
 from diamonds_ui.components.pagination import pagination_element
 from diamonds_ui.database.item.white_diamond import WhiteDiamond, white_diamonds_cursor, get_white_diamond
+from diamonds_ui.database.action.purchase import Purchase, get_purchase
 from streamlit_utils import db
 
 
-def render_white_diamond_details(d: WhiteDiamond):
+def render_white_diamond_details(d: WhiteDiamond, *, purchase = None):
     with st.container(border=True):
         st.markdown(f"### Details for: {d.stock_name}")
         st.caption(f"Lot id: #{d.lot_id}")
 
-        st.write(f"💎 Weight: {d.weight_ct} ct")
-        st.write(f"Shape: {d.shape}")
-        st.write(f"White scale: {d.white_scale}")
-        st.write(f"📜 Certificate: {d.certificate_num}")
+        st.markdown(f"**Weight:** {d.weight_ct} ct")
+        st.markdown(f"**Shape:** {d.shape}")
+        st.markdown(f"**White scale:** {d.white_scale}")
+        st.markdown(f"**Certificate:** {d.certificate_num}")
 
-    if st.button("← Back to list"):
+        st.markdown(f"#### Status")
+        if purchase is not None:
+            with st.container(border=True):
+                st.markdown(f"#### Purchase:")
+                st.markdown(f"**From:** {purchase.from_counterpart_name}. **To:** {purchase.to_counterpart_name}")
+                st.markdown(f"**Price:** {purchase.price} {purchase.currency_code}")
+                st.markdown(f"**Purchase date:** {purchase.purchase_date}")
+
+    if st.button("Back to list"):
         st.session_state.selected_lot_id = None
         st.rerun()
 
@@ -60,8 +69,9 @@ else:
     conn = db.connection()
     with conn.connect() as db:
         if st.session_state[_SELECTED_LOT_ID_KEY] is not None:
-            render_white_diamond_details(get_white_diamond(db,
-               st.session_state[_SELECTED_LOT_ID_KEY]))
+            wd = get_white_diamond(db, st.session_state[_SELECTED_LOT_ID_KEY])
+            purchase = get_purchase(db, wd.lot_id)
+            render_white_diamond_details(wd, purchase=purchase)
         else:
             with white_diamonds_cursor(
                 db,
