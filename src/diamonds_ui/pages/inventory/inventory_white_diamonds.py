@@ -12,10 +12,15 @@ from diamonds_ui.components.pagination import pagination_element
 from diamonds_ui.database.item.white_diamond import WhiteDiamond, white_diamonds_cursor, get_white_diamond
 from diamonds_ui.database.action.purchase import Purchase, get_purchase
 from diamonds_ui.database.action.memo_in import MemoIn, get_memo_in
+from diamonds_ui.database.action.transfer_to_lab import TransferToLab, get_transfers_to_lab
 from streamlit_utils import db
 
 
-def render_white_diamond_details(d: WhiteDiamond, incoming: Purchase | MemoIn):
+def render_white_diamond_details(
+        d: WhiteDiamond,
+        incoming: Purchase | MemoIn,
+        transfers: list[TransferToLab]
+):
     with st.container(border=True):
         st.markdown(f"### Details for: {d.stock_name}")
         st.caption(f"Lot id: #{d.lot_id}")
@@ -44,6 +49,15 @@ def render_white_diamond_details(d: WhiteDiamond, incoming: Purchase | MemoIn):
                 if incoming.expected_return_date is not None:
                     st.markdown(f"**Expected return date:** {incoming.expected_return_date}")
 
+        transfers.sort(key=lambda item: item.updated_at)
+        for t in transfers:
+            match t:
+                case TransferToLab():
+                    st.markdown(f"#### Transfer to lab:")
+                    st.markdown(f"**From:** {incoming.from_counterpart_name}. **To:** {incoming.to_counterpart_name}")
+                    st.markdown(f"**Transfer number:** {incoming.transfer_num}")
+                    st.markdown(f"**Ship date:** {incoming.ship_date}")
+                    st.markdown(f"**Lab purpose:** {incoming.lab_purpose}")
 
     if st.button("Back to list"):
         st.session_state.selected_lot_id = None
@@ -84,7 +98,15 @@ else:
         if st.session_state[_SELECTED_LOT_ID_KEY] is not None:
             wd = get_white_diamond(db, st.session_state[_SELECTED_LOT_ID_KEY])
             purchase = get_purchase(db, wd.lot_id)
-            render_white_diamond_details(wd, purchase)
+            transfers_to_lab = get_transfers_to_lab(db, wd.lot_id)
+            transfers_to_factory = []
+            transfers_to_office = []
+
+            render_white_diamond_details(
+                wd,
+                purchase,
+                transfers_to_lab + transfers_to_factory + transfers_to_office
+            )
         else:
             with white_diamonds_cursor(
                 db,
