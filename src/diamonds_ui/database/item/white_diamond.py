@@ -52,3 +52,21 @@ def white_diamonds_cursor(
         )
         yield cur.execute(q, other_params)
 
+
+def get_white_diamond(
+        db: psycopg.Connection,
+        lot_id: int
+):
+    with db.cursor(row_factory=class_row(WhiteDiamond)) as cur:
+        return cur.execute(
+            """
+            SELECT lot_id, stock_name, purchase_date, supplier_name,
+                origin, responsible_office, physical_location,
+                is_available, weight_ct,
+                shape, white_scale, certificate_num
+            FROM diamonds_are_forever.complete_inventory_white_diamonds
+            WHERE lot_id = %s
+            """,
+            (lot_id,),
+        ).fetchone()
+
