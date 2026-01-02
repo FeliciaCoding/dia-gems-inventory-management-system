@@ -13,13 +13,14 @@ from diamonds_ui.database.item.white_diamond import WhiteDiamond, white_diamonds
 from diamonds_ui.database.action.purchase import Purchase, get_purchase
 from diamonds_ui.database.action.memo_in import MemoIn, get_memo_in
 from diamonds_ui.database.action.transfer_to_lab import TransferToLab, get_transfers_to_lab
+from diamonds_ui.database.action.transfer_to_factory import TransferToFactory, get_transfers_to_factory
 from streamlit_utils import db
 
 
 def render_white_diamond_details(
         d: WhiteDiamond,
         incoming: Purchase | MemoIn,
-        transfers: list[TransferToLab]
+        transfers: list[TransferToLab | TransferToFactory]
 ):
     with st.container(border=True):
         st.markdown(f"### Details for: {d.stock_name}")
@@ -58,6 +59,12 @@ def render_white_diamond_details(
                     st.markdown(f"**Transfer number:** {incoming.transfer_num}")
                     st.markdown(f"**Ship date:** {incoming.ship_date}")
                     st.markdown(f"**Lab purpose:** {incoming.lab_purpose}")
+                case TransferToFactory():
+                    st.markdown(f"#### Transfer to factory:")
+                    st.markdown(f"**From:** {incoming.from_counterpart_name}. **To:** {incoming.to_counterpart_name}")
+                    st.markdown(f"**Transfer number:** {incoming.transfer_num}")
+                    st.markdown(f"**Ship date:** {incoming.ship_date}")
+                    st.markdown(f"**Processing type:** {incoming.processing_type}")
 
     if st.button("Back to list"):
         st.session_state.selected_lot_id = None
@@ -99,7 +106,7 @@ else:
             wd = get_white_diamond(db, st.session_state[_SELECTED_LOT_ID_KEY])
             purchase = get_purchase(db, wd.lot_id)
             transfers_to_lab = get_transfers_to_lab(db, wd.lot_id)
-            transfers_to_factory = []
+            transfers_to_factory = get_transfers_to_factory(db, wd.lot_id)
             transfers_to_office = []
 
             render_white_diamond_details(
