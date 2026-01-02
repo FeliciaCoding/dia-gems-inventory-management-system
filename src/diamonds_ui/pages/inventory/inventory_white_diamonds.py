@@ -14,13 +14,14 @@ from diamonds_ui.database.action.purchase import Purchase, get_purchase
 from diamonds_ui.database.action.memo_in import MemoIn, get_memo_in
 from diamonds_ui.database.action.transfer_to_lab import TransferToLab, get_transfers_to_lab
 from diamonds_ui.database.action.transfer_to_factory import TransferToFactory, get_transfers_to_factory
+from diamonds_ui.database.action.transfer_to_office import TransferToOffice, get_transfers_to_office
 from streamlit_utils import db
 
 
 def render_white_diamond_details(
         d: WhiteDiamond,
         incoming: Purchase | MemoIn,
-        transfers: list[TransferToLab | TransferToFactory]
+        transfers: list[TransferToLab | TransferToFactory | TransferToOffice]
 ):
     with st.container(border=True):
         st.markdown(f"### Details for: {d.stock_name}")
@@ -55,16 +56,21 @@ def render_white_diamond_details(
             match t:
                 case TransferToLab():
                     st.markdown(f"#### Transfer to lab:")
-                    st.markdown(f"**From:** {incoming.from_counterpart_name}. **To:** {incoming.to_counterpart_name}")
-                    st.markdown(f"**Transfer number:** {incoming.transfer_num}")
-                    st.markdown(f"**Ship date:** {incoming.ship_date}")
-                    st.markdown(f"**Lab purpose:** {incoming.lab_purpose}")
+                    st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
+                    st.markdown(f"**Transfer number:** {t.transfer_num}")
+                    st.markdown(f"**Ship date:** {t.ship_date}")
+                    st.markdown(f"**Lab purpose:** {t.lab_purpose}")
                 case TransferToFactory():
                     st.markdown(f"#### Transfer to factory:")
-                    st.markdown(f"**From:** {incoming.from_counterpart_name}. **To:** {incoming.to_counterpart_name}")
-                    st.markdown(f"**Transfer number:** {incoming.transfer_num}")
-                    st.markdown(f"**Ship date:** {incoming.ship_date}")
-                    st.markdown(f"**Processing type:** {incoming.processing_type}")
+                    st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
+                    st.markdown(f"**Transfer number:** {t.transfer_num}")
+                    st.markdown(f"**Ship date:** {t.ship_date}")
+                    st.markdown(f"**Processing type:** {t.processing_type}")
+                case TransferToOffice():
+                    st.markdown(f"#### Transfer to office:")
+                    st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
+                    st.markdown(f"**Transfer number:** {t.transfer_num}")
+                    st.markdown(f"**Ship date:** {t.ship_date}")
 
     if st.button("Back to list"):
         st.session_state.selected_lot_id = None
