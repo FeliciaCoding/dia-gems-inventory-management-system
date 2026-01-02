@@ -12,6 +12,7 @@ from diamonds_ui.components.pagination import pagination_element
 from diamonds_ui.database.item.white_diamond import WhiteDiamond, white_diamonds_cursor, get_white_diamond
 from diamonds_ui.database.action.purchase import Purchase, get_purchase
 from diamonds_ui.database.action.memo_in import MemoIn, get_memo_in
+from diamonds_ui.database.action.memo_out import MemoOut, get_memos_out
 from diamonds_ui.database.action.transfer_to_lab import TransferToLab, get_transfers_to_lab
 from diamonds_ui.database.action.transfer_to_factory import TransferToFactory, get_transfers_to_factory
 from diamonds_ui.database.action.transfer_to_office import TransferToOffice, get_transfers_to_office
@@ -20,8 +21,10 @@ from streamlit_utils import db
 
 def render_white_diamond_details(
         d: WhiteDiamond,
-        incoming: Purchase | MemoIn,
-        transfers: list[TransferToLab | TransferToFactory | TransferToOffice]
+        *,
+        memo_in: MemoIn | None = None,
+        purchase: Purchase,
+        transfers: list[TransferToLab | TransferToFactory | TransferToOffice | MemoOut]
 ):
     with st.container(border=True):
         st.markdown(f"### Details for: {d.stock_name}")
@@ -35,23 +38,23 @@ def render_white_diamond_details(
 
         st.markdown(f"#### Status")
 
-        match incoming:
-            case Purchase():
-                with st.container(border=True):
-                    st.markdown(f"#### Purchase:")
-                    st.markdown(f"**From:** {incoming.from_counterpart_name}. **To:** {incoming.to_counterpart_name}")
-                    st.markdown(f"**Price:** {incoming.price} {incoming.currency_code}")
-                    st.markdown(f"**Purchase date:** {incoming.purchase_date}")
-            case MemoIn():
-                st.markdown(f"#### Memo In:")
-                st.markdown(f"**From:** {incoming.from_counterpart_name}. **To:** {incoming.to_counterpart_name}")
-                st.markdown(f"**Price:** {incoming.price} {incoming.currency_code}")
-                st.markdown(f"**Memo in number:** {incoming.memo_in_num}")
-                st.markdown(f"**Ship date:** {incoming.ship_date}")
-                if incoming.expected_return_date is not None:
-                    st.markdown(f"**Expected return date:** {incoming.expected_return_date}")
+        if memo_in is not None:
+            st.markdown(f"#### Memo In:")
+            st.markdown(f"**From:** {memo_in.from_counterpart_name}. **To:** {memo_in.to_counterpart_name}")
+            st.markdown(f"**Price:** {memo_in.price} {memo_in.currency_code}")
+            st.markdown(f"**Memo in number:** {memo_in.memo_in_num}")
+            st.markdown(f"**Ship date:** {memo_in.ship_date}")
+            if memo_in.expected_return_date is not None:
+                st.markdown(f"**Expected return date:** {memo_in.expected_return_date}")
 
-        transfers.sort(key=lambda item: item.updated_at)
+        with st.container(border=True):
+            st.markdown(f"#### Purchase:")
+            st.markdown(f"**From:** {purchase.from_counterpart_name}. **To:** {purchase.to_counterpart_name}")
+            st.markdown(f"**Price:** {purchase.price} {purchase.currency_code}")
+            st.markdown(f"**Purchase date:** {purchase.purchase_date}")
+
+        transfers.sort(key=lambda item: item.created_at)
+
         for t in transfers:
             match t:
                 case TransferToLab():
@@ -71,6 +74,13 @@ def render_white_diamond_details(
                     st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
                     st.markdown(f"**Transfer number:** {t.transfer_num}")
                     st.markdown(f"**Ship date:** {t.ship_date}")
+                case MemoOut():
+                    st.markdown(f"#### Memo Out:")
+                    st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
+                    st.markdown(f"**Memo out number:** {t.transfer_num}")
+                    st.markdown(f"**Ship date:** {t.ship_date}")
+                    if t.expected_return_date is not None:
+                        st.markdown(f"**Expected return date:** {t.expected_return_date}")
 
     if st.button("Back to list"):
         st.session_state.selected_lot_id = None
@@ -113,12 +123,13 @@ else:
             purchase = get_purchase(db, wd.lot_id)
             transfers_to_lab = get_transfers_to_lab(db, wd.lot_id)
             transfers_to_factory = get_transfers_to_factory(db, wd.lot_id)
-            transfers_to_office = []
+            transfers_to_office = get_transfers_to_office(db, wd.lot_id)
+            memos_out = get_memos_out(db, wd.lot_id)
 
             render_white_diamond_details(
                 wd,
-                purchase,
-                transfers_to_lab + transfers_to_factory + transfers_to_office
+                purchase=purchase,
+                transfers=transfers_to_lab + transfers_to_factory + transfers_to_office
             )
         else:
             with white_diamonds_cursor(
