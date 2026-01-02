@@ -15,7 +15,7 @@ class MemoIn(BaseModel):
     currency_code: str
     created_at: datetime
     updated_at: datetime
-    memo_in_num: str
+    transfer_num: str
     ship_date: date
     expected_return_date: date | None
 
@@ -36,7 +36,7 @@ def get_memo_in(
                 currency_code,
                 a.created_at,
                 a.updated_at,
-                memo_in_num,
+                memo_in_num AS transfer_num,
                 ship_date,
                 expected_return_date
             FROM diamonds_are_forever.action_item ai

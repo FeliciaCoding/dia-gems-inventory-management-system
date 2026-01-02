@@ -15,8 +15,8 @@ class Purchase(BaseModel):
     currency_code: str
     created_at: datetime
     updated_at: datetime
-    purchase_num: str
-    purchase_date: date
+    transfer_num: str
+    ship_date: date
 
 
 def get_purchase(
@@ -35,8 +35,8 @@ def get_purchase(
                 currency_code,
                 a.created_at,
                 a.updated_at,
-                purchase_num,
-                purchase_date
+                purchase_num AS transfer_num,
+                purchase_date AS ship_date
             FROM diamonds_are_forever.action_item ai
                 INNER JOIN diamonds_are_forever.action a
                 ON ai.action_id = a.action_id

@@ -15,7 +15,7 @@ class MemoOut(BaseModel):
     currency_code: str
     created_at: datetime
     updated_at: datetime
-    memo_out_num: str
+    transfer_num: str
     ship_date: date
     expected_return_date: date | None
 
@@ -36,7 +36,7 @@ def get_memos_out(
                 currency_code,
                 a.created_at,
                 a.updated_at,
-                memo_out_num,
+                memo_out_num AS transfer_num,
                 ship_date,
                 expected_return_date
             FROM diamonds_are_forever.action_item ai

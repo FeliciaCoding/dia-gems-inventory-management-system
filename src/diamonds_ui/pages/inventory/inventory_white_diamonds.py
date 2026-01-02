@@ -6,25 +6,26 @@ Its content could be different depending on who looks at it.
 
 import streamlit as st
 from psycopg import sql
-
+from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.components.pagination import pagination_element
 from diamonds_ui.database.item.white_diamond import WhiteDiamond, white_diamonds_cursor, get_white_diamond
 from diamonds_ui.database.action.purchase import Purchase, get_purchase
+from diamonds_ui.database.action.sale import Sale, get_sale
 from diamonds_ui.database.action.memo_in import MemoIn, get_memo_in
 from diamonds_ui.database.action.memo_out import MemoOut, get_memos_out
 from diamonds_ui.database.action.transfer_to_lab import TransferToLab, get_transfers_to_lab
 from diamonds_ui.database.action.transfer_to_factory import TransferToFactory, get_transfers_to_factory
 from diamonds_ui.database.action.transfer_to_office import TransferToOffice, get_transfers_to_office
-from streamlit_utils import db
+from diamonds_ui.database.action.return_from_lab import ReturnFromLab, get_returns_from_lab
+from diamonds_ui.database.action.return_from_factory import ReturnFromFactory, get_returns_from_factory
+from diamonds_ui.database.action.return_memo_in import ReturnMemoIn, get_returns_memo_in
+from diamonds_ui.database.action.return_memo_out import ReturnMemoOut, get_returns_memo_out
 
 
 def render_white_diamond_details(
         d: WhiteDiamond,
-        *,
-        memo_in: MemoIn | None = None,
-        purchase: Purchase,
-        transfers: list[TransferToLab | TransferToFactory | TransferToOffice | MemoOut]
+        actions: list
 ):
     with st.container(border=True):
         st.markdown(f"### Details for: {d.stock_name}")
@@ -36,51 +37,53 @@ def render_white_diamond_details(
         st.markdown(f"**White scale:** {d.white_scale}")
         st.markdown(f"**Certificate:** {d.certificate_num}")
 
-        st.markdown(f"#### Status")
+        st.markdown("### Status")
 
-        if memo_in is not None:
-            st.markdown(f"#### Memo In:")
-            st.markdown(f"**From:** {memo_in.from_counterpart_name}. **To:** {memo_in.to_counterpart_name}")
-            st.markdown(f"**Price:** {memo_in.price} {memo_in.currency_code}")
-            st.markdown(f"**Memo in number:** {memo_in.memo_in_num}")
-            st.markdown(f"**Ship date:** {memo_in.ship_date}")
-            if memo_in.expected_return_date is not None:
-                st.markdown(f"**Expected return date:** {memo_in.expected_return_date}")
+        actions.sort(key=lambda item: item.created_at)
 
-        with st.container(border=True):
-            st.markdown(f"#### Purchase:")
-            st.markdown(f"**From:** {purchase.from_counterpart_name}. **To:** {purchase.to_counterpart_name}")
-            st.markdown(f"**Price:** {purchase.price} {purchase.currency_code}")
-            st.markdown(f"**Purchase date:** {purchase.purchase_date}")
+        for a in actions:
+            with st.container(border=True):
+                info: dict[str, str] = dict()
 
-        transfers.sort(key=lambda item: item.created_at)
+                match a:
+                    case MemoIn():
+                        st.markdown("#### Memo In:")
+                        if a.expected_return_date is not None:
+                            info["Expected return date"] = a.expected_return_date
+                    case MemoOut():
+                        st.markdown("#### Memo Out:")
+                        if a.expected_return_date is not None:
+                            info["Expected return date"] = a.expected_return_date
+                    case Purchase():
+                        st.markdown("#### Purchase:")
+                    case Sale():
+                        st.markdown("#### Sale:")
+                    case TransferToLab():
+                        st.markdown("#### Transfer to lab:")
+                        info["Lab purpose"] = a.lab_purpose
+                    case TransferToFactory():
+                        st.markdown("#### Transfer to factory:")
+                        info["Processing type"] = a.processing_type
+                    case TransferToOffice():
+                        st.markdown("#### Transfer to office:")
+                    case ReturnMemoIn():
+                        st.markdown("#### Return memo-in:")
+                    case ReturnMemoOut():
+                        st.markdown("#### Return memo-out:")
+                    case ReturnFromLab():
+                        st.markdown("#### Return from lab:")
+                    case ReturnFromFactory():
+                        st.markdown("#### Return from factory:")
+                    case _:
+                        continue
 
-        for t in transfers:
-            match t:
-                case TransferToLab():
-                    st.markdown(f"#### Transfer to lab:")
-                    st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
-                    st.markdown(f"**Transfer number:** {t.transfer_num}")
-                    st.markdown(f"**Ship date:** {t.ship_date}")
-                    st.markdown(f"**Lab purpose:** {t.lab_purpose}")
-                case TransferToFactory():
-                    st.markdown(f"#### Transfer to factory:")
-                    st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
-                    st.markdown(f"**Transfer number:** {t.transfer_num}")
-                    st.markdown(f"**Ship date:** {t.ship_date}")
-                    st.markdown(f"**Processing type:** {t.processing_type}")
-                case TransferToOffice():
-                    st.markdown(f"#### Transfer to office:")
-                    st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
-                    st.markdown(f"**Transfer number:** {t.transfer_num}")
-                    st.markdown(f"**Ship date:** {t.ship_date}")
-                case MemoOut():
-                    st.markdown(f"#### Memo Out:")
-                    st.markdown(f"**From:** {t.from_counterpart_name}. **To:** {t.to_counterpart_name}")
-                    st.markdown(f"**Memo out number:** {t.transfer_num}")
-                    st.markdown(f"**Ship date:** {t.ship_date}")
-                    if t.expected_return_date is not None:
-                        st.markdown(f"**Expected return date:** {t.expected_return_date}")
+                st.markdown(f"**From:** {a.from_counterpart_name}. **To:** {a.to_counterpart_name}")
+                st.markdown(f"**Price:** {a.price} {a.currency_code}")
+                st.markdown(f"**Ship date:** {a.ship_date}")
+                st.markdown(f"**Transfer number:** {a.transfer_num}")
+
+                for label, val in info.items():
+                    st.markdown(f"**{label}:** {val}")
 
     if st.button("Back to list"):
         st.session_state.selected_lot_id = None
@@ -120,17 +123,22 @@ else:
     with conn.connect() as db:
         if st.session_state[_SELECTED_LOT_ID_KEY] is not None:
             wd = get_white_diamond(db, st.session_state[_SELECTED_LOT_ID_KEY])
-            purchase = get_purchase(db, wd.lot_id)
-            transfers_to_lab = get_transfers_to_lab(db, wd.lot_id)
-            transfers_to_factory = get_transfers_to_factory(db, wd.lot_id)
-            transfers_to_office = get_transfers_to_office(db, wd.lot_id)
-            memos_out = get_memos_out(db, wd.lot_id)
 
             render_white_diamond_details(
                 wd,
-                purchase=purchase,
-                transfers=transfers_to_lab + transfers_to_factory + transfers_to_office
+                [get_purchase(db, wd.lot_id)] +
+                [get_memo_in(db, wd.lot_id)] +
+                get_transfers_to_lab(db, wd.lot_id) +
+                get_transfers_to_factory(db, wd.lot_id) +
+                get_transfers_to_office(db, wd.lot_id) +
+                get_returns_memo_in(db, wd.lot_id) +
+                [get_sale(db, wd.lot_id)] +
+                get_memos_out(db, wd.lot_id) +
+                get_returns_memo_out(db, wd.lot_id) +
+                get_returns_from_lab(db, wd.lot_id) +
+                get_returns_from_factory(db, wd.lot_id)
             )
+
         else:
             with white_diamonds_cursor(
                 db,

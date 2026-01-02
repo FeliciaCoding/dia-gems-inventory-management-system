@@ -15,8 +15,8 @@ class Sale(BaseModel):
     currency_code: str
     created_at: datetime
     updated_at: datetime
-    sale_num: str | None
-    sale_date: date | None
+    transfer_num: str | None
+    ship_date: date | None
     payment_method: str | None
     payment_status: str | None
 
@@ -37,8 +37,8 @@ def get_sale(
                 currency_code,
                 a.created_at,
                 a.updated_at,
-                sale_num,
-                sale_date,
+                sale_num AS transfer_num,
+                sale_date AS ship_date,
                 payment_method,
                 payment_status              
             FROM diamonds_are_forever.action_item ai
