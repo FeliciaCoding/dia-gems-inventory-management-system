@@ -17,9 +17,11 @@ def render_item_card(i: Item):
 
         col3.write(f"{'available' if i.is_available else 'not available'}")
 
-        # if col3.button("Details", key=f"item_details_{d.lot_id}"):
-        #     st.session_state.selected_lot_id = d.lot_id
-        #     st.rerun()
+        if col3.button("Details", key=f"item_details_{i.lot_id}"):
+            st.switch_page(
+                "pages/inventory/inventory_white_diamonds.py",
+                query_params=dict(lot_id=i.lot_id),
+            )
 
 
 if user.get() is None:
