@@ -8,10 +8,11 @@ import streamlit as st
 from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.database.item.white_diamond import WhiteDiamond, get_white_diamonds
+from diamonds_ui.database.action.action import Action, get_actions
 from streamlit_utils.query_param import query_param
 
 
-def render_white_diamond_details(d: WhiteDiamond):
+def render_white_diamond_details(d: WhiteDiamond, actions: list[Action]):
     with st.container(border=True):
         st.markdown(f"### Details for: {d.lot_id}")
         st.markdown(f"**Weight:** {d.weight_ct} ct")
@@ -20,6 +21,16 @@ def render_white_diamond_details(d: WhiteDiamond):
         st.markdown(f"**Certificate:** {d.certificate_num}")
 
         st.markdown("### Status")
+
+        for a in actions:
+            with st.container(border=True):
+                col1, col2, col3 = st.columns(3)
+                col1.markdown(f"**{a.action_category.capitalize()}**")
+                col1.write(f"action id: #{a.action_id}")
+                col2.write(f"From: {a.from_counterpart_name}")
+                col2.write(f"From: {a.to_counterpart_name}")
+                col3.write(f"Price: {a.price} {a.currency_code}")
+                col3.write(f"Registered: {a.created_at.date()}")
 
 
 def select_white_diamond(
@@ -55,7 +66,8 @@ else:
         if white_diamond is None:
             st.info("Please select white diamond to inspect its details")
         else:
-            render_white_diamond_details(white_diamond)
+            actions = get_actions(db, white_diamond.lot_id)
+            render_white_diamond_details(white_diamond, actions)
 
 
 

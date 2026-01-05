@@ -1,6 +1,5 @@
 from decimal import Decimal
 from datetime import date, datetime
-from contextlib import contextmanager
 from pydantic import BaseModel
 import psycopg
 from psycopg.rows import class_row
@@ -19,7 +18,6 @@ class Action(BaseModel):
     updated_at: datetime
 
 
-@contextmanager
 def get_actions(
         db: psycopg.Connection,
         lot_id: int
@@ -36,7 +34,7 @@ def get_actions(
                 (ai.unit_price * ai.quantity) AS price,
                 currency_code,
                 a.created_at,
-                a.updated_at,
+                a.updated_at
             FROM diamonds_are_forever.action_item ai
                 INNER JOIN diamonds_are_forever.action a
                 ON ai.action_id = a.action_id
@@ -47,5 +45,5 @@ def get_actions(
             WHERE ai.lot_id = %s
             """,
             (lot_id,),
-        ).fetchone()
+        ).fetchall()
 
