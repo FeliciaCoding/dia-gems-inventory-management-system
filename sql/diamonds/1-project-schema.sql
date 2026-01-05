@@ -8,24 +8,44 @@ BEGIN;
 --ENUM TYPE
 
 CREATE TYPE code AS ENUM ('USD', 'HKD', 'CHF', 'EUR', 'NTD');
-CREATE TYPE category AS ENUM ('Supplier', 'Client', 'Office', 'Lab', 'Manufacturer');
+CREATE TYPE category AS ENUM ('Supplier', 'Client', 'Office',
+    'Lab', 'Manufacturer');
 CREATE TYPE role AS ENUM ('Chief', 'Admin', 'Sales', 'Accountant');
-CREATE TYPE shape AS ENUM ('Brilliant Cut', 'Pear Shape', 'Radiant Cut', 'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite', 'Marquise', 'Oval', 'Princess', 'Trillion');
-CREATE TYPE clarity AS ENUM ('I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS', 'VVS1', 'VVS2','FL', 'IF');
+CREATE TYPE shape AS ENUM ('Brilliant Cut', 'Pear Shape', 'Radiant Cut',
+    'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite',
+    'Marquise', 'Oval', 'Princess', 'Trillion');
+CREATE TYPE clarity AS ENUM ('I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS',
+    'VVS1', 'VVS2','FL', 'IF');
 CREATE TYPE gem_type AS ENUM ('Sapphire', 'Emerald', 'Ruby', 'Diamond');
-CREATE TYPE fancy_intensity AS ENUM ('Faint', 'Very Light', 'Light', 'Fancy light', 'Fancy','Fansy Vivid', 'Fancy intense', 'Fancy Deep', 'Fansy Dark');
-CREATE TYPE fancy_color AS ENUM ('Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Violet', 'Gray');
-CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring', 'Brooch', 'Bracelet');
-CREATE TYPE metal_type AS ENUM ('PT900', 'PT950', '18k white gold', '14k white gold', '18k white/yellow gold', '18k rose gold', '18k white gold + PT');
+CREATE TYPE fancy_intensity AS ENUM ('Faint', 'Very Light', 'Light',
+    'Fancy light', 'Fancy','Fansy Vivid',
+    'Fancy intense', 'Fancy Deep', 'Fansy Dark');
+CREATE TYPE fancy_color AS ENUM ('Red', 'Orange', 'Yellow',
+    'Green', 'Blue', 'Violet', 'Gray');
+CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring',
+    'Brooch', 'Bracelet');
+CREATE TYPE metal_type AS ENUM ('PT900', 'PT950', '18k white gold',
+    '14k white gold', '18k white/yellow gold',
+    '18k rose gold', '18k white gold + PT');
 CREATE TYPE update_type_enum AS ENUM ('Insert', 'Update', 'Delete');
-CREATE TYPE action_role_type AS ENUM ('Creator', 'Approver', 'Processor', 'Reviewer');
+CREATE TYPE action_role_type AS ENUM ('Creator', 'Approver',
+    'Processor', 'Reviewer');
 CREATE TYPE lab_purpose AS ENUM ('Certify', 'Re-certify');
 CREATE TYPE processing_type AS ENUM ('Remove oil', 'Recut');
 CREATE TYPE payment_status AS ENUM ('Partial paid', 'Unpaid', 'Paid');
-CREATE TYPE treatment AS ENUM ('No heat', 'heated', 'No oil', 'Minor Oil', 'Oiled');
-CREATE TYPE gem_color AS ENUM ('Red', 'Blue', 'Green', 'Pigeon blood', 'Royal Blue');
-CREATE TYPE white_scale AS ENUM ( 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-   'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+CREATE TYPE treatment AS ENUM ('No heat', 'heated', 'No oil',
+    'Minor Oil', 'Oiled');
+CREATE TYPE gem_color AS ENUM ('Red', 'Blue', 'Green',
+    'Pigeon blood', 'Royal Blue');
+CREATE TYPE white_scale AS ENUM ( 'D', 'E', 'F', 'G', 'H',
+    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
+    'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+CREATE TYPE transfer_category AS ENUM ('purchase', 'memo in',
+    'return memo in', 'transfer to lab', 'return from lab',
+    'transfer to factory', 'return from factory', 'transfer to office',
+    'memo out', 'return memo out', 'sale');
+CREATE TYPE item_category AS ENUM ('white diamond', 'colored diamond',
+    'colored gemstone', 'jewelry');
 
 
 --Create tables
@@ -96,6 +116,7 @@ CREATE TABLE action
    to_counterpart_id   INTEGER,
    terms               TEXT,
    remarks             TEXT,
+   action_category     transfer_category NOT NULL,
    created_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (from_counterpart_id) REFERENCES counterpart (counterpart_id)
@@ -132,6 +153,7 @@ CREATE TABLE item
    supplier_id           INTEGER                                NOT NULL,
    origin                TEXT                                   NOT NULL,
    responsible_office_id INTEGER                                NOT NULL,
+   item_type             item_category                          NOT NULL,
    created_at            TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at            TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    is_available          BOOLEAN                                NOT NULL DEFAULT TRUE,

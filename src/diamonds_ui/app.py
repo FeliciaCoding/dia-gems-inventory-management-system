@@ -21,6 +21,10 @@ sales = st.Page(
     "pages/sales.py", title="Sales", icon=":material/store:"
 )
 
+inventory_items = st.Page(
+    "pages/inventory.py", title="Inventory", icon=":material/store:"
+)
+
 transfers = [
     st.Page("pages/transfers/transfers_to_office.py", title="To office", icon=":material/store:"),
     st.Page("pages/transfers/transfers_to_lab.py", title="To lab", icon=":material/store:"),
@@ -56,7 +60,7 @@ if user.is_logged:
     if user.get().role == 'Chief':
         # full control
         chief_dict = {
-            "": [purchases, sales],
+            "": [purchases, sales, inventory_items],
             "Inventory": items,
             "Transfers": transfers,
             "Returns": returns,

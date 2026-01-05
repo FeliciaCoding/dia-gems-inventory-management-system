@@ -355,7 +355,7 @@ SELECT CASE
            WHEN cgs.lot_id IS NOT NULL THEN 'Colored Gemstone'
            WHEN j.lot_id IS NOT NULL THEN 'Jewelry'
            ELSE 'Unknown'
-           END                                                 AS item_type,
+           END                                                 AS item_tp,
 
 
        COUNT(*)                                                AS total_count,
@@ -379,7 +379,7 @@ SELECT CASE
        LEFT JOIN jewelry j
        ON i.lot_id = j.lot_id
 
- GROUP BY item_type
+ GROUP BY item_tp
  ORDER BY total_count DESC;
 
 --test
