@@ -56,3 +56,32 @@ def items_cursor(
         )
         yield cur.execute(q, other_params)
 
+
+def get_item(
+    db: psycopg.Connection,
+    lot_id: int,
+):
+    with db.cursor(row_factory=class_row(Item)) as cur:
+        return cur.execute(
+            """
+            SELECT 
+                lot_id, 
+                stock_name, 
+                purchase_date, 
+                s.name AS supplier_name,
+                origin, 
+                ro.name AS responsible_office,
+                item_type,
+                is_available,
+                i.created_at,
+                i.updated_at
+            FROM diamonds_are_forever.item i
+                INNER JOIN diamonds_are_forever.counterpart s
+                ON i.supplier_id = s.counterpart_id
+                INNER JOIN diamonds_are_forever.counterpart ro
+                ON i.responsible_office_id = ro.counterpart_id
+            WHERE i.lot_id = %s
+            """,
+            (lot_id,),
+        ).fetchone()
+

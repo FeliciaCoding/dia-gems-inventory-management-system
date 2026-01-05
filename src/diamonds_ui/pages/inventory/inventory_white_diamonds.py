@@ -8,13 +8,19 @@ import streamlit as st
 from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.database.item.white_diamond import WhiteDiamond, get_white_diamonds
+from diamonds_ui.database.item.item import Item, get_item
 from diamonds_ui.database.action.action import Action, get_actions
 from streamlit_utils.query_param import query_param
 
 
-def render_white_diamond_details(d: WhiteDiamond, actions: list[Action]):
+def render_white_diamond_details(d: WhiteDiamond, i: Item, actions: list[Action]):
     with st.container(border=True):
         st.markdown(f"### Details for: {d.lot_id}")
+
+        st.markdown(f"**Stock name:** {i.stock_name}")
+        st.write(f"**Purchased from:** {i.supplier_name} **on** {i.purchase_date.date()}")
+        st.write(f"**Availability:** {'yes' if i.is_available else 'no'}")
+
         st.markdown(f"**Weight:** {d.weight_ct} ct")
         st.markdown(f"**Shape:** {d.shape}")
         st.markdown(f"**White scale:** {d.white_scale}")
@@ -24,13 +30,12 @@ def render_white_diamond_details(d: WhiteDiamond, actions: list[Action]):
 
         for a in actions:
             with st.container(border=True):
-                col1, col2, col3 = st.columns(3)
-                col1.markdown(f"**{a.action_category.capitalize()}**")
-                col1.write(f"action id: #{a.action_id}")
-                col2.write(f"From: {a.from_counterpart_name}")
-                col2.write(f"From: {a.to_counterpart_name}")
-                col3.write(f"Price: {a.price} {a.currency_code}")
-                col3.write(f"Registered: {a.created_at.date()}")
+                st.markdown(f"#### {a.action_category.capitalize()}")
+                col1, col2 = st.columns(2)
+                col1.write(f"From: {a.from_counterpart_name}")
+                col1.write(f"By: {a.to_counterpart_name}")
+                col2.write(f"Price: {a.price} {a.currency_code}")
+                col2.write(f"Registered: {a.created_at.date()}")
 
 
 def select_white_diamond(
@@ -66,8 +71,9 @@ else:
         if white_diamond is None:
             st.info("Please select white diamond to inspect its details")
         else:
+            general_item = get_item(db, white_diamond.lot_id)
             actions = get_actions(db, white_diamond.lot_id)
-            render_white_diamond_details(white_diamond, actions)
+            render_white_diamond_details(white_diamond, general_item, actions)
 
 
 
