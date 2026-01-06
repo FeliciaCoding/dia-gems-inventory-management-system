@@ -28,6 +28,11 @@ def render_item_card(i: Item):
                     "pages/inventory/inventory_colored_diamonds.py",
                     query_params=dict(lot_id=i.lot_id),
                 )
+            elif i.item_type == "colored gemstone":
+                st.switch_page(
+                    "pages/inventory/inventory_colored_gemstones.py",
+                    query_params=dict(lot_id=i.lot_id),
+                )
 
 
 if user.get() is None:
