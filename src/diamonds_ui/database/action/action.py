@@ -47,3 +47,31 @@ def get_actions(
             (lot_id,),
         ).fetchall()
 
+
+def get_action(
+        db: psycopg.Connection,
+        action_id: int
+):
+    with db.cursor(row_factory=class_row(Action)) as cur:
+        return cur.execute(
+            """
+            SELECT a.action_id,
+                   c1.name                       AS from_counterpart_name,
+                   c2.name                       AS to_counterpart_name,
+                   terms,
+                   remarks,
+                   action_category,
+                   (ai.unit_price * ai.quantity) AS price,
+                   currency_code,
+                   a.created_at,
+                   a.updated_at
+            FROM diamonds_are_forever.action a
+                INNER JOIN diamonds_are_forever.counterpart c1
+                ON a.from_counterpart_id = c1.counterpart_id
+                INNER JOIN diamonds_are_forever.counterpart c2
+                ON a.to_counterpart_id = c2.counterpart_id
+            WHERE a.action_id = %s
+            """,
+            (action_id,)
+        ).fetchone()
+
