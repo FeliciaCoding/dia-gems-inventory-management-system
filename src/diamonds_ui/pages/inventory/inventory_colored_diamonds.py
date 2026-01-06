@@ -3,47 +3,85 @@ This page represents the inventory.
 Also, this page is the main page.
 Its content could be different depending on who looks at it.
 """
-
 import streamlit as st
-from psycopg import sql
-
-from diamonds_ui.components.pagination import pagination_element
-from diamonds_ui.database.item.colored_diamond import ColoredDiamond, colored_diamonds_cursor
 from streamlit_utils import db
-# from streamlit_utils.query_param import query_param
+from diamonds_ui.auth import user
+from diamonds_ui.database.item.colored_diamond import (
+    ColoredDiamond,
+    get_colored_diamonds
+)
+from diamonds_ui.database.item.item import Item, get_item
+from diamonds_ui.database.action.action import Action, get_actions
+from streamlit_utils.query_param import query_param
 
-st.header("Colored Diamonds")
-st.subheader("All the colored diamonds registered in the system")
 
-conn = db.connection()
-with conn.connect() as db:
+def render_colored_diamond_details(d: ColoredDiamond, i: Item, actions: list[Action]):
+    with st.container(border=True):
+        st.markdown(f"### Details for: {d.lot_id}")
 
-    def render_colored_diamond(cd: ColoredDiamond):
-        with st.container(border=True):
-            st.html(
-                f"""
-                Colored diamond: <strong>{cd.stock_name} - {cd.origin}</strong> <small>({cd.purchase_date})</small>
-                <br>
-                {cd.weight_ct}
-                """
-            )
+        st.markdown(f"**Stock name:** {i.stock_name}")
+        st.write(f"**Purchased from:** {i.supplier_name} **on** {i.purchase_date.date()}")
+        st.write(f"**Availability:** {'yes' if i.is_available else 'no'}")
 
-    # Use the white_diamonds context manager to stream results from the DB.
-    # The cursor supports .scroll() and .fetchmany() so we can implement pagination.
-    with colored_diamonds_cursor(
-        db,
-        condition=sql.SQL("is_available = TRUE"),
-    ) as cur:
-        if cur.rowcount == 0:
-            st.info("No results")
+        st.markdown(f"**Weight:** {d.weight_ct} ct")
+        st.markdown(f"**Shape:** {d.shape}")
+        st.markdown(f"**Length:** {d.length} mm")
+        st.markdown(f"**Width:** {d.width} mm")
+        st.markdown(f"**Depth:** {d.depth} mm")
+
+        st.markdown(f"**Fancy intensity:** {d.fancy_intensity}")
+        st.markdown(f"**Fancy overtone:** {d.fancy_overtone}")
+        st.markdown(f"**Fancy color:** {d.fancy_color}")
+
+        st.markdown(f"**Certificate:** {d.certificate_num}")
+
+        st.markdown("### Status")
+
+        for a in actions:
+            with st.container(border=True):
+                st.markdown(f"#### {a.action_category.capitalize()}")
+                col1, col2 = st.columns(2)
+                col1.write(f"From: {a.from_counterpart_name}")
+                col1.write(f"By: {a.to_counterpart_name}")
+                col2.write(f"Price: {a.price} {a.currency_code}")
+                col2.write(f"Registered: {a.created_at.date()}")
+
+
+def select_colored_diamond(
+    diamonds: list[ColoredDiamond],
+    cd_id: int | None = None,
+):
+    if cd_id is None:
+        index = None
+    else:
+        index = [d.lot_id for d in diamonds].index(cd_id)
+
+    return st.selectbox(
+        "Current colored diamond",
+        diamonds,
+        key="colored_diamond_selection",  # required for sync with query parameter (otherwise needs a rerun)
+        index=index,
+        format_func=lambda wd: f"colored diamond: (#{wd.lot_id}) {wd.weight_ct} ct, {wd.shape}",
+    )
+
+
+if user.get() is None:
+    st.error("Somehow you have accessed this page while not being logged !!!")
+else:
+    st.header("Colored Diamond Details")
+
+    conn = db.connection()
+    with conn.connect() as db:
+        with query_param("lot_id", int) as qp:
+            diamond = select_colored_diamond(
+                get_colored_diamonds(db), qp.get())
+            if diamond is not None:
+                qp.set(diamond.lot_id)
+
+        if diamond is None:
+            st.info("Please select colored diamond to inspect its details")
         else:
-            # Build the pagination UI from the total number of rows; this returns
-            # the chosen per_page and offset values that we use with the cursor.
-            per_page, offset = pagination_element(cur.rowcount)
-
-            # Move the cursor to the requested offset and fetch the desired page.
-            cur.scroll(offset)
-            diamonds = cur.fetchmany(per_page)
-            for d in diamonds:
-                render_colored_diamond(d)
+            general_item = get_item(db, diamond.lot_id)
+            actions = get_actions(db, diamond.lot_id)
+            render_colored_diamond_details(diamond, general_item, actions)
 

@@ -1,7 +1,5 @@
 from decimal import Decimal
-from datetime import datetime
 from pydantic import BaseModel
-from contextlib import contextmanager
 import psycopg
 from psycopg import sql
 from psycopg.rows import class_row
@@ -9,15 +7,11 @@ from psycopg.rows import class_row
 
 class ColoredDiamond(BaseModel):
     lot_id: int
-    stock_name: str
-    purchase_date: datetime
-    supplier_name: str
-    origin: str
-    responsible_office: str
-    physical_location: str
-    is_available: bool
     weight_ct: Decimal
     shape: str
+    length: Decimal
+    width: Decimal
+    depth: Decimal
     fancy_intensity: str
     fancy_overtone: str
     fancy_color: str
@@ -25,22 +19,32 @@ class ColoredDiamond(BaseModel):
     certificate_num: str
 
 
-@contextmanager
-def colored_diamonds_cursor(
+def get_colored_diamonds(
     db: psycopg.Connection,
     condition: sql.SQL = sql.SQL("TRUE"),
-    order: sql.SQL = sql.SQL("updated_at DESC"),
+    order: sql.SQL = sql.SQL("c.updated_at DESC"),
     **other_params,
 ):
     with db.cursor(row_factory=class_row(ColoredDiamond)) as cur:
         q = sql.SQL(
             """
-            SELECT lot_id, stock_name, purchase_date, supplier_name,
-                origin, responsible_office, physical_location,
-                is_available, weight_ct, shape,
-                fancy_intensity, fancy_overtone, fancy_color,
-                clarity, certificate_num
-            FROM diamonds_are_forever.complete_inventory_colored_diamonds
+            SELECT
+                cd.lot_id, 
+                ls.weight_ct,
+                ls.shape,
+                ls.length,
+                ls.width,
+                ls.depth,
+                cd.fancy_intensity, 
+                cd.fancy_overtone, 
+                cd.fancy_color,
+                cd.clarity, 
+                c.certificate_num
+            FROM colored_diamond cd
+                INNER JOIN loose_stone ls
+                ON cd.lot_id = ls.lot_id
+                INNER JOIN certificate c
+                ON cd.lot_id = c.lot_id
             WHERE {condition}
             ORDER BY {order}
             """
@@ -48,5 +52,6 @@ def colored_diamonds_cursor(
             condition=condition,
             order=order,
         )
-        yield cur.execute(q, other_params)
+        cur.execute("SET search_path TO diamonds_are_forever")
+        return cur.execute(q, other_params).fetchall()
 

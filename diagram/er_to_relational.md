@@ -30,7 +30,7 @@ employee (**employee_id**, counterpart_id, first_name, last_name, email, role, i
 
 ### `action`
 
-action (**action_id**, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at) <br>
+action (**action_id**, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at, action_category) <br>
     `from_counterpart_id` references `counterpart.counterpart_id` NOT NULL <br>
     `to_counterpart_id` references `counterpart.counterpart_id` NOT NULL <br>
     
@@ -46,7 +46,7 @@ update_log (**log_time, action_id**, employee_id, update_type, old_value, new_va
 
 ### `item`
 
-item (**lot_id**, stock_name, purchase_date, supplier_id, origin, responsible_office_id, created_at, updated_at, is_available) <br>
+item (**lot_id**, stock_name, purchase_date, supplier_id, origin, responsible_office_id, created_at, updated_at, is_available, item_type) <br>
     `supplier_id` references `counterpart.counterpart_id` NOT NULL
     `responsible_office_id` references `counterpart.counterpart_id` NOT NULL
 
@@ -141,7 +141,7 @@ total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)  <br>
 ### `certificate`
 
 certificate(**certificate_id**, lot_id, lab_id, certificate_num, issue_date, shape, weight_ct, length, width, depth, clarity, color, treatment, gem_type, created_at, updated_at) <br>
-    `lot_id` references `item.lot_id` <br>
+    `lot_id` references `item.lot_id` NOT NULL <br>
     `lab_id` references `counterpart.counterpart_id` NOT NULL
 
 
