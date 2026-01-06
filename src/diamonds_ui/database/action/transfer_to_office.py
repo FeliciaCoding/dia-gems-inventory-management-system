@@ -1,14 +1,33 @@
+from datetime import date, datetime
+from pydantic import BaseModel
 import psycopg
-from diamonds_ui.database.action.transfer import Transfer, get_transfers_to
+from psycopg import sql
+from psycopg.rows import class_row
 
 
-class TransferToOffice(Transfer):
-    pass
+class TransferToOffice(BaseModel):
+    action_id: int
+    transfer_num: str
+    ship_date: date
 
 
-def get_transfers_to_office(
+def get_transfers_between_offices(
         db: psycopg.Connection,
-        lot_id: int
+        condition: sql.SQL = sql.SQL("TRUE"),
+        **other_params,
 ):
-    return get_transfers_to(db, "transfer_to_office",
-                            lot_id, [])
+    with db.cursor(row_factory=class_row(TransferToOffice)) as cur:
+        q = sql.SQL(
+            """
+            SELECT 
+                action_id,
+                transfer_num,
+                ship_date
+            FROM diamonds_are_forever.transfer_to_office
+            WHERE {condition}
+            """
+        ).format(
+            condition=condition
+        )
+        return cur.execute(q).fetchall()
+
