@@ -5,6 +5,7 @@ This page allows to do
 
 
 import streamlit as st
+from psycopg import sql
 from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
@@ -13,7 +14,8 @@ from diamonds_ui.database.action.transfer_to_office import (
 )
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
 from diamonds_ui.database.item.item import (
-    Item, PricedItem, get_items_for_action
+    Item, PricedItem,
+    get_items_for_action, get_items_stored_in_office
 )
 from streamlit_utils.query_param import query_param
 
@@ -43,7 +45,39 @@ def render_transfer_details(t: TransferToOffice, a: Action, items: list[Item]):
 
 @st.dialog("New transfer")
 def new_transfer_to_office():
-    st.write(f"Adding new purchase")
+    src_office = st.selectbox(
+        "Chosen supplier",
+        get_counterparts(db, sql.SQL("category = 'Office'")),
+        key="src_office_selection",
+        index=None,
+        format_func=lambda office: f"From office: {office.country} {office.city} {office.postal_code}",
+    )
+
+    if src_office is not None:
+        dest_office = st.selectbox(
+            "Chosen supplier",
+            get_counterparts(db,
+                 sql.SQL("category = 'Office' AND c.counterpart_id != {src}").format(
+                     src=src_office.counterpart_id)),
+            key="dest_office_selection",
+            index=None,
+            format_func=lambda office: f"To office: {office.country} {office.city} {office.postal_code}",
+        )
+
+        # select items that store in src office
+        items_to_send = st.multiselect(
+            "What items you would like to send?",
+            get_items_stored_in_office(db, src_office.counterpart_id),
+            format_func=lambda item: f"{item.item_type.capitalize()}: {item.stock_name}, supplier: {item.supplier_name}",
+        )
+
+    if st.button("Submit"):
+        # create new action
+        # create new transfer to office
+        # create action_item link for every item in items_to_send
+        pass
+
+
 
 
 def select_transfer(

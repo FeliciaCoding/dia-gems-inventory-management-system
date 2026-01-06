@@ -125,3 +125,38 @@ def get_items_for_action(
         ).fetchall()
 
 
+def get_items_stored_in_office(
+    db: psycopg.Connection,
+    office_id: int,
+):
+    with db.cursor(row_factory=class_row(Item)) as cur:
+        return cur.execute(
+            """
+            SELECT DISTINCT ON (i.lot_id)
+                i.lot_id,
+                i.stock_name,
+                i.purchase_date,
+                s.name AS supplier_name,
+                i.origin,
+                ro.name AS responsible_office,
+                i.item_type,
+                i.is_available,
+                i.created_at,
+                i.updated_at
+            FROM diamonds_are_forever.action a
+                INNER JOIN diamonds_are_forever.action_item ai
+                ON a.action_id = ai.action_id
+                INNER JOIN diamonds_are_forever.item i
+                ON ai.lot_id = i.lot_id
+                INNER JOIN diamonds_are_forever.counterpart s
+                ON i.supplier_id = s.counterpart_id
+                INNER JOIN diamonds_are_forever.counterpart ro
+                ON i.responsible_office_id = ro.counterpart_id
+            WHERE a.to_counterpart_id = %s
+            ORDER BY i.lot_id, a.updated_at DESC
+            """,
+            (office_id,),
+        ).fetchall()
+
+
+
