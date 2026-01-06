@@ -11,7 +11,7 @@ from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.transfer_to_office import (
     TransferToOffice, get_transfers_between_offices,
-    make_new_transfer_to_office
+    make_new_transfer_to_office, PriceInCurrency
 )
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
 from diamonds_ui.database.item.item import (
@@ -85,19 +85,22 @@ def new_transfer_to_office(db):
                 {"item": item.stock_name, "price": item.price, "currency": item.currency_code}
                 for item in items_to_send
             ], disabled=["item", "currency"])
-            st.write(f"In total: {sum(map(lambda i: i["price"], edited_items))}")
 
-        if st.button("Submit"):
-            # create new action
-            # create new transfer to office
-            # create action_item link for every item in items_to_send
-            # make_new_transfer_to_office(db,
-            #     src_office, dest_office, terms, remarks,
-            #     price, currency_code, transfer_num, ship_date,
-            #     items_to_send)
-            pass
-
-
+            if st.button("Submit"):
+                # create new action
+                # create new transfer to office
+                # create action_item link for every item in items_to_send
+                make_new_transfer_to_office(db,
+                    src_office,
+                    dest_office,
+                    terms,
+                    remarks,
+                    {item["item"]: PriceInCurrency(item["price"], item["currency"])
+                     for item in edited_items},
+                    transfer_num,
+                    ship_date,
+                    items_to_send,
+                    user.get())
 
 
 def select_transfer(

@@ -129,7 +129,7 @@ def get_items_stored_in_office(
     db: psycopg.Connection,
     office_id: int,
 ):
-    with db.cursor(row_factory=class_row(Item)) as cur:
+    with db.cursor(row_factory=class_row(PricedItem)) as cur:
         return cur.execute(
             """
             SELECT DISTINCT ON (i.lot_id)
@@ -142,7 +142,9 @@ def get_items_stored_in_office(
                 i.item_type,
                 i.is_available,
                 i.created_at,
-                i.updated_at
+                i.updated_at,
+                ai.unit_price AS price,
+                ai.currency_code
             FROM diamonds_are_forever.action a
                 INNER JOIN diamonds_are_forever.action_item ai
                 ON a.action_id = ai.action_id
