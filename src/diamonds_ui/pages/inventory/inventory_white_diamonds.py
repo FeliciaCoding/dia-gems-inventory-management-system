@@ -40,8 +40,11 @@ def render_white_diamond_details(d: WhiteDiamond, i: Item, actions: list[Action]
                 col1, col2 = st.columns(2)
                 col1.write(f"From: {a.from_counterpart_name}")
                 col1.write(f"By: {a.to_counterpart_name}")
+<<<<<<< Updated upstream
                 # col2.write(f"Price: {a.price} {a.currency_code}")
                 # col2.write(f"Registered: {a.created_at.date()}")
+=======
+>>>>>>> Stashed changes
 
 
 def select_white_diamond(

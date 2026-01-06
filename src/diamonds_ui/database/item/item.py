@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from pydantic import BaseModel
 from contextlib import contextmanager
 import psycopg
@@ -17,6 +18,8 @@ class Item(BaseModel):
     is_available: bool
     created_at: datetime
     updated_at: datetime
+    price: Decimal | None
+    currency_code: str | None
 
 
 @contextmanager
@@ -74,7 +77,9 @@ def get_item(
                 item_type,
                 is_available,
                 i.created_at,
-                i.updated_at
+                i.updated_at,
+                NULL AS price,
+                NULL AS currency_code
             FROM diamonds_are_forever.item i
                 INNER JOIN diamonds_are_forever.counterpart s
                 ON i.supplier_id = s.counterpart_id
@@ -84,4 +89,38 @@ def get_item(
             """,
             (lot_id,),
         ).fetchone()
+
+
+def get_items_for_action(
+    db: psycopg.Connection,
+    action_id: int,
+):
+    with db.cursor(row_factory=class_row(Item)) as cur:
+        return cur.execute(
+            """
+            SELECT 
+                i.lot_id, 
+                i.stock_name, 
+                i.purchase_date, 
+                s.name AS supplier_name,
+                i.origin, 
+                ro.name AS responsible_office,
+                i.item_type,
+                i.is_available,
+                i.created_at,
+                i.updated_at,
+                ai.unit_price AS price,
+                ai.currency_code
+            FROM diamonds_are_forever.action_item ai
+                INNER JOIN diamonds_are_forever.item i
+                ON ai.lot_id = i.lot_id
+                INNER JOIN diamonds_are_forever.counterpart s
+                ON i.supplier_id = s.counterpart_id
+                INNER JOIN diamonds_are_forever.counterpart ro
+                ON i.responsible_office_id = ro.counterpart_id
+            WHERE ai.action_id = %s
+            """,
+            (action_id,),
+        ).fetchall()
+
 

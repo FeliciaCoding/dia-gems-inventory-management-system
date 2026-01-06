@@ -12,11 +12,11 @@ from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.purchase import Purchase, get_purchases
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
-from diamonds_ui.database.item.item import Item
+from diamonds_ui.database.item.item import Item, get_items_for_action
 from streamlit_utils.query_param import query_param
 
 
-def render_purchase_details(p: Purchase, a: Action):
+def render_purchase_details(p: Purchase, a: Action, items: list[Item]):
     with st.container(border=True):
         st.markdown(f"### Details for: {p.action_id}")
 
@@ -32,6 +32,15 @@ def render_purchase_details(p: Purchase, a: Action):
         # - Add all concerned items included in this purchase
         # - Compute price of this whole purchase
         st.markdown("#### Items:")
+
+        for item in items:
+            with st.container(border=True):
+                col1, col2, col3 = st.columns(3)
+                col1.markdown(f"{item.item_type.capitalize()}: **{item.stock_name}**")
+                col1.caption(f"Lot #{item.lot_id}")
+                col2.write(f"Purchased: {item.purchase_date.date()}")
+                col2.write(f"From: {item.supplier_name}")
+                col2.write(f"Price: {item.price} {item.currency_code}")
 
 
 @st.dialog("New purchase")
@@ -263,5 +272,6 @@ else:
             st.info("Please select purchase to inspect it")
         else:
             action = get_action(db, p.action_id)
-            render_purchase_details(p, action)
+            items = get_items_for_action(db, action.action_id)
+            render_purchase_details(p, action, items)
 
