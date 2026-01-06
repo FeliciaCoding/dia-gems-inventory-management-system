@@ -1,0 +1,85 @@
+= Délivrables du projet BDR
+Nastaran FATEMI <nastaran.fatemi@heig-vd.ch>; Christopher MEIER <christopher.meier@heig-vd.ch>
+:lang: fr
+:toc:
+:toc-title: Table des matières
+
+
+== Slides
+
+Au format PDF.
+
+La présentation doit couvrir:
+
+** La problématique
+** Le schéma conceptuel (avec zoom sur les parties intéressantes)
+** Le schéma relationnel (avec zoom sur les parties intéressantes)
+** Une sélection des requêtes/vues/triggers intéressantes
+** Mention des technologies utilisées
+** Une démo de l'application fonctionnelle
+** Défis rencontrés
+** Synthèse des fonctionnalités implémentées (ou non)
+** Conclusion
+
+*Mettez à jour le lien ci-après pour pointer vers vos slides: link:slides.pdf[Mes slides].*
+
+
+
+== Rapport
+
+Au format Markdown, AsciiDoc ou PDF.
+
+Le rapport doit contenir:
+
+* Une intro et une conclusion
+* Le cahier des charges (phase 1 mis à jour)
+* Le schéma conceptuel (phase 2 mis à jour)
+* Le schéma relationnel (phase 3 mis à jour)
+* Les défis rencontrés
+* Liste des fonctionnalités planifiées avec mention si c'est fonctionnel ou pas
+* Liste des bugs connus
+* La contribution des différents membres de l'équipe
+* Quelques captures d'écran des différentes interfaces de l'application
+
+*Mettez à jour le lien ci-après pour pointer vers votre rapport: link:report.asciidoc[Mon rapport].*
+
+
+== Phases précédentes mises à jour
+
+Vu que le rapport contient déjà les résultats mis à jour des phases 1 à 3, seule la phase 4 est à rendre séparément:
+
+* un (ou plusieurs) fichier SQL contenant le résultat mis à jour de la phase 4.
+
+
+== Script de création de la base de données
+
+Fichier unique (ou séquence de fichiers) qu'il faut exécuter pour créer la base de données complète.
+
+Le script doit inclure:
+
+* La création des tables, vues, fonctions/procédures, triggers
+* Le peuplement initial de la base de données (pour avoir un exemple de contenu)
+
+*Mettez à jour le lien ci-après pour pointer vers votre script de création de la BD: link:create.sql[Mon script].*
+
+
+== Code
+
+Le code source commenté de l'application.
+
+L'application doit utiliser:
+
+* Des requêtes de manipulation des données (UPDATE, INSERT, DELETE). Au moins une de chaque.
+* Des requêtes SELECT simples et avancées.
+* Des triggers, fonctions/procédures et vues. Au moins un de chaque.
+
+
+== README
+
+Le link:README.md[``README.md``] doit contenir:
+
+* Les instructions pour créer la base de données.
+* Les instructions pour installer les dépendances.
+* Les instructions pour démarrer l'application.
+* L'URL de la page d'accueil.
+* Une courte description de l'arborescence du repo (que contiennent les différents dossiers ?).

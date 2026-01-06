@@ -71,7 +71,9 @@ Phase IV::
 * Fichier du script pour ajouter des vues et des triggers.
 * Fichier contenant des requêtes liées aux fonctionnalités prévues.
 |
--
+mer. 10.12.2025
+
+à 23h59
 
 a|
 Rendu ﬁnal::
@@ -98,6 +100,7 @@ avant Mardi 13h sur le
 repo
 |===
 
+Voir xref:deliverables.asciidoc[délivrables] pour plus d'information sur le rendu final.
 
 
 == Evaluation
