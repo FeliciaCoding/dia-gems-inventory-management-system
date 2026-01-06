@@ -168,6 +168,58 @@ def new_purchase():
             # 6) reflect new action creation in action_update_log for current user
             pass
 
+    elif item_type == "jewelry":
+        jewelry_type = st.selectbox(
+            "Type of a jewelry",
+            ['Earrings', 'Necklace', 'Ring',
+             'Brooch', 'Bracelet'],
+            key="jewelry_type_selection",
+            index=None
+        )
+        gross_weight_gr = st.number_input(
+            "Whole weight of a jewelry in g",
+            min_value=0
+        )
+        metal_type = st.selectbox(
+            "Type of metal",
+            ['PT900', 'PT950', '18k white gold',
+             '14k white gold', '18k white/yellow gold',
+             '18k rose gold', '18k white gold + PT'],
+            key="metal_type_selection",
+            index=None
+        )
+        metal_weight_gr = st.number_input(
+            "Weight of the metal in g",
+            min_value=0.0
+        )
+        centered_stone_type = st.text_input("Type of the center stones")
+        total_center_stone_qty = st.number_input(
+            "Total quantity of center stones",
+            min_value=0
+        )
+        total_center_stone_weight_ct = st.number_input(
+            "Total weight of the center stones in carats",
+            min_value=0.0
+        )
+        side_stone_type = st.text_input("Type of the side stones")
+        total_side_stone_qty = st.number_input(
+            "Total quantity of side stones",
+            min_value=0
+        )
+        total_side_stone_weight_ct = st.number_input(
+            "Total weight of the side stones in carats",
+            min_value=0.0
+        )
+        if st.button("Submit"):
+            # TODO:
+            # 1) create new action (type=purchase)
+            # 2) create new item/jewelry
+            # 3) make action_item link
+            # 4) create new purchase
+            # 5) switch page to purchase with newly created purchase
+            # 6) reflect new action creation in action_update_log for current user
+            pass
+
 
 def select_purchase(
     purchases: list[Purchase],
