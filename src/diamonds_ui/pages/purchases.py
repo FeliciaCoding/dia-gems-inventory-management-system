@@ -99,7 +99,74 @@ def new_purchase():
             pass
 
     elif item_type == "colored diamond":
-        cd1 = st.text_input("colored diamond input")
+        fancy_intensity = st.selectbox(
+            "Fancy intensity of a colored diamond",
+            ['Faint', 'Very Light', 'Light',
+             'Fancy light', 'Fancy','Fansy Vivid',
+             'Fancy intense', 'Fancy Deep', 'Fansy Dark'],
+            key="fancy_intensity_selection",
+            index=None
+        )
+        fancy_overtone = st.text_input(
+            "Fancy overtone of a colored diamond")
+        fancy_color = st.selectbox(
+            "Fancy color of a colored diamond",
+            ['Red', 'Orange', 'Yellow',
+             'Green', 'Blue', 'Violet', 'Gray'],
+            key="fancy_color_selection",
+            index=None
+        )
+        clarity = st.selectbox(
+            "Clarity of a diamond",
+            ['I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS',
+             'VVS1', 'VVS2','FL', 'IF'],
+            key="clarity_selection",
+            index=None
+        )
+        if st.button("Submit"):
+            # TODO:
+            # 1) create new action (type=purchase)
+            # 2) create new item/loose stone/colored diamond
+            # 3) make action_item link
+            # 4) create new purchase
+            # 5) switch page to purchase with newly created purchase
+            # 6) reflect new action creation in action_update_log for current user
+            pass
+
+    elif item_type == "colored gemstone":
+        # gem_type selector
+        gem_type = st.selectbox(
+            "Type of a gemstone",
+            ['Sapphire', 'Emerald', 'Ruby', 'Diamond'],
+            key="gem_type_selection",
+            index=None
+        )
+        # gem_color selector
+        gem_color = st.selectbox(
+            "Color of a gemstone",
+            ['Red', 'Blue', 'Green',
+             'Pigeon blood', 'Royal Blue'],
+            key="gem_color_selection",
+            index=None
+        )
+        # treatment selector
+        treatment = st.selectbox(
+            "Treatment of a gemstone",
+            ['No heat', 'heated', 'No oil',
+             'Minor Oil', 'Oiled'],
+            key="treatment_selection",
+            index=None
+        )
+
+        if st.button("Submit"):
+            # TODO:
+            # 1) create new action (type=purchase)
+            # 2) create new item/loose stone/colored gemstone
+            # 3) make action_item link
+            # 4) create new purchase
+            # 5) switch page to purchase with newly created purchase
+            # 6) reflect new action creation in action_update_log for current user
+            pass
 
 
 def select_purchase(
