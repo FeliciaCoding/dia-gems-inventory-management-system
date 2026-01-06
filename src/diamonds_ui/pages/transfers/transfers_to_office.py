@@ -10,7 +10,8 @@ from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.transfer_to_office import (
-    TransferToOffice, get_transfers_between_offices
+    TransferToOffice, get_transfers_between_offices,
+    make_new_transfer_to_office
 )
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
 from diamonds_ui.database.item.item import (
@@ -44,7 +45,7 @@ def render_transfer_details(t: TransferToOffice, a: Action, items: list[Item]):
 
 
 @st.dialog("New transfer between offices")
-def new_transfer_to_office():
+def new_transfer_to_office(db):
     transfer_num = st.text_input("Transfer number")
     ship_date = st.date_input("Shipment date")
 
@@ -72,13 +73,29 @@ def new_transfer_to_office():
             "What items you would like to send?",
             get_items_stored_in_office(db, src_office.counterpart_id),
             format_func=lambda item: f"{item.item_type.capitalize()}: {item.stock_name}, supplier: {item.supplier_name}",
+            default=None
         )
 
-    if st.button("Submit"):
-        # create new action
-        # create new transfer to office
-        # create action_item link for every item in items_to_send
-        pass
+        terms = st.text_input("Terms")
+        remarks = st.text_input("Remarks")
+
+        if len(items_to_send) > 0:
+            st.write("Prices (editable) of chosen items: ")
+            edited_items = st.data_editor([
+                {"item": item.stock_name, "price": item.price, "currency": item.currency_code}
+                for item in items_to_send
+            ], disabled=["item", "currency"])
+            st.write(f"In total: {sum(map(lambda i: i["price"], edited_items))}")
+
+        if st.button("Submit"):
+            # create new action
+            # create new transfer to office
+            # create action_item link for every item in items_to_send
+            # make_new_transfer_to_office(db,
+            #     src_office, dest_office, terms, remarks,
+            #     price, currency_code, transfer_num, ship_date,
+            #     items_to_send)
+            pass
 
 
 
@@ -116,7 +133,7 @@ else:
                     qp.set(t.action_id)
 
                 if st.button("Make new transfer"):
-                    new_transfer_to_office()
+                    new_transfer_to_office(db)
 
         if t is None:
             st.info("Please select transfer to inspect it")
