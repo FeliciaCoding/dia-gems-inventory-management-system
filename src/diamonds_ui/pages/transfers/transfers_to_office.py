@@ -43,10 +43,13 @@ def render_transfer_details(t: TransferToOffice, a: Action, items: list[Item]):
                 col2.write(f"From: {item.supplier_name}")
 
 
-@st.dialog("New transfer")
+@st.dialog("New transfer between offices")
 def new_transfer_to_office():
+    transfer_num = st.text_input("Transfer number")
+    ship_date = st.date_input("Shipment date")
+
     src_office = st.selectbox(
-        "Chosen supplier",
+        "Sender",
         get_counterparts(db, sql.SQL("category = 'Office'")),
         key="src_office_selection",
         index=None,
@@ -55,7 +58,7 @@ def new_transfer_to_office():
 
     if src_office is not None:
         dest_office = st.selectbox(
-            "Chosen supplier",
+            "Recipient",
             get_counterparts(db,
                  sql.SQL("category = 'Office' AND c.counterpart_id != {src}").format(
                      src=src_office.counterpart_id)),
