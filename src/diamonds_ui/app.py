@@ -29,15 +29,11 @@ transfers = [
     st.Page("pages/transfers/transfers_to_office.py", title="To office", icon=":material/store:"),
     st.Page("pages/transfers/transfers_to_lab.py", title="To lab", icon=":material/store:"),
     st.Page("pages/transfers/transfers_to_factory.py", title="To factory", icon=":material/store:"),
-    st.Page("pages/transfers/memos_in.py", title="Memo in", icon=":material/store:"),
-    st.Page("pages/transfers/memos_out.py", title="Memo out", icon=":material/store:")
 ]
 
 returns = [
     st.Page("pages/returns/return_from_lab.py", title="From labs", icon=":material/store:"),
     st.Page("pages/returns/return_from_factory.py", title="From factories", icon=":material/store:"),
-    st.Page("pages/returns/return_memo_in.py", title="From memos in", icon=":material/store:"),
-    st.Page("pages/returns/return_memo_out.py", title="From memos out", icon=":material/store:"),
 ]
 
 

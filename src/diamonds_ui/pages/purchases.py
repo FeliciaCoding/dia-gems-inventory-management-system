@@ -12,11 +12,13 @@ from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.purchase import Purchase, get_purchases
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
-from diamonds_ui.database.item.item import Item, get_items_for_action
+from diamonds_ui.database.item.item import (
+    Item, PricedItem, get_items_for_action
+)
 from streamlit_utils.query_param import query_param
 
 
-def render_purchase_details(p: Purchase, a: Action, items: list[Item]):
+def render_purchase_details(p: Purchase, a: Action, items: list[PricedItem]):
     with st.container(border=True):
         st.markdown(f"### Details for: {p.action_id}")
 
@@ -35,7 +37,7 @@ def render_purchase_details(p: Purchase, a: Action, items: list[Item]):
 
         for item in items:
             with st.container(border=True):
-                col1, col2, col3 = st.columns(3)
+                col1, col2 = st.columns(2)
                 col1.markdown(f"{item.item_type.capitalize()}: **{item.stock_name}**")
                 col1.caption(f"Lot #{item.lot_id}")
                 col2.write(f"Purchased: {item.purchase_date.date()}")
