@@ -31,10 +31,6 @@ def render_purchase_details(p: Purchase, a: Action):
         st.write(f"Purchase date: {p.purchase_date}")
 
 
-def select_supplier(suppliers: list[Counterpart]):
-    return
-
-
 @st.dialog("New purchase")
 def new_purchase():
     st.write(f"Adding new purchase")
