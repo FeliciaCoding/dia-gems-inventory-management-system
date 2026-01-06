@@ -39,7 +39,8 @@ def select_supplier(suppliers: list[Counterpart]):
 def new_purchase():
     st.write(f"Adding new purchase")
     stock_name = st.text_input("Stock name")
-    purchase_date = st.text_input("Purchase date")
+    purchase_date = st.date_input("Purchase date")
+    purchase_num = st.text_input("Purchase number")
     origin = st.text_input("Origin")
 
     # selector for supplier
@@ -58,13 +59,51 @@ def new_purchase():
         index=None
     )
 
-    # TODO:
-    # conditionally render necessary inputs
-    # depending on item's type
+    if item_type in ["white diamond", "colored diamond",
+                    "colored gemstone"]:
+        weight_ct = st.text_input("Weight in carats")
+        shape = st.selectbox(
+            "Loose stone shape",
+            ['Brilliant Cut', 'Pear Shape', 'Radiant Cut',
+             'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite',
+             'Marquise', 'Oval', 'Princess', 'Trillion'],
+            key="shape_selection",
+            index=None
+        )
+        length = st.text_input("Length in mm")
+        width = st.text_input("Width in mm")
+        depth = st.text_input("Depth in mm")
 
-    # if st.button("Submit"):
-    #     st.session_state.vote = {"item": item, "reason": reason}
-    #     st.rerun()
+    if item_type == "white diamond":
+        white_scale = st.selectbox(
+            "White scale of a diamond",
+            ['D', 'E', 'F', 'G', 'H',
+             'I', 'J', 'K', 'L', 'M',
+             'N', 'O', 'P', 'Q', 'R',
+             'S', 'T', 'U', 'V', 'W',
+             'X', 'Y', 'Z'],
+            key="white_scale_selection",
+            index=None
+        )
+        clarity = st.selectbox(
+            "Clarity of a diamond",
+            ['I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS',
+             'VVS1', 'VVS2','FL', 'IF'],
+            key="clarity_selection",
+            index=None
+        )
+        if st.button("Submit"):
+            # TODO:
+            # 1) create new action (type=purchase)
+            # 2) create new item/loose stone/white diamond
+            # 3) make action_item link
+            # 4) create new purchase
+            # 5) switch page to purchase with newly created purchase
+            # 6) reflect new action creation in action_update_log for current user
+            pass
+
+    elif item_type == "colored diamond":
+        cd1 = st.text_input("colored diamond input")
 
 
 def select_purchase(
@@ -101,7 +140,6 @@ else:
 
                 if st.button("Add purchase"):
                     new_purchase()
-
 
         if p is None:
             st.info("Please select purchase to inspect it")
