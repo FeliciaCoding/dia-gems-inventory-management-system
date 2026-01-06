@@ -23,7 +23,13 @@ def render_white_diamond_details(d: WhiteDiamond, i: Item, actions: list[Action]
 
         st.markdown(f"**Weight:** {d.weight_ct} ct")
         st.markdown(f"**Shape:** {d.shape}")
+        st.markdown(f"**Length:** {d.length} mm")
+        st.markdown(f"**Width:** {d.width} mm")
+        st.markdown(f"**Depth:** {d.depth} mm")
+
         st.markdown(f"**White scale:** {d.white_scale}")
+        st.markdown(f"**Clarity:** {d.clarity}")
+
         st.markdown(f"**Certificate:** {d.certificate_num}")
 
         st.markdown("### Status")

@@ -25,9 +25,9 @@ def render_colored_diamond_details(d: ColoredDiamond, i: Item, actions: list[Act
 
         st.markdown(f"**Weight:** {d.weight_ct} ct")
         st.markdown(f"**Shape:** {d.shape}")
-        st.markdown(f"**Length:** {d.length}")
-        st.markdown(f"**Width:** {d.width}")
-        st.markdown(f"**Depth:** {d.depth}")
+        st.markdown(f"**Length:** {d.length} mm")
+        st.markdown(f"**Width:** {d.width} mm")
+        st.markdown(f"**Depth:** {d.depth} mm")
 
         st.markdown(f"**Fancy intensity:** {d.fancy_intensity}")
         st.markdown(f"**Fancy overtone:** {d.fancy_overtone}")
