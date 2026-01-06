@@ -18,17 +18,20 @@ from streamlit_utils.query_param import query_param
 
 def render_purchase_details(p: Purchase, a: Action):
     with st.container(border=True):
-        st.markdown(f"### Details for: {p.lot_id}")
+        st.markdown(f"### Details for: {p.action_id}")
 
         st.markdown(f"#### {a.action_category.capitalize()}")
-        col1, col2 = st.columns(2)
-        col1.write(f"From: {a.from_counterpart_name}")
-        col1.write(f"By: {a.to_counterpart_name}")
-        col2.write(f"Price: {a.price} {a.currency_code}")
-        col2.write(f"Registered: {a.created_at.date()}")
 
-        st.write(f"Purchase number: {p.purchase_num}")
-        st.write(f"Purchase date: {p.purchase_date}")
+        col1, col2 = st.columns(2)
+        col1.markdown(f"**From:** {a.from_counterpart_name}")
+        col2.markdown(f"**By:** {a.to_counterpart_name}")
+        col1.markdown(f"**Purchase number**: {p.purchase_num}")
+        col2.markdown(f"**Purchase date**: {p.purchase_date}")
+
+        # TODO:
+        # - Add all concerned items included in this purchase
+        # - Compute price of this whole purchase
+        st.markdown("#### Items:")
 
 
 @st.dialog("New purchase")

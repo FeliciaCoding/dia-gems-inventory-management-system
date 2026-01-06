@@ -12,8 +12,6 @@ class Action(BaseModel):
     terms: str | None
     remarks: str | None
     action_category: str | None
-    price: Decimal
-    currency_code: str
     created_at: datetime
     updated_at: datetime
 
@@ -31,8 +29,6 @@ def get_actions(
                 terms,
                 remarks,
                 action_category,
-                (ai.unit_price * ai.quantity) AS price,
-                currency_code,
                 a.created_at,
                 a.updated_at
             FROM diamonds_are_forever.action_item ai
@@ -61,8 +57,6 @@ def get_action(
                    terms,
                    remarks,
                    action_category,
-                   (ai.unit_price * ai.quantity) AS price,
-                   currency_code,
                    a.created_at,
                    a.updated_at
             FROM diamonds_are_forever.action a
