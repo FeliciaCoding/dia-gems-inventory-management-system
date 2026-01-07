@@ -29,7 +29,7 @@ def render_transfer_details(t: TransferToOffice, a: Action, items: list[Item]):
 
         col1, col2 = st.columns(2)
         col1.markdown(f"**From:** {a.from_counterpart_name}")
-        col2.markdown(f"**By:** {a.to_counterpart_name}")
+        col2.markdown(f"**To:** {a.to_counterpart_name}")
         col1.markdown(f"**Transfer number**: {t.transfer_num}")
         col2.markdown(f"**Ship date**: {t.ship_date}")
 
@@ -90,7 +90,7 @@ def new_transfer_to_office(db):
                 # create new action
                 # create new transfer to office
                 # create action_item link for every item in items_to_send
-                make_new_transfer_to_office(db,
+                action_id, err = make_new_transfer_to_office(db,
                     src_office,
                     dest_office,
                     terms,
@@ -102,22 +102,34 @@ def new_transfer_to_office(db):
                     items_to_send,
                     user.get())
 
+                if err is None:
+                    db.commit()
+                    st.toast("New transfer to office has been registered!",
+                             icon="✅")
+
+                    st.switch_page(
+                        "pages/transfers/transfers_to_office.py",
+                        query_params=dict(action_id=action_id),
+                    )
+                else:
+                    st.error(err)
+
 
 def select_transfer(
     transfers: list[TransferToOffice],
-    id: int | None = None,
+    transfer_id: int | None = None,
 ):
-    if id is None:
+    if transfer_id is None:
         index = None
     else:
-        index = [a.action_id for a in transfers].index(id)
+        index = [a.action_id for a in transfers].index(transfer_id)
 
     return st.selectbox(
         "Current transfer",
         transfers,
-        key="transfer_selection",
+        key="transfer_to_office_selection",
         index=index,
-        format_func=lambda a: f"Transfer: (#{a.action_id}) from {a.from_counterpart_name} to {a.to_counterpart_name}",
+        format_func=lambda t: f"Transfer: (#{t.action_id}) number: {t.transfer_num}, date: {t.ship_date}",
     )
 
 
@@ -128,7 +140,7 @@ else:
 
     conn = db.connection()
     with conn.connect() as db:
-        with query_param("lot_id", int) as qp:
+        with query_param("action_id", int) as qp:
             with st.container(horizontal=True, vertical_alignment="bottom"):
                 t = select_transfer(
                     get_transfers_between_offices(db), qp.get())

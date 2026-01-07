@@ -54,7 +54,7 @@ def make_new_transfer_to_office(
         ship_date: date,
         items_to_send: list[Item],
         employee: Employee
-):
+) -> tuple[int | None, str | None]:
     # create new action
     action = db.execute(sql.SQL(
     """
@@ -75,7 +75,7 @@ def make_new_transfer_to_office(
     )).fetchone()
 
     if not action:
-        return "Transfer to office: could not create a new action"
+        return None, "Transfer to office: could not create a new action"
 
     # reflect action creation in action_update_log
     db.execute(sql.SQL(
@@ -127,7 +127,7 @@ def make_new_transfer_to_office(
     )).fetchone()
 
     if not transfer:
-        return "Transfer to office: could not create a new transfer to office"
+        return None, "Transfer to office: could not create a new transfer to office"
 
-    return None
+    return action[0], None
 
