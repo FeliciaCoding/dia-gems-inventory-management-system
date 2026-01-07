@@ -85,9 +85,9 @@ def make_new_transfer_to_office(
         employee_id, 
         update_type
     ) VALUES
-    ({action_id}, {employee_id}, 'Insert', NULL, NULL),
+    ({action_id}, {employee_id}, 'Insert')
     """).format(
-        action_id=action,
+        action_id=action[0],
         employee_id=employee.employee_id,
     ))
 
@@ -104,10 +104,10 @@ def make_new_transfer_to_office(
             ) VALUES
             ({action_id}, {lot_id}, 1, {price}, {currency_code})
             """).format(
-            action_id=action,
+            action_id=action[0],
             lot_id=item.lot_id,
-            price=prices[item.stock_name.price],
-            currency_code=prices[item.stock_name.currency_code],
+            price=prices[item.stock_name].price,
+            currency_code=prices[item.stock_name].currency_code,
         ))
 
     # create new transfer to office
@@ -121,7 +121,7 @@ def make_new_transfer_to_office(
     ({action_id}, {transfer_num}, {ship_date})
     RETURNING action_id
     """).format(
-        action_id=action,
+        action_id=action[0],
         transfer_num=transfer_num,
         ship_date=ship_date,
     )).fetchone()
