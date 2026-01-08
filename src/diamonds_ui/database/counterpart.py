@@ -15,7 +15,8 @@ class Counterpart(BaseModel):
     country: str | None
     email: str | None
     is_active: bool
-    type: str
+    type_name: str
+    category: str
 
 
 @contextmanager
@@ -37,10 +38,13 @@ def counterpart_cursor(
                 country, 
                 email, 
                 is_active,
-                cat.type_name
+                cat.type_name,
+                atype.category
             FROM diamonds_are_forever.counterpart c
                 INNER JOIN diamonds_are_forever.counterpart_account_type cat
                 ON c.counterpart_id = cat.counterpart_id
+                INNER JOIN diamonds_are_forever.account_type atype
+                ON cat.type_name = atype.type_name               
             WHERE {condition}
             ORDER BY {order}
             """
@@ -67,15 +71,17 @@ def get_counterparts(
                 country, 
                 email, 
                 is_active,
-                cat.type_name AS type
+                cat.type_name,
+                atype.category
             FROM diamonds_are_forever.counterpart c
                 INNER JOIN diamonds_are_forever.counterpart_account_type cat
                 ON c.counterpart_id = cat.counterpart_id
+                INNER JOIN diamonds_are_forever.account_type atype
+                ON cat.type_name = atype.type_name
             WHERE {condition}
             """
         ).format(
             condition=condition,
         )
         return cur.execute(q).fetchall()
-
 

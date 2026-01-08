@@ -25,17 +25,17 @@ BEGIN
 
     dynamic_sql := FORMAT(
           $sql$
-        UPDATE item
+        UPDATE diamonds_are_forever.item
            SET responsible_office_id = (
                    SELECT %I
-                     FROM action
+                     FROM diamonds_are_forever.action
                     WHERE action_id = $1
                ),
                updated_at   = NOW(),
                is_available = $2
          WHERE lot_id IN (
                SELECT lot_id
-                 FROM action_item
+                 FROM diamonds_are_forever.action_item
                 WHERE action_id = $1
          )
         $sql$,
@@ -131,12 +131,12 @@ DECLARE
 BEGIN
     item_id := (
         SELECT lot_id
-        FROM action_item
+        FROM diamonds_are_forever.action_item
         WHERE new.action_id = action_item.action_id
         LIMIT 1
     );
 
-    UPDATE loose_stone
+    UPDATE diamonds_are_forever.loose_stone
     SET weight_ct = new.after_weight_ct,
         shape = new.after_shape,
         length = new.after_length,
@@ -176,22 +176,22 @@ BEGIN
     -- action.from_counterpart_id == item.supplier_id
     counterpart_id := (
         SELECT from_counterpart_id
-        FROM action a
+        FROM diamonds_are_forever.action a
         WHERE a.action_id = new.action_id
         LIMIT 1
     );
 
     supplier_id := (
         SELECT it.supplier_id
-        FROM action_item ai
-            INNER JOIN item it
+        FROM diamonds_are_forever.action_item ai
+            INNER JOIN diamonds_are_forever.item it
             ON it.lot_id = ai.lot_id
         WHERE ai.action_id = new.action_id
         LIMIT 1
     );
 
     IF counterpart_id <> supplier_id THEN
-        UPDATE action
+        UPDATE diamonds_are_forever.action
         SET from_counterpart_id = supplier_id
         WHERE action.action_id = new.action_id;
         RAISE WARNING 'action.from_counterpart_id does not equal supplier_id. Updating action.from_counterpart_id from supplier_id';
@@ -224,7 +224,6 @@ $$
 DECLARE
     mistaken_item_id   INTEGER;
     original_action_id INTEGER;
-    dynamic_sql        TEXT;
 BEGIN
     -- NOTE:
     -- Since `return_memo_in` inherits attributes from `action`
@@ -239,10 +238,10 @@ BEGIN
 
     FOR mistaken_item_id IN
           WITH orig_action_items_ids AS (SELECT lot_id
-                                           FROM action_item ai
+                                           FROM diamonds_are_forever.action_item ai
                                           WHERE ai.action_id = new.orig_transfer_id),
                returned_items_ids AS (SELECT lot_id
-                                        FROM action_item ai
+                                        FROM diamonds_are_forever.action_item ai
                                        WHERE ai.action_id = new.action_id)
         SELECT lot_id
           FROM returned_items_ids
@@ -299,15 +298,15 @@ BEGIN
     -- action-action_item-purchase suite
 
     supplier_id := (SELECT from_counterpart_id
-                      FROM action
+                      FROM diamonds_are_forever.action
                      WHERE action_id = new.action_id
                      ORDER BY created_at DESC
                      LIMIT 1);
 
     IF NOT EXISTS(
         SELECT *
-          FROM counterpart_account_type cat
-               INNER JOIN account_type at
+          FROM diamonds_are_forever.counterpart_account_type cat
+               INNER JOIN diamonds_are_forever.account_type at
                ON cat.type_name = at.type_name
          WHERE cat.counterpart_id = supplier_id AND
              at.category = 'Supplier'
@@ -339,15 +338,15 @@ DECLARE
 BEGIN
     client_id := (
         SELECT to_counterpart_id
-        FROM action
+        FROM diamonds_are_forever.action
         WHERE action_id = new.action_id
         ORDER BY created_at DESC
         LIMIT 1);
 
     IF NOT EXISTS(
         SELECT *
-        FROM counterpart_account_type cat
-            INNER JOIN account_type at
+        FROM diamonds_are_forever.counterpart_account_type cat
+            INNER JOIN diamonds_are_forever.account_type at
             ON cat.type_name = at.type_name
         WHERE cat.counterpart_id = client_id AND
               at.category = 'Client'
@@ -378,14 +377,14 @@ DECLARE
     prev_sale_id INTEGER;
 BEGIN
     item_id := (SELECT ai.lot_id
-                  FROM action_item ai
+                  FROM diamonds_are_forever.action_item ai
                  WHERE ai.action_id = new.action_id);
 
     prev_sale_id := (SELECT s.action_id
-                       FROM sale s
-                            INNER JOIN action a
+                       FROM diamonds_are_forever.sale s
+                            INNER JOIN diamonds_are_forever.action a
                             ON s.action_id = a.action_id
-                            INNER JOIN action_item ai
+                            INNER JOIN diamonds_are_forever.action_item ai
                             ON s.action_id = ai.action_id
                       WHERE ai.lot_id = item_id);
 

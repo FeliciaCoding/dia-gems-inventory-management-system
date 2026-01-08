@@ -8,14 +8,6 @@ from psycopg.rows import class_row
 
 class Transfer(BaseModel):
     action_id: int
-    from_counterpart_name: str
-    to_counterpart_name: str
-    terms: str
-    remarks: str
-    price: Decimal
-    currency_code: str
-    created_at: datetime
-    updated_at: datetime
     transfer_num: str
     ship_date: date
 
@@ -30,8 +22,6 @@ def get_transfers_to(
         q = sql.SQL(
             """
             SELECT a.action_id,
-                c1.name AS from_counterpart_name,
-                c2.name AS to_counterpart_name,
                 terms,
                 remarks,
                 (ai.unit_price * ai.quantity) AS price,
