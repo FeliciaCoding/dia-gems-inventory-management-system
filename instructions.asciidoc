@@ -52,14 +52,18 @@ a|
 Phase II::
 * Schéma conceptuel au format UML.
 |
--
+jeu. 30.10.2025
+
+à 12h00
 
 a|
 Phase III::
 * Schéma relationnel.
 * Fichier du script de création des tables et des contraintes d’intégrité référentielle.
 |
--
+dim. 23.11.2025
+
+à 23h59
 
 a|
 Phase IV::
@@ -67,7 +71,9 @@ Phase IV::
 * Fichier du script pour ajouter des vues et des triggers.
 * Fichier contenant des requêtes liées aux fonctionnalités prévues.
 |
--
+mer. 10.12.2025
+
+à 23h59
 
 a|
 Rendu ﬁnal::
@@ -94,6 +100,7 @@ avant Mardi 13h sur le
 repo
 |===
 
+Voir xref:deliverables.asciidoc[délivrables] pour plus d'information sur le rendu final.
 
 
 == Evaluation
