@@ -565,3 +565,40 @@ EXECUTE FUNCTION trig_b_i_one_item_per_back_from_lab_factory();
 -- END TRIGGER #11
 
 
+-- BEGIN TRIGGER #12
+-- Description:
+-- Disallow selling stones (white diamonds/colored diamonds/colore gemstones)
+-- without valid certificate
+CREATE OR REPLACE FUNCTION trig_b_i_sale_without_certificate()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    item_id INTEGER;
+    cert_id INTEGER;
+BEGIN
+    FOR item_id, cert_id IN
+        SELECT ai.lot_id
+        FROM diamonds_are_forever.sale s
+            INNER JOIN diamonds_are_forever.action_item ai
+            ON s.action_id = ai.action_id
+            -- join on certificate will automatically
+            -- remove the tuples with jewelry
+            -- since they do not have the certificates at all
+            INNER JOIN diamonds_are_forever.certificate c
+            ON ai.lot_id = c.lot_id
+        WHERE c.is_valid = FALSE
+    LOOP
+        RAISE EXCEPTION 'Selling stones (white diamonds/colored diamonds/colore gemstones) ',
+             'without valid certificate is disallowed. ',
+            'But in sale (%) stone (%) has invalid certificate (%)', new.action_id,
+            item_id, cert_id;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER disallow_sell_stones_without_cert_trigger
+    BEFORE INSERT
+    ON sale
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_sale_without_certificate();
+-- END TRIGGER #12
