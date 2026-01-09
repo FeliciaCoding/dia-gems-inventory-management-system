@@ -33,6 +33,11 @@ def render_item_card(i: Item):
                     "pages/inventory/inventory_colored_gemstones.py",
                     query_params=dict(lot_id=i.lot_id),
                 )
+            elif i.item_type == "jewelry":
+                st.switch_page(
+                    "pages/inventory/inventory_jewelries.py",
+                    query_params=dict(lot_id=i.lot_id),
+                )
 
 
 if user.get() is None:
@@ -40,10 +45,6 @@ if user.get() is None:
 else:
     st.header("Inventory")
     st.subheader("All sorts of the registered items in the system")
-
-    # _SELECTED_LOT_ID_KEY = "selected_lot_id"
-    # if _SELECTED_LOT_ID_KEY not in st.session_state:
-    #     st.session_state[_SELECTED_LOT_ID_KEY] = None
 
     conn = db.connection()
     with conn.connect() as db:

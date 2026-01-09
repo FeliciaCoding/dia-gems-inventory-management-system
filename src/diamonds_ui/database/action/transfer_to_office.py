@@ -17,7 +17,7 @@ class TransferToOffice(BaseModel):
     ship_date: date
 
 
-class PriceInCurrency(NamedTuple):
+class PriceWithCurrency(NamedTuple):
     price: Decimal
     currency_code: str
 
@@ -49,7 +49,7 @@ def make_new_transfer_to_office(
         to_counterpart: Counterpart,
         terms: str,
         remarks: str,
-        prices: dict[str, PriceInCurrency],
+        prices: dict[str, PriceWithCurrency],
         transfer_num: str,
         ship_date: date,
         items_to_send: list[Item],
@@ -98,11 +98,10 @@ def make_new_transfer_to_office(
             INSERT INTO diamonds_are_forever.action_item (
                 action_id, 
                 lot_id, 
-                quantity, 
-                unit_price, 
+                price, 
                 currency_code
             ) VALUES
-            ({action_id}, {lot_id}, 1, {price}, {currency_code})
+            ({action_id}, {lot_id}, {price}, {currency_code})
             """).format(
             action_id=action[0],
             lot_id=item.lot_id,

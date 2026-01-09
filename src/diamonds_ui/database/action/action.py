@@ -33,7 +33,7 @@ def get_actions(
                 action_category,
                 a.created_at,
                 a.updated_at,
-                (ai.quantity * ai.unit_price) AS price,
+                ai.price,
                 ai.currency_code
             FROM diamonds_are_forever.action_item ai
                 INNER JOIN diamonds_are_forever.action a

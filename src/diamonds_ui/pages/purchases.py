@@ -59,7 +59,7 @@ def new_purchase():
         get_counterparts(db),
         key="supplier_selection",
         index=None,
-        format_func=lambda suppl: f"Supplier: (#{suppl.name}) {suppl.type}",
+        format_func=lambda suppl: f"Supplier: (#{suppl.name}) {suppl.category}",
     )
     # selector for item type
     item_type = st.selectbox(
