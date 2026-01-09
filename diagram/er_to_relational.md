@@ -51,7 +51,7 @@ item (**lot_id**, stock_name, purchase_date, supplier_id, origin, responsible_of
     `responsible_office_id` references `counterpart.counterpart_id` NOT NULL
 
 
-action_item(**action_id, lot_id**, quantity, unit_price, currency_code) <br>
+action_item(**action_id, lot_id**, price, currency_code) <br>
    `action_id` references `action.action_id` <br>
    `lot_id` references `item.lot_id` <br>
    `currency_code` references `currency.code` NOT NULL
