@@ -209,8 +209,8 @@ BEGIN
             UPDATE diamonds_are_forever.item
             SET supplier_id = supplier_id
             WHERE item.lot_id = item_id;
-            RAISE WARNING 'item.supplier does not equal to ',
-             'purchase.action.from_counterpart_id. Updating item.supplier_id ...';
+            RAISE WARNING 'item(%).supplier(%) does not equal to purchase.action(%).from_counterpart_id(%). Updating item.supplier_id ...',
+                item_id, supplier_id, new.action_id, counterpart_id;
         END IF;
     END LOOP;
 
@@ -545,8 +545,8 @@ BEGIN
     WHERE ai.action_id = new.action_id;
 
     IF n_items > 1 THEN
-        RAISE EXCEPTION 'Expected to have only one item per one back_from_lab/back_from_factory.',
-            ' But % have been assigned', n_items;
+        RAISE EXCEPTION 'Expected to have only one item per one back_from_lab/back_from_factory. But % have been assigned for %',
+            n_items, new.action_id;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
@@ -588,10 +588,8 @@ BEGIN
             ON ai.lot_id = c.lot_id
         WHERE c.is_valid = FALSE
     LOOP
-        RAISE EXCEPTION 'Selling stones (white diamonds/colored diamonds/colore gemstones) ',
-             'without valid certificate is disallowed. ',
-            'But in sale (%) stone (%) has invalid certificate (%)', new.action_id,
-            item_id, cert_id;
+        RAISE EXCEPTION 'Selling stones (white diamonds/colored diamonds/colore gemstones) without valid certificate is disallowed. But in sale (%) stone (%) has invalid certificate (%)',
+            new.action_id, item_id, cert_id;
     END LOOP;
 END;
 $$ LANGUAGE plpgsql;
