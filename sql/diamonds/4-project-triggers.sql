@@ -516,8 +516,41 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER invalidate_certificates_after_factory_trigger
-    BEFORE INSERT
+    AFTER INSERT
     ON back_from_factory
     FOR EACH ROW
 EXECUTE FUNCTION trig_a_i_invalidate_certificates();
+-- END TRIGGER #11
+
+
+-- BEGIN TRIGGER #11
+CREATE OR REPLACE FUNCTION trig_b_i_one_item_per_back_from_lab_factory()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    n_items INTEGER;
+BEGIN
+    SELECT COUNT(*)
+    INTO n_items
+    FROM  diamonds_are_forever.action_item ai
+    WHERE ai.action_id = new.action_id;
+
+    IF n_items > 1 THEN
+        RAISE EXCEPTION 'Expected to have only one item per one back_from_lab/back_from_factory.',
+            ' But % have been assigned', n_items;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER ensure_one_item_per_one_back_from_lab_trigger
+    BEFORE INSERT
+    ON back_from_lab
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_one_item_per_back_from_lab_factory();
+
+CREATE TRIGGER ensure_one_item_per_one_back_from_factory_trigger
+    BEFORE INSERT
+    ON back_from_factory
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_one_item_per_back_from_lab_factory();
 -- END TRIGGER #11
