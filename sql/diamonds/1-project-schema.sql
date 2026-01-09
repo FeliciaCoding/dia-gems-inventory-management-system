@@ -169,8 +169,7 @@ CREATE TABLE action_item
 (
    action_id     INTEGER,
    lot_id        INTEGER,
-   quantity      INTEGER        NOT NULL,
-   unit_price    DECIMAL(15, 2) NOT NULL,
+   price    DECIMAL(15, 2) NOT NULL,
    currency_code code           NOT NULL,
    PRIMARY KEY (action_id, lot_id),
    FOREIGN KEY (action_id) REFERENCES action (action_id)
@@ -179,8 +178,7 @@ CREATE TABLE action_item
       ON DELETE RESTRICT ON UPDATE CASCADE,
    FOREIGN KEY (currency_code) REFERENCES currency (code)
       ON DELETE RESTRICT ON UPDATE CASCADE,
-   CONSTRAINT positive_quantity CHECK (quantity > 0),
-   CONSTRAINT non_negative_price CHECK (unit_price >= 0)
+   CONSTRAINT non_negative_price CHECK (price >= 0)
 );
 
 
@@ -272,6 +270,7 @@ CREATE TABLE back_from_lab
    orig_transfer_id  INTEGER NOT NULL,
    back_from_lab_num TEXT UNIQUE,
    back_date         DATE    NOT NULL,
+   new_certificate_id INTEGER NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_lab (action_id)
@@ -296,6 +295,11 @@ CREATE TABLE back_from_factory
    orig_transfer_id  INTEGER NOT NULL,
    back_from_fac_num TEXT UNIQUE,
    back_date         DATE    NOT NULL,
+   before_weight_ct   DECIMAL(5, 2),
+   before_shape       shape,
+   before_length      DECIMAL(4, 2),
+   before_width       DECIMAL(4, 2),
+   before_depth       DECIMAL(4, 2),
    after_weight_ct   DECIMAL(5, 2),
    after_shape       shape,
    after_length      DECIMAL(4, 2),
@@ -307,8 +311,11 @@ CREATE TABLE back_from_factory
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_factory (action_id)
       ON DELETE RESTRICT ON UPDATE CASCADE,
-   CONSTRAINT positive_weight CHECK (after_weight_ct > 0),
-   CONSTRAINT positive_dimensions CHECK (after_length > 0 AND after_width > 0 AND after_depth > 0),
+   CONSTRAINT positive_weight CHECK (before_weight_ct > 0 AND after_weight_ct > 0),
+   CONSTRAINT positive_dimensions CHECK (
+       before_length > 0 AND before_width > 0 AND before_depth > 0 AND
+       after_length > 0 AND after_width > 0 AND after_depth > 0
+   ),
    CONSTRAINT non_negative_weight_loss CHECK (weight_loss_ct >= 0)
 );
 
@@ -426,6 +433,7 @@ CREATE TABLE certificate
    color           fancy_color,
    treatment       treatment,
    gem_type        gem_type,
+   is_valid        BOOL NOT NULL DEFAULT TRUE,
    created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
@@ -438,5 +446,5 @@ CREATE TABLE certificate
 );
 
 END;
-
+-- ROLLBACK;
 
