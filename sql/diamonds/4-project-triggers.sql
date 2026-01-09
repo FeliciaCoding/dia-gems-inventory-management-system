@@ -524,6 +524,15 @@ EXECUTE FUNCTION trig_a_i_invalidate_certificates();
 
 
 -- BEGIN TRIGGER #11
+-- Description:
+-- Since we would like to reflect:
+-- - new certificates after re-certification
+-- - new measurements after re-cutting/polishing
+-- We would like to reduce relationship between Action and Item
+-- from many-to-many to many-to-one for certain cases: Back from lab, Back from Factory
+-- (if we've received 10 items back from factory we must insert
+--  10 rows in back from factory while specifying the same back_from_fac_num
+--  and orig_transfer_id everywhere)
 CREATE OR REPLACE FUNCTION trig_b_i_one_item_per_back_from_lab_factory()
     RETURNS TRIGGER AS
 $$
@@ -554,3 +563,5 @@ CREATE TRIGGER ensure_one_item_per_one_back_from_factory_trigger
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_one_item_per_back_from_lab_factory();
 -- END TRIGGER #11
+
+
