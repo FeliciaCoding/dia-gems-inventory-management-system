@@ -268,7 +268,7 @@ CREATE TABLE back_from_lab
 (
    action_id         INTEGER PRIMARY KEY,
    orig_transfer_id  INTEGER NOT NULL,
-   back_from_lab_num TEXT UNIQUE,
+   back_from_lab_num TEXT NOT NULL,
    back_date         DATE    NOT NULL,
    new_certificate_id INTEGER NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
@@ -293,7 +293,7 @@ CREATE TABLE back_from_factory
 (
    action_id         INTEGER PRIMARY KEY,
    orig_transfer_id  INTEGER NOT NULL,
-   back_from_fac_num TEXT UNIQUE,
+   back_from_fac_num TEXT NOT NULL,
    back_date         DATE    NOT NULL,
    before_weight_ct   DECIMAL(5, 2),
    before_shape       shape,
