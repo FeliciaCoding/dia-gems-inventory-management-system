@@ -128,7 +128,7 @@ CREATE OR REPLACE FUNCTION trig_a_i_back_from_fac()
 $$
 DECLARE
     item_id INTEGER;
-    ls_item loose_stone%ROWTYPE;
+    ls_item diamonds_are_forever.loose_stone%ROWTYPE;
 BEGIN
     item_id := (
         SELECT lot_id
@@ -477,4 +477,47 @@ EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
 -- END TRIGGER #10
 
 
+-- BEGIN TRIGGER #11
+-- Description:
+-- After stone has been returned from factory
+-- all its certificates should be no longer valid
+CREATE OR REPLACE FUNCTION trig_a_i_invalidate_certificates()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    item_id INTEGER;
+    cert diamonds_are_forever.certificate%ROWTYPE;
+BEGIN
+    -- for all returned back from factory items
+    FOR item_id IN
+        SELECT ai.lot_id
+        FROM diamonds_are_forever.back_from_factory bff
+            INNER JOIN diamonds_are_forever.action_item ai
+            ON bff.action_id = ai.action_id
+        WHERE bff.action_id = new.action_id
+    LOOP
+        -- for every certificate of every item
+        FOR cert IN
+            SELECT *
+            FROM diamonds_are_forever.certificate
+            WHERE lot_id = item_id
+        LOOP
+            -- make certificate invalid
+            IF cert.is_valid THEN
+                UPDATE diamonds_are_forever.certificate c
+                SET is_valid = FALSE
+                WHERE c.certificate_id = cert.certificate_id;
+            END IF;
+        END LOOP;
+    END LOOP;
 
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER invalidate_certificates_after_factory_trigger
+    BEFORE INSERT
+    ON back_from_factory
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_i_invalidate_certificates();
+-- END TRIGGER #11
