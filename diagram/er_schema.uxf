@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>11</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>814</x><y>451</y><w>154</w><h>187</h></coordinates><panel_attributes>Action
+<diagram program="umletino" version="15.1"><zoom_level>9</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>666</x><y>369</y><w>126</w><h>153</h></coordinates><panel_attributes>Action
 --
 _action_id_
 terms
@@ -11,47 +11,55 @@ action_category
 
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>583</x><y>627</y><w>330</w><h>77</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>280;10;280;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>55</x><y>671</y><w>759</w><h>220</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;180;10;10;670;10</additional_attributes></element><element><id>Relation</id><coordinates><x>781</x><y>671</y><w>891</w><h>220</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;790;10;790;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>869</y><w>110</w><h>132</h></coordinates><panel_attributes>Purchase 
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>477</x><y>513</y><w>270</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>280;10;280;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>45</x><y>549</y><w>621</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;180;10;10;670;10</additional_attributes></element><element><id>Relation</id><coordinates><x>639</x><y>549</y><w>729</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;790;10;790;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>711</y><w>90</w><h>108</h></coordinates><panel_attributes>Purchase 
 --
 purchase_num
 purchase_date
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1584</x><y>869</y><w>132</w><h>132</h></coordinates><panel_attributes>Sale
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1296</x><y>711</y><w>108</w><h>108</h></coordinates><panel_attributes>Sale
 --
 sale_num
 sale_date
 payment_method
 payment_status
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>671</y><w>33</w><h>220</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>88</x><y>1122</y><w>187</w><h>132</h></coordinates><panel_attributes>Return Memo In
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>162</x><y>549</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>72</x><y>918</y><w>153</w><h>108</h></coordinates><panel_attributes>Return Memo In
 --
 return_memo_in_num
-back_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>451</x><y>869</y><w>187</w><h>132</h></coordinates><panel_attributes>Memo Out
+back_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>369</x><y>711</y><w>153</w><h>108</h></coordinates><panel_attributes>Memo Out
 --
 memo_in_num
 ship_date
-expected_return_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>825</x><y>869</y><w>132</w><h>132</h></coordinates><panel_attributes>Transfer To Office
+expected_return_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>675</x><y>711</y><w>108</w><h>108</h></coordinates><panel_attributes>Transfer To Office
 --
 transfer_num
-ship_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>132</x><y>869</y><w>154</w><h>132</h></coordinates><panel_attributes>Memo In 
+ship_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>108</x><y>711</y><w>126</w><h>108</h></coordinates><panel_attributes>Memo In 
 --
 memo_in_num
 ship_date
-expected_return_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>517</x><y>1111</y><w>165</w><h>132</h></coordinates><panel_attributes>Return Memo Out
+expected_return_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>423</x><y>909</y><w>135</w><h>108</h></coordinates><panel_attributes>Return Memo Out
 --
 return_memo_out_num
-back_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>671</x><y>671</y><w>77</w><h>550</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>50;10;50;480;10;480</additional_attributes></element><element><id>Relation</id><coordinates><x>880</x><y>671</y><w>33</w><h>220</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1089</x><y>869</y><w>121</w><h>132</h></coordinates><panel_attributes>Transfer To Lab
+back_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>549</x><y>549</y><w>63</w><h>450</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>50;10;50;480;10;480</additional_attributes></element><element><id>Relation</id><coordinates><x>720</x><y>549</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>891</x><y>711</y><w>99</w><h>108</h></coordinates><panel_attributes>Transfer To Lab
 --
 transfer_num
-ship_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1056</x><y>1100</y><w>143</w><h>132</h></coordinates><panel_attributes>Back From Lab
+ship_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>864</x><y>900</y><w>117</w><h>108</h></coordinates><panel_attributes>Back From Lab
 --
 back_from_lab_num
-back_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1364</x><y>869</y><w>132</w><h>132</h></coordinates><panel_attributes>Transfer To Factory
+back_date
+new_certificate_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1116</x><y>711</y><w>108</w><h>108</h></coordinates><panel_attributes>Transfer To Factory
 --
 transfer_num
-ship_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1342</x><y>1111</y><w>176</w><h>220</h></coordinates><panel_attributes>Back From Factory
+ship_date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1098</x><y>909</y><w>144</w><h>261</h></coordinates><panel_attributes>Back From Factory
 --
 back_from_fac_num
 back_date
+
+before_weight_ct
+before_shape
+before_length
+before_width
+before_depth
+
 after_weight_ct
 after_shape
 after_length
@@ -60,10 +68,10 @@ after_depth
 weight_loss_ct
 note
 
-style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>825</x><y>330</y><w>110</w><h>143</h></coordinates><panel_attributes>lt=-
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>675</x><y>270</y><w>90</w><h>117</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
-arrived to ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1969</x><y>363</y><w>154</w><h>198</h></coordinates><panel_attributes>Item
+arrived to ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1611</x><y>297</y><w>126</w><h>162</h></coordinates><panel_attributes>Item
 --
 _lot_id_
 stock_name
@@ -84,22 +92,22 @@ item_type
 	
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1760</x><y>858</y><w>110</w><h>110</h></coordinates><panel_attributes>Diamond
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1440</x><y>702</y><w>90</w><h>90</h></coordinates><panel_attributes>Diamond
 --
 clarity
 
 	
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1991</x><y>858</y><w>132</w><h>132</h></coordinates><panel_attributes>Colored Gem Stone
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1629</x><y>702</y><w>108</w><h>108</h></coordinates><panel_attributes>Colored Gem Stone
 --
 gem_type
 gem_color
-treatment</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1650</x><y>1034</y><w>132</w><h>132</h></coordinates><panel_attributes>White Diamond
+treatment</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1350</x><y>846</y><w>108</w><h>108</h></coordinates><panel_attributes>White Diamond
 --
 white_level
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1815</x><y>1034</y><w>176</w><h>132</h></coordinates><panel_attributes>Colored Diamond
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1485</x><y>846</y><w>144</w><h>108</h></coordinates><panel_attributes>Colored Diamond
 --
 gem_tpy
 color
@@ -109,7 +117,7 @@ color
 
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1804</x><y>781</y><w>154</w><h>99</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>120;10;120;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1914</x><y>814</y><w>165</w><h>66</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>130;40;130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1716</x><y>957</y><w>121</w><h>99</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>90;10;90;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1804</x><y>990</y><w>132</w><h>66</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>100;40;100;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>814</x><y>99</y><w>165</w><h>242</h></coordinates><panel_attributes>Counterpart
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1476</x><y>639</y><w>126</w><h>81</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>120;10;120;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1566</x><y>666</y><w>135</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>130;40;130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1404</x><y>783</y><w>99</w><h>81</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>90;10;90;40;10;40;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>1476</x><y>810</y><w>108</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>100;40;100;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>666</x><y>81</y><w>135</w><h>198</h></coordinates><panel_attributes>Counterpart
 --
 _counterpart_id_
 name
@@ -125,7 +133,7 @@ created_at
 updated_at
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1925</x><y>550</y><w>143</w><h>88</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>110;10;110;60;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>2035</x><y>605</y><w>143</w><h>33</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>110;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1870</x><y>660</y><w>121</w><h>132</h></coordinates><panel_attributes>Loose Stone
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1575</x><y>450</y><w>117</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>110;10;110;60;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>1665</x><y>495</y><w>117</w><h>27</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>110;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1530</x><y>540</y><w>99</w><h>108</h></coordinates><panel_attributes>Loose Stone
 --
 weight_ct
 shape
@@ -134,7 +142,7 @@ measurement
 	width
 	depth
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1925</x><y>605</y><w>33</w><h>77</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>2068</x><y>638</y><w>209</w><h>209</h></coordinates><panel_attributes>Jewellery
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1575</x><y>495</y><w>27</w><h>63</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1692</x><y>522</y><w>171</w><h>171</h></coordinates><panel_attributes>Jewellery
 --
 jewellery_type
 gross_weight_gr
@@ -148,20 +156,20 @@ total_side_stone_weight_ct
 side_stone_type
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>2145</x><y>605</y><w>33</w><h>55</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>2046</x><y>583</y><w>132</w><h>33</h></coordinates><panel_attributes>disjoint, total
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>572</x><y>671</y><w>33</w><h>220</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>1188</x><y>671</y><w>121</w><h>528</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>90;10;90;460;10;460</additional_attributes></element><element><id>Relation</id><coordinates><x>1419</x><y>671</y><w>33</w><h>220</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>1507</x><y>671</y><w>66</w><h>539</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>40;10;40;470;10;470</additional_attributes></element><element><id>Relation</id><coordinates><x>561</x><y>990</y><w>121</w><h>143</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1755</x><y>495</y><w>27</w><h>45</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1674</x><y>477</y><w>108</w><h>27</h></coordinates><panel_attributes>disjoint, total
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>468</x><y>549</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>972</x><y>549</y><w>99</w><h>432</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>90;10;90;460;10;460</additional_attributes></element><element><id>Relation</id><coordinates><x>1161</x><y>549</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>1233</x><y>549</y><w>54</w><h>441</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>40;10;40;470;10;470</additional_attributes></element><element><id>Relation</id><coordinates><x>459</x><y>810</y><w>99</w><h>117</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
-is based on ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>1133</x><y>671</y><w>33</w><h>220</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>1133</x><y>990</y><w>121</w><h>132</h></coordinates><panel_attributes>lt=-
-m1=1..1
-m2=0..*
-is based on ^
-</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>1408</x><y>990</y><w>121</w><h>143</h></coordinates><panel_attributes>lt=-
+is based on ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>927</x><y>549</y><w>27</w><h>180</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>927</x><y>810</y><w>99</w><h>108</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
 is based on ^
-</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>902</x><y>649</y><w>132</w><h>33</h></coordinates><panel_attributes>disjoint, total
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>407</x><y>110</y><w>165</w><h>198</h></coordinates><panel_attributes>Employee
+</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>1152</x><y>810</y><w>99</w><h>117</h></coordinates><panel_attributes>lt=-
+m1=1..1
+m2=0..*
+is based on ^
+</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>738</x><y>531</y><w>108</w><h>27</h></coordinates><panel_attributes>disjoint, total
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>333</x><y>90</y><w>135</w><h>162</h></coordinates><panel_attributes>Employee
 --
 _employee_id_
 first_name
@@ -174,59 +182,53 @@ updated_at
 
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>561</x><y>143</y><w>275</w><h>55</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>459</x><y>117</y><w>225</w><h>45</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
-works for &gt;</panel_attributes><additional_attributes>230;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>561</x><y>528</y><w>264</w><h>44</h></coordinates><panel_attributes>lt=[log_time]-
-m2=1..*</panel_attributes><additional_attributes>200;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1111</x><y>572</y><w>165</w><h>88</h></coordinates><panel_attributes>Currency
+works for &gt;</panel_attributes><additional_attributes>230;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>459</x><y>432</y><w>216</w><h>36</h></coordinates><panel_attributes>lt=[log_time]-
+m2=1..*</panel_attributes><additional_attributes>200;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>909</x><y>468</y><w>135</w><h>72</h></coordinates><panel_attributes>Currency
 --
 _Code_
-name</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1199</x><y>143</y><w>176</w><h>88</h></coordinates><panel_attributes>Account type
+name</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>981</x><y>117</y><w>144</w><h>72</h></coordinates><panel_attributes>Account type
 --
 _type_name_
 category
-is_internal</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>968</x><y>165</y><w>253</w><h>55</h></coordinates><panel_attributes>lt=-
+is_internal</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>792</x><y>135</y><w>207</w><h>45</h></coordinates><panel_attributes>lt=-
 m1=1..*
 m2=1..*
-has type &gt;</panel_attributes><additional_attributes>210;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>935</x><y>330</y><w>121</w><h>143</h></coordinates><panel_attributes>lt=-
+has type &gt;</panel_attributes><additional_attributes>210;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>765</x><y>270</y><w>99</w><h>117</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
-arrived from ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>407</x><y>484</y><w>165</w><h>165</h></coordinates><panel_attributes>Update log
+arrived from ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>333</x><y>396</y><w>135</w><h>135</h></coordinates><panel_attributes>Update log
 --
 update_type
 old_value
-new_value</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>484</x><y>297</y><w>121</w><h>209</h></coordinates><panel_attributes>lt=-
+new_value</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>396</x><y>243</y><w>99</w><h>171</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
-triggered by ^</panel_attributes><additional_attributes>10;10;10;170</additional_attributes></element><element><id>UMLNote</id><coordinates><x>176</x><y>330</y><w>176</w><h>121</h></coordinates><panel_attributes>Update log is weak entity
+triggered by ^</panel_attributes><additional_attributes>10;10;10;170</additional_attributes></element><element><id>UMLNote</id><coordinates><x>144</x><y>270</y><w>144</w><h>99</h></coordinates><panel_attributes>Update log is weak entity
 that has Action as its strong entity
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>341</x><y>440</y><w>88</w><h>66</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;60;40</additional_attributes></element><element><id>Relation</id><coordinates><x>957</x><y>506</y><w>1034</w><h>44</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>279</x><y>360</y><w>72</w><h>54</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;60;40</additional_attributes></element><element><id>Relation</id><coordinates><x>783</x><y>414</y><w>846</w><h>36</h></coordinates><panel_attributes>lt=-
 m1=0..*
-m2=0..*</panel_attributes><additional_attributes>920;10;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>2156</x><y>176</y><w>209</w><h>165</h></coordinates><panel_attributes>1) responsible_office_id is precomputed from appropiet action
+m2=0..*</panel_attributes><additional_attributes>920;10;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1764</x><y>144</y><w>171</w><h>135</h></coordinates><panel_attributes>1) responsible_office_id is precomputed from appropiet action
 2) supplier_id should be an id of the same counterpart from Purchase who sold an item to us
 3) jewerly does not have a dedicated certificate
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1375</x><y>572</y><w>165</w><h>88</h></coordinates><panel_attributes>Action Item
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1125</x><y>468</y><w>135</w><h>72</h></coordinates><panel_attributes>Action Item
 --
-quantity
-unit_price
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1441</x><y>506</y><w>33</w><h>88</h></coordinates><panel_attributes>lt=.
+price</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1179</x><y>414</y><w>27</w><h>72</h></coordinates><panel_attributes>lt=.
 
-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1584</x><y>528</y><w>209</w><h>88</h></coordinates><panel_attributes>quantity is precomputed and could be determined by counting items issued by an action
-
-bg=white
-style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1265</x><y>616</y><w>132</w><h>44</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>1035</x><y>504</y><w>108</w><h>36</h></coordinates><panel_attributes>lt=-
 m1=0..*
-m2=1..1</panel_attributes><additional_attributes>100;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>990</y><w>121</w><h>143</h></coordinates><panel_attributes>lt=-
+m2=1..1</panel_attributes><additional_attributes>100;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>162</x><y>810</y><w>99</w><h>117</h></coordinates><panel_attributes>lt=-
 m1=1..1
 m2=0..*
-is based on ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>264</x><y>671</y><w>99</w><h>550</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>70;10;70;480;10;480</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1540</x><y>209</y><w>187</w><h>286</h></coordinates><panel_attributes>Certificate
+is based on ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>216</x><y>549</y><w>81</w><h>450</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>70;10;70;480;10;480</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1260</x><y>171</y><w>153</w><h>234</h></coordinates><panel_attributes>Certificate
 --
 _certificate_id_
 certificate_num
@@ -241,24 +243,24 @@ color
 treatment
 gem_type
 created_at
-updated_at</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>968</x><y>275</y><w>594</w><h>55</h></coordinates><panel_attributes>lt=-
+updated_at</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>792</x><y>225</y><w>486</w><h>45</h></coordinates><panel_attributes>lt=-
 m1=0..*
 m2=1..1 lab
-&lt; is issued by</panel_attributes><additional_attributes>520;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1716</x><y>396</y><w>275</w><h>55</h></coordinates><panel_attributes>lt=-
+&lt; is issued by</panel_attributes><additional_attributes>520;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1404</x><y>324</y><w>225</w><h>45</h></coordinates><panel_attributes>lt=-
 m1=1..1
-m2=0..1
-represents &gt;</panel_attributes><additional_attributes>230;20;10;20</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1232</x><y>0</y><w>209</w><h>88</h></coordinates><panel_attributes>Category of account type could be: Supplier, Client, Office, Lab, Manufacturer
+m2=0..*
+represents &gt;</panel_attributes><additional_attributes>230;20;10;20</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1008</x><y>0</y><w>171</w><h>72</h></coordinates><panel_attributes>Category of account type could be: Supplier, Client, Office, Lab, Manufacturer
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>605</x><y>341</y><w>198</w><h>121</h></coordinates><panel_attributes>Action Integrity Constraints:
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>495</x><y>279</y><w>162</w><h>99</h></coordinates><panel_attributes>Action Integrity Constraints:
 1) updated_at &gt;= created_at
 2) from_counterpart_id != to_counterpart_id
 
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1804</x><y>165</y><w>319</w><h>121</h></coordinates><panel_attributes>Item Integrity Constraints:
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1476</x><y>135</y><w>261</w><h>99</h></coordinates><panel_attributes>Item Integrity Constraints:
 1) updated_at &gt;= created_at
 2) supplier_id should point to the counterpart which posses "supplier" category
 3) responsible_office_id should point to the counterpart which posses "office" category
@@ -266,18 +268,18 @@ style=wordwrap
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>154</x><y>44</y><w>209</w><h>88</h></coordinates><panel_attributes>Employee has next roles: Chief, Admin, Sales, Accountant
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>126</x><y>36</y><w>171</w><h>72</h></coordinates><panel_attributes>Employee has next roles: Chief, Admin, Sales, Accountant
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>154</x><y>143</y><w>209</w><h>143</h></coordinates><panel_attributes>Employee integrity constraints:
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>126</x><y>117</y><w>171</w><h>117</h></coordinates><panel_attributes>Employee integrity constraints:
 1) An employee can works only for the counterpart which
 has an integral account type
 2) updated_at &gt;= created_at
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1496</x><y>11</y><w>275</w><h>165</h></coordinates><panel_attributes>Certificate Integrity Constraints:
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1224</x><y>9</y><w>225</w><h>135</h></coordinates><panel_attributes>Certificate Integrity Constraints:
 1) updated_at &gt;= created_at
 2) A certificate can be issued only by counterpart
 which posses "lab" category
@@ -289,24 +291,21 @@ which posses "lab" category
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1364</x><y>77</y><w>66</w><h>88</h></coordinates><panel_attributes>lt=.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1116</x><y>63</y><w>54</w><h>72</h></coordinates><panel_attributes>lt=.
 
-</panel_attributes><additional_attributes>40;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>2112</x><y>330</y><w>66</w><h>55</h></coordinates><panel_attributes>lt=.
+</panel_attributes><additional_attributes>40;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>1728</x><y>270</y><w>54</w><h>45</h></coordinates><panel_attributes>lt=.
 
-</panel_attributes><additional_attributes>40;10;10;30</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1232</x><y>418</y><w>253</w><h>66</h></coordinates><panel_attributes>Action Item Integrity Constraints:
-1) quantity &gt; 0
-2) unite_price &gt;= 0
+</panel_attributes><additional_attributes>40;10;10;30</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1008</x><y>342</y><w>207</w><h>54</h></coordinates><panel_attributes>Action Item Integrity Constraints:
+1) price &gt;= 0
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1529</x><y>539</y><w>77</w><h>55</h></coordinates><panel_attributes>lt=.
-
-</panel_attributes><additional_attributes>50;10;10;30</additional_attributes></element><element><id>UMLNote</id><coordinates><x>187</x><y>1276</y><w>319</w><h>99</h></coordinates><panel_attributes>Memo In and Memo Out Integrity Constraints:
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>153</x><y>1044</y><w>261</w><h>81</h></coordinates><panel_attributes>Memo In and Memo Out Integrity Constraints:
 1) expected_return_date should be either omitted or expected_return_date &gt;= ship_date
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>671</x><y>1265</y><w>451</w><h>242</h></coordinates><panel_attributes>Every action that has corresponding "return"-style action should follow next Integrity Constraint:
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>477</x><y>1035</y><w>405</w><h>198</h></coordinates><panel_attributes>Every action that has corresponding "return"-style action should follow next Integrity Constraint:
 
 Before creating tuple in "return-(something)" every returned item should be verified that it was indeed shiped somewhere.
 
@@ -318,16 +317,22 @@ For example:
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1210</x><y>1375</y><w>319</w><h>132</h></coordinates><panel_attributes>Back From Factory Integrity Constraints:
-1) after_weight_ct &gt; 0
-2) after_length &gt; 0
-3) after_width &gt; 0 
-4) after_depth &gt; 0
-5) weight_loss_ct &gt;= 0
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1278</x><y>999</y><w>261</w><h>207</h></coordinates><panel_attributes>Back From Factory Integrity Constraints:
+
+1) before_weight_ct &gt; 0
+2) before_length &gt; 0
+3) before_width &gt; 0 
+4) before_depth &gt; 0
+
+5) after_weight_ct &gt; 0
+6) after_length &gt; 0
+7) after_width &gt; 0 
+8) after_depth &gt; 0
+9) weight_loss_ct &gt;= 0
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1672</x><y>660</y><w>187</w><h>132</h></coordinates><panel_attributes>Loose Stone Integrity Constraints:
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1368</x><y>540</y><w>153</w><h>108</h></coordinates><panel_attributes>Loose Stone Integrity Constraints:
 1) weight_ct &gt; 0
 2) length &gt; 0
 3) width &gt; 0 
@@ -335,11 +340,23 @@ style=wordwrap
 
 bg=white
 style=wordwrap
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>2321</x><y>638</y><w>297</w><h>132</h></coordinates><panel_attributes>Jewellery Integrity Constraints:
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>1899</x><y>522</y><w>243</w><h>108</h></coordinates><panel_attributes>Jewellery Integrity Constraints:
 
 1) gross_weight_gr &gt; 0 
 2) metal_weight_gr &gt; 0
 2) metal_weight_gr &lt;= gross_weight_gr
+
+bg=white
+style=wordwrap
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>918</x><y>1224</y><w>513</w><h>135</h></coordinates><panel_attributes>Back From Lab and Back From Factory
+can only be bound to one Item at time
+which effectively reduce their Action-Item relationship
+to many-to-one (one item can be returned from labs,
+returned from factories, but one return from lab/factory
+can only include 1 item).
+
+It is justified by them having item's specific information (new_certificate_id for example) that
+cannot be just grouped.
 
 bg=white
 style=wordwrap
