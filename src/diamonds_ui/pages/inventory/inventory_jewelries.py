@@ -42,7 +42,7 @@ def render_jewelry_details(j: Jewelry, i: Item, actions: list[Action]):
                 st.markdown(f"#### {a.action_category.capitalize()}")
                 col1, col2 = st.columns(2)
                 col1.write(f"From: {a.from_counterpart_name}")
-                col1.write(f"By: {a.to_counterpart_name}")
+                col1.write(f"To: {a.to_counterpart_name}")
                 col2.write(f"Price: {a.price} {a.currency_code}")
                 col2.write(f"Registered: {a.created_at.date()}")
 
