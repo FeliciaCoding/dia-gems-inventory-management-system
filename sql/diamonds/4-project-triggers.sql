@@ -569,7 +569,7 @@ EXECUTE FUNCTION trig_b_i_one_item_per_back_from_lab_factory();
 -- Description:
 -- Disallow selling stones (white diamonds/colored diamonds/colore gemstones)
 -- without valid certificate
-CREATE OR REPLACE FUNCTION trig_b_i_sale_without_certificate()
+CREATE OR REPLACE FUNCTION trig_b_i_sale_without_valid_certificate()
     RETURNS TRIGGER AS
 $$
 DECLARE
@@ -596,9 +596,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER disallow_sell_stones_without_cert_trigger
+CREATE TRIGGER disallow_sell_stones_without_valid_cert_trigger
     BEFORE INSERT
     ON sale
     FOR EACH ROW
-EXECUTE FUNCTION trig_b_i_sale_without_certificate();
+EXECUTE FUNCTION trig_b_i_sale_without_valid_certificate();
 -- END TRIGGER #12
