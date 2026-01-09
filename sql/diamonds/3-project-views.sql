@@ -144,6 +144,7 @@ SELECT DISTINCT ON (i.lot_id)
        i.created_at,
        i.updated_at,
        c.certificate_num,
+       c.is_valid AS is_cert_valid,
        lab.name   AS certification_lab
 
   FROM item i
@@ -234,6 +235,7 @@ SELECT DISTINCT ON (i.lot_id)
        i.created_at,
        i.updated_at,
        c.certificate_num,
+       c.is_valid AS is_cert_valid,
        lab.name   AS certification_lab
 
   FROM item i
@@ -327,6 +329,7 @@ SELECT DISTINCT ON (i.lot_id)
        i.created_at,
        i.updated_at,
        c.certificate_num,
+       c.is_valid AS is_cert_valid,
        lab.name   AS certification_lab
 
   FROM item i
@@ -394,4 +397,10 @@ SELECT CASE
 -- SELECT * FROM complete_inventory_white_diamonds;
 -- SELECT * FROM complete_inventory_colored_diamonds;
 -- SELECT * FROM inventory_by_type;
+
+-- DROP VIEW complete_inventory_jewelry;
+-- DROP VIEW complete_inventory_colored_gem_stones;
+-- DROP VIEW complete_inventory_white_diamonds;
+-- DROP VIEW complete_inventory_colored_diamonds;
+-- DROP VIEW inventory_by_type;
 
