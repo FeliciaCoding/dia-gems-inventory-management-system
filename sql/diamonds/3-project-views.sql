@@ -62,13 +62,13 @@ SELECT i.lot_id,
        i.updated_at
 
   FROM item i
-       JOIN jewelry j
+       INNER JOIN jewelry j
        ON i.lot_id = j.lot_id
 
-       LEFT JOIN counterpart s
+       INNER JOIN counterpart s
        ON i.supplier_id = s.counterpart_id
 
-       LEFT JOIN counterpart o
+       INNER JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
 
  ORDER BY i.lot_id DESC;
@@ -78,8 +78,12 @@ SELECT i.lot_id,
 -- BEGIN VIEW
 -- Description:
 -- Status on all colored gemstones
+-- NOTE:
+-- We use `DISTINCT ON (i.lot_id)` because a stone could have several certificates,
+-- and we are interested to show the most recent one here
 CREATE OR REPLACE VIEW complete_inventory_colored_gem_stones AS
-SELECT i.lot_id,
+SELECT DISTINCT ON (i.lot_id)
+       i.lot_id,
        i.stock_name,
        i.origin,
        i.purchase_date,
@@ -143,25 +147,25 @@ SELECT i.lot_id,
        lab.name   AS certification_lab
 
   FROM item i
-       JOIN loose_stone ls
+       INNER JOIN loose_stone ls
        ON i.lot_id = ls.lot_id
 
-       JOIN colored_gem_stone cgs
+       INNER JOIN colored_gem_stone cgs
        ON ls.lot_id = cgs.lot_id
 
-       LEFT JOIN counterpart s
+       INNER JOIN counterpart s
        ON i.supplier_id = s.counterpart_id
 
-       LEFT JOIN counterpart o
+       INNER JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
 
-       LEFT JOIN certificate c
+       INNER JOIN certificate c
        ON i.lot_id = c.lot_id
 
-       LEFT JOIN counterpart lab
+       INNER JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
- ORDER BY i.lot_id DESC;
+ ORDER BY i.lot_id, c.certificate_id DESC;
 -- END VIEW
 
 
@@ -169,7 +173,8 @@ SELECT i.lot_id,
 -- Description:
 -- Status on all white diamonds
 CREATE OR REPLACE VIEW complete_inventory_white_diamonds AS
-SELECT i.lot_id,
+SELECT DISTINCT ON (i.lot_id)
+       i.lot_id,
        i.stock_name,
        i.origin,
        i.purchase_date,
@@ -232,25 +237,25 @@ SELECT i.lot_id,
        lab.name   AS certification_lab
 
   FROM item i
-       JOIN loose_stone ls
+       INNER JOIN loose_stone ls
        ON i.lot_id = ls.lot_id
 
-       JOIN white_diamond wd
+       INNER JOIN white_diamond wd
        ON ls.lot_id = wd.lot_id
 
-       LEFT JOIN counterpart s
+       INNER JOIN counterpart s
        ON i.supplier_id = s.counterpart_id
 
-       LEFT JOIN counterpart o
+       INNER JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
 
-       LEFT JOIN certificate c
+       INNER JOIN certificate c
        ON i.lot_id = c.lot_id
 
-       LEFT JOIN counterpart lab
+       INNER JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
- ORDER BY i.lot_id DESC;
+ ORDER BY i.lot_id, c.certificate_id DESC;
 -- END VIEW
 
 
@@ -258,7 +263,8 @@ SELECT i.lot_id,
 -- Description:
 -- Status on all the colored diamonds
 CREATE OR REPLACE VIEW complete_inventory_colored_diamonds AS
-SELECT i.lot_id,
+SELECT DISTINCT ON (i.lot_id)
+       i.lot_id,
        i.stock_name,
        i.origin,
        i.purchase_date,
@@ -324,25 +330,25 @@ SELECT i.lot_id,
        lab.name   AS certification_lab
 
   FROM item i
-       JOIN loose_stone ls
+       INNER JOIN loose_stone ls
        ON i.lot_id = ls.lot_id
 
-       JOIN colored_diamond cd
+       INNER JOIN colored_diamond cd
        ON ls.lot_id = cd.lot_id
 
-       LEFT JOIN counterpart s
+       INNER JOIN counterpart s
        ON i.supplier_id = s.counterpart_id
 
-       LEFT JOIN counterpart o
+       INNER JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
 
-       LEFT JOIN certificate c
+       INNER JOIN certificate c
        ON i.lot_id = c.lot_id
 
-       LEFT JOIN counterpart lab
+       INNER JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
- ORDER BY i.lot_id DESC;
+ ORDER BY i.lot_id, c.certificate_id DESC;
 -- END VIEW
 
 
