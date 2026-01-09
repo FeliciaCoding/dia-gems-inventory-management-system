@@ -360,68 +360,68 @@ INSERT INTO purchase (action_id, purchase_num, purchase_date) VALUES
 
 
 -- White diamonds from Antwerp
-INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
-(1, 1, 1, 18500.00, 'USD'),
-(1, 2, 1, 32000.00, 'USD'),
-(1, 3, 1, 19200.00, 'USD'),
-(1, 6, 1, 8700.00, 'USD'),
-(1, 7, 1, 14900.00, 'USD'),
-(1, 12, 1, 17900.00, 'USD'),
-(1, 13, 1, 9000.00, 'USD'),
-(1, 14, 1, 14800.00, 'USD'),
-(1, 15, 1, 9900.00, 'USD');
+INSERT INTO action_item (action_id, lot_id, price, currency_code) VALUES
+(1, 1, 18500.00, 'USD'),
+(1, 2, 32000.00, 'USD'),
+(1, 3, 19200.00, 'USD'),
+(1, 6, 8700.00, 'USD'),
+(1, 7, 14900.00, 'USD'),
+(1, 12, 17900.00, 'USD'),
+(1, 13, 9000.00, 'USD'),
+(1, 14, 14800.00, 'USD'),
+(1, 15, 9900.00, 'USD');
 
 -- Diamonds from Mumbai
-INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
+INSERT INTO action_item (action_id, lot_id, price, currency_code) VALUES
 -- white diamonds
-(2, 4, 1, 52000.00, 'USD'),
-(2, 5, 1, 13500.00, 'USD'),
-(2, 8, 1, 28800.00, 'USD'),
-(2, 9, 1, 16500.00, 'USD'),
-(2, 10, 1, 25100.00, 'USD'),
-(2, 11, 1, 15500.00, 'USD'),
+(2, 4, 52000.00, 'USD'),
+(2, 5, 13500.00, 'USD'),
+(2, 8, 28800.00, 'USD'),
+(2, 9, 16500.00, 'USD'),
+(2, 10, 25100.00, 'USD'),
+(2, 11, 15500.00, 'USD'),
 -- colored diamonds
-(2, 16, 1, 56900.00, 'USD'),
-(2, 17, 1, 81100.00, 'USD'),
-(2, 18, 1, 39200.00, 'USD'),
-(2, 19, 1, 21500.00, 'USD'),
-(2, 20, 1, 13500.00, 'USD'),
-(2, 21, 1, 13200.00, 'USD'),
-(2, 22, 1, 92400.00, 'USD'),
-(2, 23, 1, 31300.00, 'USD'),
-(2, 24, 1, 42300.00, 'USD'),
-(2, 25, 1, 38900.00, 'USD');
+(2, 16, 56900.00, 'USD'),
+(2, 17, 81100.00, 'USD'),
+(2, 18, 39200.00, 'USD'),
+(2, 19, 21500.00, 'USD'),
+(2, 20, 13500.00, 'USD'),
+(2, 21, 13200.00, 'USD'),
+(2, 22, 92400.00, 'USD'),
+(2, 23, 31300.00, 'USD'),
+(2, 24, 42300.00, 'USD'),
+(2, 25, 38900.00, 'USD');
 
 -- Rubies from Bangkok
-INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
-(3, 26, 1, 28500.00, 'USD'),
-(3, 27, 1, 58000.00, 'USD'),
-(3, 28, 1, 18900.00, 'USD'),
-(3, 29, 1, 11000.00, 'USD'),
-(3, 30, 1, 20100.00, 'USD'),
-(3, 31, 1, 10400.00, 'USD'),
-(3, 32, 1, 8100.00, 'USD'),
-(3, 33, 1, 17500.00, 'USD');
+INSERT INTO action_item (action_id, lot_id, price, currency_code) VALUES
+(3, 26, 28500.00, 'USD'),
+(3, 27, 58000.00, 'USD'),
+(3, 28, 18900.00, 'USD'),
+(3, 29, 11000.00, 'USD'),
+(3, 30, 20100.00, 'USD'),
+(3, 31, 10400.00, 'USD'),
+(3, 32, 8100.00, 'USD'),
+(3, 33, 17500.00, 'USD');
 
 -- Sapphires from Kashmir
-INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
-(4, 34, 1, 45000.00, 'USD'),
-(4, 35, 1, 28000.00, 'USD'),
-(4, 36, 1, 33000.00, 'USD'),
-(4, 37, 1, 58000.00, 'USD'),
-(4, 38, 1, 55000.00, 'USD'),
-(4, 39, 1, 11000.00, 'USD'),
-(4, 40, 1, 34000.00, 'USD'),
-(4, 41, 1, 20000.00, 'USD');
+INSERT INTO action_item (action_id, lot_id, price, currency_code) VALUES
+(4, 34, 45000.00, 'USD'),
+(4, 35, 28000.00, 'USD'),
+(4, 36, 33000.00, 'USD'),
+(4, 37, 58000.00, 'USD'),
+(4, 38, 55000.00, 'USD'),
+(4, 39, 11000.00, 'USD'),
+(4, 40, 34000.00, 'USD'),
+(4, 41, 20000.00, 'USD');
 
 -- Emeralds from Colombia
-INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
-(5, 42, 1, 32500.00, 'USD'),
-(5, 43, 1, 52000.00, 'USD'),
-(5, 44, 1, 18000.00, 'USD'),
-(5, 45, 1, 28000.00, 'USD'),
-(5, 46, 1, 24000.00, 'USD'),
-(5, 47, 1, 38000.00, 'USD');
+INSERT INTO action_item (action_id, lot_id, price, currency_code) VALUES
+(5, 42, 32500.00, 'USD'),
+(5, 43, 52000.00, 'USD'),
+(5, 44, 18000.00, 'USD'),
+(5, 45, 28000.00, 'USD'),
+(5, 46, 24000.00, 'USD'),
+(5, 47, 38000.00, 'USD');
 
 
 INSERT INTO sale (action_id, sale_num, sale_date, payment_method, payment_status) VALUES
@@ -505,20 +505,20 @@ INSERT INTO purchase (action_id, purchase_num, purchase_date) VALUES
 (11, 'PO-2024-0006', '2024-01-15'),
 (12, 'PO-2024-0007', '2024-02-05');
 
-INSERT INTO action_item (action_id, lot_id, quantity, unit_price, currency_code) VALUES
-(11, 48, 1, 10500.00, 'USD'),
-(11, 49, 1, 8500.00, 'USD'),
-(11, 50, 1, 11500.00, 'USD'),
-(11, 51, 1, 3500.00, 'USD'),
-(11, 52, 1, 20100.00, 'USD'),
-(11, 53, 1, 18500.00, 'USD'),
-(12, 54, 1, 9200.00, 'USD'),
-(12, 55, 1, 15100.00, 'USD'),
-(12, 56, 1, 9500.00, 'USD'),
-(12, 57, 1, 21900.00, 'USD'),
-(12, 58, 1, 43000.00, 'USD'),
-(12, 59, 1, 4700.00, 'USD'),
-(12, 60, 1, 5800.00, 'USD');
+INSERT INTO action_item (action_id, lot_id, price, currency_code) VALUES
+(11, 48, 10500.00, 'USD'),
+(11, 49, 8500.00, 'USD'),
+(11, 50, 11500.00, 'USD'),
+(11, 51, 3500.00, 'USD'),
+(11, 52, 20100.00, 'USD'),
+(11, 53, 18500.00, 'USD'),
+(12, 54, 9200.00, 'USD'),
+(12, 55, 15100.00, 'USD'),
+(12, 56, 9500.00, 'USD'),
+(12, 57, 21900.00, 'USD'),
+(12, 58, 43000.00, 'USD'),
+(12, 59, 4700.00, 'USD'),
+(12, 60, 5800.00, 'USD');
 
 
 INSERT INTO action_update_log (log_time, action_id, employee_id, update_type, old_value, new_value) VALUES
