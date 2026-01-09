@@ -358,8 +358,7 @@ $$
 DECLARE
     client_id INTEGER;
 BEGIN
-
-    FOR cliend_id IN
+    FOR client_id IN
         SELECT to_counterpart_id
         FROM diamonds_are_forever.action
         WHERE action_id = new.action_id
