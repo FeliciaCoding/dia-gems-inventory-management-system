@@ -87,7 +87,7 @@ transfer_to_office(**action_id**, transfer_num, ship_date) <br>
     `action_id` references `action.action_id`
 
 
-transfer_to_lab(**action_id**, transfer_num, ship_date) <br>
+transfer_to_lab(**action_id**, transfer_num, ship_date, lab_purpose) <br>
     `action_id` references `action.action_id`
 
 
@@ -97,7 +97,7 @@ back_from_lab(**action_id**, orig_transfer_id, back_from_lab_num, back_date, new
     `new_certificate_id` references `certificate.certificate_id` NOT NULL
 
 
-transfer_to_factory(**action_id**, transfer_num, ship_date) <br>
+transfer_to_factory(**action_id**, transfer_num, ship_date, processing_type) <br>
     `transfer_to_factory.action_id` references `action.action_id`
 
 
