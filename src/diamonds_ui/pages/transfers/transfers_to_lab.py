@@ -90,7 +90,6 @@ def new_transfer_to_office(db):
             ], border="horizontal")
 
             if st.button("Submit"):
-                pass
                 # create new action
                 # create new transfer to office
                 # create action_item link for every item in items_to_send

@@ -125,3 +125,24 @@ def make_new_transfer_to_lab(
 
     return action[0], None
 
+
+def get_transfers_to_labs_where_empl_works(db: psycopg.Connection, empl: Employee):
+    with db.cursor(row_factory=class_row(TransferToLab)) as cur:
+        q = sql.SQL(
+            """
+            SELECT 
+                ttl.action_id,
+                ttl.transfer_num,
+                ttl.ship_date,
+                ttl.lab_purpose
+            FROM diamonds_are_forever.transfer_to_lab ttl
+                INNER JOIN diamonds_are_forever.action a
+                ON ttl.action_id = a.action_id
+            WHERE a.from_counterpart_id={office_id}
+            """
+        ).format(
+            office_id=empl.office_id
+        )
+        return cur.execute(q).fetchall()
+
+
