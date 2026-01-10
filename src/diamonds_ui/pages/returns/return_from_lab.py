@@ -66,6 +66,13 @@ def render_return_details(
             col2.markdown(f"**Issued by:** {cert.lab_name}")
             col2.markdown(f"**Issued on:** {cert.issue_date.date()}")
 
+            # TODO:
+            # add button that would lead to detailed certificate view
+            # (like the one for purchases for example)
+            # in this view user can look at the desired certificate
+            # in more details, or it would be cool to have search there
+            # among all the certificates for a some specific item
+
 
 @st.dialog("New return from lab")
 def new_return_from_lab(db):
