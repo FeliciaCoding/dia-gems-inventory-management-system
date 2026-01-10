@@ -24,23 +24,23 @@ BEGIN
     END IF;
 
     dynamic_sql := FORMAT(
-          $sql$
+        $sql$
         UPDATE diamonds_are_forever.item
-           SET responsible_office_id = (
-                   SELECT %I
-                     FROM diamonds_are_forever.action
-                    WHERE action_id = $1
-               ),
-               updated_at   = NOW(),
-               is_available = $2
-         WHERE lot_id IN (
-               SELECT lot_id
-                 FROM diamonds_are_forever.action_item
+            SET responsible_office_id = (
+                SELECT %I
+                FROM diamonds_are_forever.action
                 WHERE action_id = $1
-         )
+            ),
+            updated_at   = NOW(),
+            is_available = $2
+        WHERE lot_id IN (
+            SELECT lot_id
+            FROM diamonds_are_forever.action_item
+            WHERE action_id = $1
+        )
         $sql$,
-          counterpart_col_name
-                   );
+        counterpart_col_name
+    );
 
     EXECUTE dynamic_sql
         USING NEW.action_id, item_availability;
@@ -128,6 +128,7 @@ CREATE OR REPLACE FUNCTION trig_a_i_back_from_fac()
 $$
 DECLARE
     item_id INTEGER;
+    ls_item diamonds_are_forever.loose_stone%ROWTYPE;
 BEGIN
     item_id := (
         SELECT lot_id
@@ -135,6 +136,17 @@ BEGIN
         WHERE new.action_id = action_item.action_id
         LIMIT 1
     );
+
+    -- save the previous measurements
+    SELECT * INTO ls_item
+    FROM loose_stone
+    WHERE lot_id = item_id;
+
+    new.before_weight_ct = ls_item.weight_ct;
+    new.before_shape = ls_item.shape;
+    new.before_length = ls_item.length;
+    new.before_widht = ls_item.width;
+    new.before_depth = ls_item.depth;
 
     UPDATE diamonds_are_forever.loose_stone
     SET weight_ct = new.after_weight_ct,
@@ -162,8 +174,9 @@ EXECUTE FUNCTION trig_a_i_back_from_fac();
 -- DROP FUNCTION IF EXISTS trig_b_i_purchase;
 
 -- Purchase:
--- When inserting into Purchase table from_counterpart_id should be equal
--- to the supplier_id in corresponding Item (connected via Action Item relationship)
+-- When inserting into Purchase table supplier_id of all concerned items
+-- should equal to from_counterpart_id of Purchase.Action
+-- (connected via Action Item relationship)
 -- If it is not - update and raise a warning
 
 CREATE OR REPLACE FUNCTION trig_b_i_purchase()
@@ -172,6 +185,7 @@ $$
 DECLARE
     counterpart_id INTEGER;
     supplier_id INTEGER;
+    item_id INTEGER;
 BEGIN
     -- action.from_counterpart_id == item.supplier_id
     counterpart_id := (
@@ -181,21 +195,24 @@ BEGIN
         LIMIT 1
     );
 
-    supplier_id := (
-        SELECT it.supplier_id
+    -- since one purchase (from one counterpart) can
+    -- include several items we need to look at every of them
+    FOR supplier_id, item_id IN
+        SELECT it.supplier_id, it.lot_id
         FROM diamonds_are_forever.action_item ai
             INNER JOIN diamonds_are_forever.item it
             ON it.lot_id = ai.lot_id
         WHERE ai.action_id = new.action_id
-        LIMIT 1
-    );
+    LOOP
 
-    IF counterpart_id <> supplier_id THEN
-        UPDATE diamonds_are_forever.action
-        SET from_counterpart_id = supplier_id
-        WHERE action.action_id = new.action_id;
-        RAISE WARNING 'action.from_counterpart_id does not equal supplier_id. Updating action.from_counterpart_id from supplier_id';
-    END IF;
+        IF counterpart_id <> supplier_id THEN
+            UPDATE diamonds_are_forever.item
+            SET supplier_id = supplier_id
+            WHERE item.lot_id = item_id;
+            RAISE WARNING 'item(%).supplier(%) does not equal to purchase.action(%).from_counterpart_id(%). Updating item.supplier_id ...',
+                item_id, supplier_id, new.action_id, counterpart_id;
+        END IF;
+    END LOOP;
 
     RETURN new;
 END;
@@ -237,21 +254,25 @@ BEGIN
     -- (we suppose that all necessary inserts to action-memoin-action_item happen in one transaction)
 
     FOR mistaken_item_id IN
-          WITH orig_action_items_ids AS (SELECT lot_id
-                                           FROM diamonds_are_forever.action_item ai
-                                          WHERE ai.action_id = new.orig_transfer_id),
-               returned_items_ids AS (SELECT lot_id
-                                        FROM diamonds_are_forever.action_item ai
-                                       WHERE ai.action_id = new.action_id)
+        WITH orig_action_items_ids AS (
+            SELECT lot_id
+            FROM diamonds_are_forever.action_item ai
+            WHERE ai.action_id = new.orig_transfer_id
+        ),
+        returned_items_ids AS (
+            SELECT lot_id
+            FROM diamonds_are_forever.action_item ai
+            WHERE ai.action_id = new.action_id
+        )
         SELECT lot_id
-          FROM returned_items_ids
+        FROM returned_items_ids
         EXCEPT
         SELECT lot_id
-          FROM orig_action_items_ids
-        LOOP
-            RAISE EXCEPTION 'Some of returned items were not listed in the original action (%) : %',
-                original_action_id, mistaken_item_id;
-        END LOOP;
+        FROM orig_action_items_ids
+    LOOP
+        RAISE EXCEPTION 'Some of returned items were not listed in the original action (%) : %',
+            original_action_id, mistaken_item_id;
+    END LOOP;
 
     RETURN new;
 END;
@@ -297,22 +318,23 @@ BEGIN
     -- We suppose that purchase is the last row that is being inserted during
     -- action-action_item-purchase suite
 
-    supplier_id := (SELECT from_counterpart_id
-                      FROM diamonds_are_forever.action
-                     WHERE action_id = new.action_id
-                     ORDER BY created_at DESC
-                     LIMIT 1);
-
-    IF NOT EXISTS(
-        SELECT *
-          FROM diamonds_are_forever.counterpart_account_type cat
-               INNER JOIN diamonds_are_forever.account_type at
-               ON cat.type_name = at.type_name
-         WHERE cat.counterpart_id = supplier_id AND
-             at.category = 'Supplier'
-    ) THEN
-        RAISE EXCEPTION 'Trying to register purchase from the counterpart (%) that is not a supplier', supplier_id;
-    END IF;
+    FOR supplier_id IN
+        SELECT from_counterpart_id
+        FROM diamonds_are_forever.action
+        WHERE action_id = new.action_id
+        ORDER BY created_at DESC
+    LOOP
+        IF NOT EXISTS(
+            SELECT *
+            FROM diamonds_are_forever.counterpart_account_type cat
+                INNER JOIN diamonds_are_forever.account_type at
+                ON cat.type_name = at.type_name
+            WHERE cat.counterpart_id = supplier_id AND
+                at.category = 'Supplier'
+        ) THEN
+            RAISE EXCEPTION 'Trying to register purchase from the counterpart (%) that is not a supplier', supplier_id;
+        END IF;
+    END LOOP;
 
     RETURN new;
 END;
@@ -336,23 +358,23 @@ $$
 DECLARE
     client_id INTEGER;
 BEGIN
-    client_id := (
+    FOR client_id IN
         SELECT to_counterpart_id
         FROM diamonds_are_forever.action
         WHERE action_id = new.action_id
         ORDER BY created_at DESC
-        LIMIT 1);
-
-    IF NOT EXISTS(
-        SELECT *
-        FROM diamonds_are_forever.counterpart_account_type cat
-            INNER JOIN diamonds_are_forever.account_type at
-            ON cat.type_name = at.type_name
-        WHERE cat.counterpart_id = client_id AND
-              at.category = 'Client'
-    ) THEN
-        RAISE EXCEPTION 'Trying to register sale for the counterpart (%) that is not a client', client_id;
-    END IF;
+    LOOP
+        IF NOT EXISTS(
+            SELECT *
+            FROM diamonds_are_forever.counterpart_account_type cat
+                INNER JOIN diamonds_are_forever.account_type at
+                ON cat.type_name = at.type_name
+            WHERE cat.counterpart_id = client_id AND
+                  at.category = 'Client'
+        ) THEN
+            RAISE EXCEPTION 'Trying to register sale for the counterpart (%) that is not a client', client_id;
+        END IF;
+    END LOOP;
 
     RETURN new;
 END;
@@ -376,22 +398,26 @@ DECLARE
     item_id INTEGER;
     prev_sale_id INTEGER;
 BEGIN
-    item_id := (SELECT ai.lot_id
-                  FROM diamonds_are_forever.action_item ai
-                 WHERE ai.action_id = new.action_id);
+    FOR item_id IN
+        SELECT ai.lot_id
+        FROM diamonds_are_forever.action_item ai
+        WHERE ai.action_id = new.action_id
+    LOOP
+         prev_sale_id := (
+             SELECT s.action_id
+             FROM diamonds_are_forever.sale s
+                 INNER JOIN diamonds_are_forever.action a
+                 ON s.action_id = a.action_id
+                 INNER JOIN diamonds_are_forever.action_item ai
+                 ON s.action_id = ai.action_id
+             WHERE ai.lot_id = item_id
+         );
 
-    prev_sale_id := (SELECT s.action_id
-                       FROM diamonds_are_forever.sale s
-                            INNER JOIN diamonds_are_forever.action a
-                            ON s.action_id = a.action_id
-                            INNER JOIN diamonds_are_forever.action_item ai
-                            ON s.action_id = ai.action_id
-                      WHERE ai.lot_id = item_id);
-
-    IF item_id IS NOT NULL AND prev_sale_id IS NOT NULL THEN
-        RAISE EXCEPTION 'Item (%) has been already sold in action (%)',
-            item_id, prev_sale_id;
-    END IF;
+        IF item_id IS NOT NULL AND prev_sale_id IS NOT NULL THEN
+            RAISE EXCEPTION 'Item (%) has been already sold in action (%)',
+                item_id, prev_sale_id;
+        END IF;
+    END LOOP;
 
     RETURN NEW;
 END;
@@ -451,4 +477,126 @@ EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
 -- END TRIGGER #10
 
 
+-- BEGIN TRIGGER #11
+-- Description:
+-- After stone has been returned from factory
+-- all its certificates should be no longer valid
+CREATE OR REPLACE FUNCTION trig_a_i_invalidate_certificates()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    item_id INTEGER;
+    cert diamonds_are_forever.certificate%ROWTYPE;
+BEGIN
+    -- for all returned back from factory items
+    FOR item_id IN
+        SELECT ai.lot_id
+        FROM diamonds_are_forever.back_from_factory bff
+            INNER JOIN diamonds_are_forever.action_item ai
+            ON bff.action_id = ai.action_id
+        WHERE bff.action_id = new.action_id
+    LOOP
+        -- for every certificate of every item
+        FOR cert IN
+            SELECT *
+            FROM diamonds_are_forever.certificate
+            WHERE lot_id = item_id
+        LOOP
+            -- make certificate invalid
+            IF cert.is_valid THEN
+                UPDATE diamonds_are_forever.certificate c
+                SET is_valid = FALSE
+                WHERE c.certificate_id = cert.certificate_id;
+            END IF;
+        END LOOP;
+    END LOOP;
 
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER invalidate_certificates_after_factory_trigger
+    AFTER INSERT
+    ON back_from_factory
+    FOR EACH ROW
+EXECUTE FUNCTION trig_a_i_invalidate_certificates();
+-- END TRIGGER #11
+
+
+-- BEGIN TRIGGER #11
+-- Description:
+-- Since we would like to reflect:
+-- - new certificates after re-certification
+-- - new measurements after re-cutting/polishing
+-- We would like to reduce relationship between Action and Item
+-- from many-to-many to many-to-one for certain cases: Back from lab, Back from Factory
+-- (if we've received 10 items back from factory we must insert
+--  10 rows in back from factory while specifying the same back_from_fac_num
+--  and orig_transfer_id everywhere)
+CREATE OR REPLACE FUNCTION trig_b_i_one_item_per_back_from_lab_factory()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    n_items INTEGER;
+BEGIN
+    SELECT COUNT(*)
+    INTO n_items
+    FROM  diamonds_are_forever.action_item ai
+    WHERE ai.action_id = new.action_id;
+
+    IF n_items > 1 THEN
+        RAISE EXCEPTION 'Expected to have only one item per one back_from_lab/back_from_factory. But % have been assigned for %',
+            n_items, new.action_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER ensure_one_item_per_one_back_from_lab_trigger
+    BEFORE INSERT
+    ON back_from_lab
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_one_item_per_back_from_lab_factory();
+
+CREATE TRIGGER ensure_one_item_per_one_back_from_factory_trigger
+    BEFORE INSERT
+    ON back_from_factory
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_one_item_per_back_from_lab_factory();
+-- END TRIGGER #11
+
+
+-- BEGIN TRIGGER #12
+-- Description:
+-- Disallow selling stones (white diamonds/colored diamonds/colore gemstones)
+-- without valid certificate
+CREATE OR REPLACE FUNCTION trig_b_i_sale_without_valid_certificate()
+    RETURNS TRIGGER AS
+$$
+DECLARE
+    item_id INTEGER;
+    cert_id INTEGER;
+BEGIN
+    FOR item_id, cert_id IN
+        SELECT ai.lot_id
+        FROM diamonds_are_forever.sale s
+            INNER JOIN diamonds_are_forever.action_item ai
+            ON s.action_id = ai.action_id
+            -- join on certificate will automatically
+            -- remove the tuples with jewelry
+            -- since they do not have the certificates at all
+            INNER JOIN diamonds_are_forever.certificate c
+            ON ai.lot_id = c.lot_id
+        WHERE c.is_valid = FALSE
+    LOOP
+        RAISE EXCEPTION 'Selling stones (white diamonds/colored diamonds/colore gemstones) without valid certificate is disallowed. But in sale (%) stone (%) has invalid certificate (%)',
+            new.action_id, item_id, cert_id;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER disallow_sell_stones_without_valid_cert_trigger
+    BEFORE INSERT
+    ON sale
+    FOR EACH ROW
+EXECUTE FUNCTION trig_b_i_sale_without_valid_certificate();
+-- END TRIGGER #12

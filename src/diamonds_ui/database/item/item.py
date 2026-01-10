@@ -110,7 +110,7 @@ def get_items_for_action(
                 i.is_available,
                 i.created_at,
                 i.updated_at,
-                (ai.quantity * ai.unit_price) AS price,
+                ai.price,
                 ai.currency_code
             FROM diamonds_are_forever.action_item ai
                 INNER JOIN diamonds_are_forever.item i
@@ -143,7 +143,7 @@ def get_items_stored_in_office(
                 i.is_available,
                 i.created_at,
                 i.updated_at,
-                ai.unit_price AS price,
+                ai.price,
                 ai.currency_code
             FROM diamonds_are_forever.action a
                 INNER JOIN diamonds_are_forever.action_item ai

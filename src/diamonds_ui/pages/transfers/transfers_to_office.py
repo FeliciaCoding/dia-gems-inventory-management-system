@@ -11,7 +11,7 @@ from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.transfer_to_office import (
     TransferToOffice, get_transfers_between_offices,
-    make_new_transfer_to_office, PriceInCurrency
+    make_new_transfer_to_office, PriceWithCurrency
 )
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
 from diamonds_ui.database.item.item import (
@@ -95,7 +95,7 @@ def new_transfer_to_office(db):
                     dest_office,
                     terms,
                     remarks,
-                    {item["item"]: PriceInCurrency(item["price"], item["currency"])
+                    {item["item"]: PriceWithCurrency(item["price"], item["currency"])
                      for item in edited_items},
                     transfer_num,
                     ship_date,
