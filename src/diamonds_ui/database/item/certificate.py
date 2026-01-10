@@ -20,10 +20,11 @@ class Certificate(BaseModel):
     length: Decimal
     width: Decimal
     depth: Decimal
-    clarity: str
-    color: str
-    treatment: str
+    clarity: str | None
+    color: str | None
+    treatment: str | None
     gem_type: str
+    is_valid: bool
 
 
 @contextmanager
@@ -36,15 +37,28 @@ def certificates_cursor(
     with db.cursor(row_factory=class_row(Certificate)) as cur:
         q = sql.SQL(
             """
-            SELECT certificate_id, c.lot_id, stock_name,
-                l.lab_id, lab_name, certificate_num,
-                issue_date, shape, weight_ct,
-                length, width, depth, clarity,
-                color, treatment, gem_type
+            SELECT 
+                certificate_id, 
+                c.lot_id, 
+                i.stock_name,
+                c.lab_id, 
+                l.name AS lab_name, 
+                certificate_num,
+                issue_date, 
+                shape, 
+                weight_ct,
+                length, 
+                width, 
+                depth, 
+                clarity,
+                color, 
+                treatment, 
+                gem_type,
+                is_valid
             FROM diamonds_are_forever.certificate c
-                INNER JOIN lab l
-                ON c.lab_id = l.lab_id
-                INNER JOIN item i
+                INNER JOIN diamonds_are_forever.counterpart l
+                ON c.lab_id = l.counterpart_id
+                INNER JOIN diamonds_are_forever.item i
                 ON c.lot_id = i.lot_id
             WHERE {condition}
             ORDER BY {order}
@@ -54,4 +68,40 @@ def certificates_cursor(
             order=order,
         )
         yield cur.execute(q, other_params)
+
+
+def get_certificate(
+    db: psycopg.Connection,
+    certificate_id: int
+):
+    with db.cursor(row_factory=class_row(Certificate)) as cur:
+        return cur.execute(
+            """
+            SELECT 
+                certificate_id, 
+                c.lot_id, 
+                i.stock_name,
+                c.lab_id, 
+                l.name AS lab_name, 
+                certificate_num,
+                issue_date, 
+                shape, 
+                weight_ct,
+                length, 
+                width, 
+                depth, 
+                clarity,
+                color, 
+                treatment, 
+                gem_type,
+                is_valid
+            FROM diamonds_are_forever.certificate c
+                INNER JOIN diamonds_are_forever.counterpart l
+                ON c.lab_id = l.counterpart_id
+                INNER JOIN diamonds_are_forever.item i
+                ON c.lot_id = i.lot_id
+            WHERE c.certificate_id = %s
+            """,
+            (certificate_id,)
+        ).fetchone()
 

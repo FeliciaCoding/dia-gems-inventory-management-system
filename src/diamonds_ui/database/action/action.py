@@ -7,7 +7,9 @@ from psycopg.rows import class_row
 
 class Action(BaseModel):
     action_id: int
+    from_counterpart_id: int
     from_counterpart_name: str | None
+    to_counterpart_id: int
     to_counterpart_name: str | None
     terms: str | None
     remarks: str | None
@@ -26,7 +28,9 @@ def get_actions(
         return cur.execute(
             """
             SELECT a.action_id,
+                a.from_counterpart_id,
                 c1.name AS from_counterpart_name,
+                a.to_counterpart_id,
                 c2.name AS to_counterpart_name,
                 terms,
                 remarks,
@@ -56,7 +60,9 @@ def get_action(
         return cur.execute(
             """
             SELECT a.action_id,
+                a.from_counterpart_id,
                 c1.name AS from_counterpart_name,
+                a.to_counterpart_id,
                 c2.name AS to_counterpart_name,
                 terms,
                 remarks,

@@ -6,6 +6,7 @@ from psycopg.rows import class_row
 
 class Employee(BaseModel):
     employee_id: int
+    office_id: int
     first_name: str
     last_name: str
     email: str
@@ -21,13 +22,15 @@ def get_employee(
     with db.cursor(row_factory=class_row(Employee)) as cur:
         return cur.execute(
             """
-            SELECT employee_id,
-                   first_name,
-                   last_name,
-                   e.email,
-                   role,
-                   e.is_active,
-                   c.name AS counterpart
+            SELECT 
+                employee_id,
+                e.counterpart_id AS office_id,
+                first_name,
+                last_name,
+                e.email,
+                role,
+                e.is_active,
+                c.name AS counterpart
             FROM diamonds_are_forever.employee e
                      INNER JOIN diamonds_are_forever.counterpart c
                      ON e.counterpart_id = c.counterpart_id
