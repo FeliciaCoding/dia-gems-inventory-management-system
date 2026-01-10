@@ -8,7 +8,6 @@ allows to register returns:
 """
 
 import streamlit as st
-from psycopg import sql
 from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import (
@@ -27,10 +26,18 @@ from diamonds_ui.database.item.item import (
     Item, PricedItem,
     get_items_for_action, get_items_stored_in_office
 )
+from diamonds_ui.database.item.certificate import (
+    Certificate, get_certificate
+)
 from streamlit_utils.query_param import query_param
 
 
-def render_return_details(t: ReturnFromLab, a: Action, item: Item):
+def render_return_details(
+    t: ReturnFromLab,
+    a: Action,
+    item: Item,
+    cert: Certificate
+):
     with st.container(border=True):
         st.markdown(f"### Details for: #{t.action_id}")
 
@@ -50,14 +57,14 @@ def render_return_details(t: ReturnFromLab, a: Action, item: Item):
             col1, col2 = st.columns(2)
             col1.markdown(f"**Stock name:** {item.stock_name}")
             col1.markdown(f"**Type:** {item.item_type}")
-            col2.markdown(f"**Responsible office: {item.responsible_office}**")
+            col2.markdown(f"**Responsible office:** {item.responsible_office}")
 
         with st.container(border=True):
             st.markdown("#### Certificate")
             col1, col2 = st.columns(2)
-            col1.markdown("**Certificate num:**")
-            col2.markdown("**Issued by:**")
-            col2.markdown("**Issued on:**")
+            col1.markdown(f"**Certificate num:** {cert.certificate_num}")
+            col2.markdown(f"**Issued by:** {cert.lab_name}")
+            col2.markdown(f"**Issued on:** {cert.issue_date.date()}")
 
 
 @st.dialog("New return from lab")
@@ -221,6 +228,7 @@ else:
         else:
             action = get_action(db, t.action_id)
             items = get_items_for_action(db, action.action_id)
-            render_return_details(t, action, items[0])
+            cert = get_certificate(db, t.new_certificate_id)
+            render_return_details(t, action, items[0], cert)
 
 
