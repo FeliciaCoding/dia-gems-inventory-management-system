@@ -179,7 +179,7 @@ def get_items_stored_in_office(
             ) q
             WHERE q.to_counterpart_id = %s
             """,
-            (office_id,),
+            (office_id, office_id,),
         ).fetchall()
 
 
