@@ -548,6 +548,8 @@ BEGIN
         RAISE EXCEPTION 'Expected to have only one item per one back_from_lab/back_from_factory. But % have been assigned for %',
             n_items, new.action_id;
     END IF;
+
+    RETURN new;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -591,6 +593,8 @@ BEGIN
         RAISE EXCEPTION 'Selling stones (white diamonds/colored diamonds/colore gemstones) without valid certificate is disallowed. But in sale (%) stone (%) has invalid certificate (%)',
             new.action_id, item_id, cert_id;
     END LOOP;
+
+    RETURN new;
 END;
 $$ LANGUAGE plpgsql;
 
