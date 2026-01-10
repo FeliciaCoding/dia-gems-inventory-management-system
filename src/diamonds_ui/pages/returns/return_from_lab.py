@@ -11,14 +11,16 @@ import streamlit as st
 from psycopg import sql
 from streamlit_utils import db
 from diamonds_ui.auth import user
-from diamonds_ui.database.action.action import Action, get_action
+from diamonds_ui.database.action.action import (
+    Action, get_action
+)
 from diamonds_ui.database.action.transfer_to_lab import (
     TransferToLab,
     get_transfers_to_labs_where_empl_works
 )
 from diamonds_ui.database.action.return_from_lab import (
     ReturnFromLab, get_pending_items_for_lab,
-    get_returns_from_labs
+    get_returns_from_labs, make_new_return_from_lab
 )
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
 from diamonds_ui.database.item.item import (
@@ -79,7 +81,7 @@ def new_return_from_lab(db):
             st.markdown("#### Generic transfer information")
 
             transfer_num = st.text_input("Transfer number")
-            back_date = st.date_input("Received on date")
+            back_date = st.datetime_input("Received on date")
             terms = st.text_input("Terms")
             remarks = st.text_input("Remarks")
 
@@ -115,6 +117,10 @@ def new_return_from_lab(db):
                     key="gem_type_selection",
                     index=None
                 )
+
+                clarity = None
+                gem_color = None
+                treatment = None
                 if gem_type == "Diamond":
                     clarity = st.selectbox(
                         "Clarity of a diamond",
@@ -141,34 +147,38 @@ def new_return_from_lab(db):
                     )
 
                 if st.button("Submit"):
-                    pass
-                    # create new action
-                    # create new transfer to office
-                    # create action_item link for every item in items_to_send
-                    # action_id, err = make_new_transfer_to_lab(
-                    #     db,
-                    #     src_office,
-                    #     dest_lab,
-                    #     terms,
-                    #     remarks,
-                    #     transfer_num,
-                    #     ship_date,
-                    #     items_to_send,
-                    #     user.get(),
-                    #     lab_purpose
-                    # )
-                    #
-                    # if err is None:
-                    #     db.commit()
-                    #     st.toast("New transfer to lab has been registered!",
-                    #              icon="✅")
-                    #
-                    #     st.switch_page(
-                    #     "pages/transfers/transfers_to_lab.py",
-                    #         query_params=dict(action_id=action_id),
-                    #     )
-                    # else:
-                    #     st.error(err)
+                    action_id, err = make_new_return_from_lab(
+                        db,
+                        orig_transfer=orig_transfer,
+                        terms=terms,
+                        remarks=remarks,
+                        employee=user.get(),
+                        transfer_num=transfer_num,
+                        back_date=back_date,
+                        item_to_return=item_to_return,
+                        certificate_num=cert_num,
+                        issue_date=issue_date,
+                        weight_ct=weight_ct,
+                        width=width,
+                        length=length,
+                        depth=depth,
+                        shape=shape,
+                        clarity=clarity,
+                        gem_type=gem_type,
+                        gem_color=gem_color,
+                        treatment=treatment
+                    )
+
+                    if err is None:
+                        db.commit()
+                        st.toast("New return from lab has been registered!",
+                            icon="✅")
+                        st.switch_page(
+                        "pages/returns/return_from_lab.py",
+                            query_params=dict(action_id=action_id),
+                        )
+                    else:
+                        st.error(err)
 
 
 def select_transfer(
@@ -183,9 +193,9 @@ def select_transfer(
     return st.selectbox(
         "Current transfer",
         transfers,
-        key="transfer_to_lab_selection",
+        key="transfer_selection",
         index=index,
-        format_func=lambda t: f"Transfer: (#{t.action_id}) number: {t.transfer_num}, date: {t.ship_date}",
+        format_func=lambda t: f"Transfer: (#{t.action_id}) number: {t.back_from_lab_num}, date: {t.back_date}",
     )
 
 
@@ -203,7 +213,7 @@ else:
                 if t is not None:
                     qp.set(t.action_id)
 
-                if st.button("Make new transfer"):
+                if st.button("Register new return"):
                     new_return_from_lab(db)
 
         if t is None:
@@ -211,6 +221,6 @@ else:
         else:
             action = get_action(db, t.action_id)
             items = get_items_for_action(db, action.action_id)
-            render_return_details(t, action, items)
+            render_return_details(t, action, items[0])
 
 
