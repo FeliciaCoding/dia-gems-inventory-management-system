@@ -8,7 +8,6 @@ from psycopg.rows import class_row
 
 
 class Certificate(BaseModel):
-    certificate_id: int
     lot_id: int
     stock_name: str
     lab_id: int
@@ -38,7 +37,6 @@ def certificates_cursor(
         q = sql.SQL(
             """
             SELECT 
-                certificate_id, 
                 c.lot_id, 
                 i.stock_name,
                 c.lab_id, 
@@ -72,13 +70,12 @@ def certificates_cursor(
 
 def get_certificate(
     db: psycopg.Connection,
-    certificate_id: int
+    certificate_num: str
 ):
     with db.cursor(row_factory=class_row(Certificate)) as cur:
         return cur.execute(
             """
             SELECT 
-                certificate_id, 
                 c.lot_id, 
                 i.stock_name,
                 c.lab_id, 
@@ -100,8 +97,8 @@ def get_certificate(
                 ON c.lab_id = l.counterpart_id
                 INNER JOIN diamonds_are_forever.item i
                 ON c.lot_id = i.lot_id
-            WHERE c.certificate_id = %s
+            WHERE c.certificate_num = %s
             """,
-            (certificate_id,)
+            (certificate_num,)
         ).fetchone()
 

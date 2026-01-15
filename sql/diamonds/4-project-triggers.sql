@@ -506,7 +506,7 @@ BEGIN
             IF cert.is_valid THEN
                 UPDATE diamonds_are_forever.certificate c
                 SET is_valid = FALSE
-                WHERE c.certificate_id = cert.certificate_id;
+                WHERE c.certificate_num = cert.certificate_num;
             END IF;
         END LOOP;
     END LOOP;

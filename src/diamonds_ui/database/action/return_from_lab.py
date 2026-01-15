@@ -19,7 +19,7 @@ class ReturnFromLab(BaseModel):
     orig_transfer_id: int
     back_from_lab_num: str
     back_date: date
-    new_certificate_id: int
+    new_certificate_num: str
 
 
 def get_returns_from_labs(
@@ -34,7 +34,7 @@ def get_returns_from_labs(
                 orig_transfer_id,
                 back_from_lab_num,
                 back_date,
-                new_certificate_id
+                new_certificate_num
             FROM diamonds_are_forever.back_from_lab
             WHERE {condition}
             """
@@ -200,7 +200,7 @@ def make_new_return_from_lab(
     ({item_id}, {lab_id}, {cert_num}, {issue_date}, {shape}, 
      {weight_ct}, {length}, {width}, {depth}, 
      {diamond_clarity}, {gem_color}, {gem_treatment}, {gem_type})
-    RETURNING certificate_id
+    RETURNING certificate_num
     """).format(
         item_id=item_to_return.lot_id,
         lab_id=orig_action.to_counterpart_id,
@@ -228,16 +228,16 @@ def make_new_return_from_lab(
         orig_transfer_id,
         back_from_lab_num,
         back_date,
-        new_certificate_id
+        new_certificate_num
     ) VALUES
-    ({action_id}, {orig_transfer_id}, {transfer_num}, {back_date}, {new_cert_id})
+    ({action_id}, {orig_transfer_id}, {transfer_num}, {back_date}, {new_cert_num})
     RETURNING action_id
     """).format(
         action_id=action[0],
         orig_transfer_id=orig_transfer.action_id,
         transfer_num=transfer_num,
         back_date=back_date,
-        new_cert_id=certificate[0]
+        new_cert_num=certificate[0]
     )).fetchone()
 
     if not transfer:
