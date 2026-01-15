@@ -9,43 +9,43 @@ BEGIN;
 
 CREATE TYPE code AS ENUM ('USD', 'HKD', 'CHF', 'EUR', 'NTD');
 CREATE TYPE category AS ENUM ('Supplier', 'Client', 'Office',
-    'Lab', 'Manufacturer');
+   'Lab', 'Manufacturer');
 CREATE TYPE role AS ENUM ('Chief', 'Admin', 'Sales', 'Accountant');
 CREATE TYPE shape AS ENUM ('Brilliant Cut', 'Pear Shape', 'Radiant Cut',
-    'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite',
-    'Marquise', 'Oval', 'Princess', 'Trillion');
+   'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite',
+   'Marquise', 'Oval', 'Princess', 'Trillion');
 CREATE TYPE clarity AS ENUM ('I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS',
-    'VVS1', 'VVS2','FL', 'IF');
+   'VVS1', 'VVS2','FL', 'IF');
 CREATE TYPE gem_type AS ENUM ('Sapphire', 'Emerald', 'Ruby', 'Diamond');
 CREATE TYPE fancy_intensity AS ENUM ('Faint', 'Very Light', 'Light',
-    'Fancy light', 'Fancy','Fansy Vivid',
-    'Fancy intense', 'Fancy Deep', 'Fansy Dark');
+   'Fancy light', 'Fancy','Fansy Vivid',
+   'Fancy intense', 'Fancy Deep', 'Fansy Dark');
 CREATE TYPE fancy_color AS ENUM ('Red', 'Orange', 'Yellow',
-    'Green', 'Blue', 'Violet', 'Gray');
+   'Green', 'Blue', 'Violet', 'Gray');
 CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring',
-    'Brooch', 'Bracelet');
+   'Brooch', 'Bracelet');
 CREATE TYPE metal_type AS ENUM ('PT900', 'PT950', '18k white gold',
-    '14k white gold', '18k white/yellow gold',
-    '18k rose gold', '18k white gold + PT');
+   '14k white gold', '18k white/yellow gold',
+   '18k rose gold', '18k white gold + PT');
 CREATE TYPE update_type_enum AS ENUM ('Insert', 'Update', 'Delete');
 CREATE TYPE action_role_type AS ENUM ('Creator', 'Approver',
-    'Processor', 'Reviewer');
+   'Processor', 'Reviewer');
 CREATE TYPE lab_purpose AS ENUM ('Certify', 'Re-certify');
 CREATE TYPE processing_type AS ENUM ('Remove oil', 'Recut');
 CREATE TYPE payment_status AS ENUM ('Partial paid', 'Unpaid', 'Paid');
 CREATE TYPE treatment AS ENUM ('No heat', 'heated', 'No oil',
-    'Minor Oil', 'Oiled');
+   'Minor Oil', 'Oiled');
 CREATE TYPE gem_color AS ENUM ('Red', 'Blue', 'Green',
-    'Pigeon blood', 'Royal Blue');
+   'Pigeon blood', 'Royal Blue');
 CREATE TYPE white_scale AS ENUM ( 'D', 'E', 'F', 'G', 'H',
-    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
-    'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+   'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
+   'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 CREATE TYPE transfer_category AS ENUM ('purchase', 'memo in',
-    'return memo in', 'transfer to lab', 'return from lab',
-    'transfer to factory', 'return from factory', 'transfer to office',
-    'memo out', 'return memo out', 'sale');
+   'return memo in', 'transfer to lab', 'return from lab',
+   'transfer to factory', 'return from factory', 'transfer to office',
+   'memo out', 'return memo out', 'sale');
 CREATE TYPE item_category AS ENUM ('white diamond', 'colored diamond',
-    'colored gemstone', 'jewelry');
+   'colored gemstone', 'jewelry');
 
 
 --Create tables
@@ -116,7 +116,7 @@ CREATE TABLE action
    to_counterpart_id   INTEGER,
    terms               TEXT,
    remarks             TEXT,
-   action_category     transfer_category NOT NULL,
+   action_category     transfer_category                      NOT NULL,
    created_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at          TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (from_counterpart_id) REFERENCES counterpart (counterpart_id)
@@ -131,12 +131,12 @@ CREATE TABLE action
 -- !! 6. update_log is maybe a weak entity with action as its strong entity
 CREATE TABLE action_update_log
 (
-   log_time     TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-   action_id    INTEGER                                NOT NULL,
-   employee_id  INTEGER                                NOT NULL,
-   update_type  update_type_enum                       NOT NULL,
-   old_value    jsonb,
-   new_value    jsonb,
+   log_time    TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+   action_id   INTEGER                                NOT NULL,
+   employee_id INTEGER                                NOT NULL,
+   update_type update_type_enum                       NOT NULL,
+   old_value   jsonb,
+   new_value   jsonb,
    PRIMARY KEY (action_id, log_time),
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
@@ -169,7 +169,7 @@ CREATE TABLE action_item
 (
    action_id     INTEGER,
    lot_id        INTEGER,
-   price    DECIMAL(15, 2) NOT NULL,
+   price         DECIMAL(15, 2) NOT NULL,
    currency_code code           NOT NULL,
    PRIMARY KEY (action_id, lot_id),
    FOREIGN KEY (action_id) REFERENCES action (action_id)
@@ -189,7 +189,8 @@ CREATE TABLE purchase
    purchase_num  TEXT UNIQUE,
    purchase_date DATE DEFAULT CURRENT_DATE,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
-      ON DELETE CASCADE ON UPDATE CASCADE
+      ON DELETE CASCADE ON UPDATE CASCADE,
+      CONSTRAINT purchase_date_no_future CHECK (purchase_date <= CURRENT_DATE)
 );
 
 
@@ -207,10 +208,10 @@ CREATE TABLE memo_in
 
 CREATE TABLE return_memo_in
 (
-   action_id           INTEGER PRIMARY KEY,
-   orig_transfer_id    INTEGER NOT NULL,
-   return_memo_in_num  TEXT UNIQUE,
-   back_date           DATE    NOT NULL,
+   action_id          INTEGER PRIMARY KEY,
+   orig_transfer_id   INTEGER NOT NULL,
+   return_memo_in_num TEXT UNIQUE,
+   back_date          DATE    NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES memo_in (action_id)
@@ -266,10 +267,10 @@ CREATE TABLE transfer_to_lab
 -- back_from_lab(**action_id, back_from_lab_num**, back_date)
 CREATE TABLE back_from_lab
 (
-   action_id         INTEGER PRIMARY KEY,
-   orig_transfer_id  INTEGER NOT NULL,
-   back_from_lab_num TEXT NOT NULL,
-   back_date         DATE    NOT NULL,
+   action_id          INTEGER PRIMARY KEY,
+   orig_transfer_id   INTEGER NOT NULL,
+   back_from_lab_num  TEXT    NOT NULL,
+   back_date          DATE    NOT NULL,
    new_certificate_id INTEGER NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
@@ -293,13 +294,13 @@ CREATE TABLE back_from_factory
 (
    action_id         INTEGER PRIMARY KEY,
    orig_transfer_id  INTEGER NOT NULL,
-   back_from_fac_num TEXT NOT NULL,
+   back_from_fac_num TEXT    NOT NULL,
    back_date         DATE    NOT NULL,
-   before_weight_ct   DECIMAL(5, 2),
-   before_shape       shape,
-   before_length      DECIMAL(4, 2),
-   before_width       DECIMAL(4, 2),
-   before_depth       DECIMAL(4, 2),
+   before_weight_ct  DECIMAL(5, 2),
+   before_shape      shape,
+   before_length     DECIMAL(4, 2),
+   before_width      DECIMAL(4, 2),
+   before_depth      DECIMAL(4, 2),
    after_weight_ct   DECIMAL(5, 2),
    after_shape       shape,
    after_length      DECIMAL(4, 2),
@@ -313,9 +314,9 @@ CREATE TABLE back_from_factory
       ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT positive_weight CHECK (before_weight_ct > 0 AND after_weight_ct > 0),
    CONSTRAINT positive_dimensions CHECK (
-       before_length > 0 AND before_width > 0 AND before_depth > 0 AND
-       after_length > 0 AND after_width > 0 AND after_depth > 0
-   ),
+      before_length > 0 AND before_width > 0 AND before_depth > 0 AND
+      after_length > 0 AND after_width > 0 AND after_depth > 0
+      ),
    CONSTRAINT non_negative_weight_loss CHECK (weight_loss_ct >= 0)
 );
 
@@ -433,7 +434,7 @@ CREATE TABLE certificate
    color           fancy_color,
    treatment       treatment,
    gem_type        gem_type,
-   is_valid        BOOL NOT NULL DEFAULT TRUE,
+   is_valid        bool                                   NOT NULL DEFAULT TRUE,
    created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
