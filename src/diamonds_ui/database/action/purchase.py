@@ -34,15 +34,61 @@ def create_purchase_white_diamonds(
 ) -> int :
     with db.cursor() as cur:
         cur.execute("SET search_path TO diamonds_are_forever")
+
         # add into action
+        # execute(sql_query, parameter) method: https://www.psycopg.org/psycopg3/docs/api/cursors.html#psycopg.Cursor.execute
+        # Parameters: https://www.psycopg.org/psycopg3/docs/basic/params.html
+        cur.execute("""
+        INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category) 
+        values(%s, %s, 'purchase')
+        returning action_id
+        """, (supplier_id, office_id)) # should return {int}
+        action_id = cur.fetchone()[0]
+
+
         # add into item
+        cur.execute("""
+        insert into item(stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type)
+        values(%s, %s, %s, %s, %s, 'white diamond')
+        returning lot_id
+        """, (stock_name, purchase_date, supplier_id, origin, office_id))
+        lot_id = cur.fetchone()[0]
+
         # add into loose stone
+        cur.execute("""
+            INSERT INTO loose_stone (lot_id, weight_ct, shape, length, width, depth)
+            VALUES (%s, %s, %s::shape, %s, %s, %s)
+        """, (lot_id, weight_ct, shape, length, width, depth))
+
+
         # add white diamond
+        cur.execute("""
+            INSERT INTO white_diamond (lot_id, white_scale, clarity)
+            VALUES (%s, %s::white_scale, %s::clarity)
+        """, (lot_id, white_scale, clarity))
+
         # add action_item
+        cur.execute("""
+            INSERT INTO action_item (action_id, lot_id, price, currency_code)
+            VALUES (%s, %s, %s, %s::code)
+        """, (action_id, lot_id, price, currency))
+
         # add purcahse
+        cur.execute("""
+            INSERT INTO purchase (action_id, purchase_num, purchase_date)
+            VALUES (%s, %s, %s)
+        """, (action_id, purchase_num, purchase_date))
+
+
         # add log
+        cur.execute("""
+             INSERT INTO action_update_log (action_id, employee_id, update_type)
+             VALUES (%s, %s, 'Insert')
+         """, (action_id, employee_id))
 
         # commit and return
+        db.commit()
+        return lot_id
 
 
 def get_purchases(
