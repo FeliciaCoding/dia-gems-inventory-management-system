@@ -353,10 +353,10 @@ CREATE TABLE back_from_factory
 CREATE TABLE sale
 (
    action_id      INTEGER PRIMARY KEY,
-   sale_num       TEXT UNIQUE,
-   sale_date      DATE           DEFAULT CURRENT_DATE,
-   payment_method TEXT,
-   payment_status payment_status DEFAULT 'Unpaid',
+   sale_num       TEXT UNIQUE                     NOT NULL,
+   sale_date      DATE DEFAULT CURRENT_DATE       NOT NULL,
+   payment_method TEXT                            NOT NULL,
+   payment_status payment_status DEFAULT 'Unpaid' NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE
 );
