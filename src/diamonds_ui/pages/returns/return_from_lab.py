@@ -235,7 +235,7 @@ else:
         else:
             action = get_action(db, t.action_id)
             items = get_items_for_action(db, action.action_id)
-            cert = get_certificate(db, t.new_certificate_id)
+            cert = get_certificate(db, t.new_certificate_num)
             render_return_details(t, action, items[0], cert)
 
 
