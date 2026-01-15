@@ -117,32 +117,32 @@ INSERT INTO employee (employee_id, counterpart_id, first_name, last_name, email,
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type, is_available) VALUES
 (1, 'WD-2024-001', '2024-01-15 10:00:00+00', 5, 'South Africa', 1, 'white diamond', TRUE),
 (2, 'WD-2024-002', '2024-01-20 14:30:00+00', 5, 'Botswana', 1, 'white diamond', TRUE),
-(3, 'WD-2024-003', '2024-02-05 09:15:00+00', 6, 'India', 2, 'white diamond', TRUE),
-(4, 'WD-2024-004', '2024-02-10 11:45:00+00', 7, 'Russia', 3, 'white diamond', TRUE),
-(5, 'WD-2024-005', '2024-02-15 13:20:00+00', 8, 'Botswana', 1, 'white diamond', TRUE),
+(3, 'WD-2024-003', '2024-02-05 09:15:00+00', 6, 'India', 1, 'white diamond', TRUE),
+(4, 'WD-2024-004', '2024-02-10 11:45:00+00', 7, 'Russia', 2, 'white diamond', TRUE),
+(5, 'WD-2024-005', '2024-02-15 13:20:00+00', 8, 'Botswana', 2, 'white diamond', TRUE),
 (6, 'WD-2024-006', '2024-03-01 10:30:00+00', 5, 'South Africa', 1, 'white diamond', TRUE),
-(7, 'WD-2024-007', '2024-03-10 15:00:00+00', 6, 'Australia', 2, 'white diamond', TRUE),
-(8, 'WD-2024-008', '2024-03-15 09:45:00+00', 7, 'Canada', 3, 'white diamond', TRUE),
-(9, 'WD-2024-009', '2024-04-01 14:15:00+00', 5, 'South Africa', 1, 'white diamond', TRUE),
-(10, 'WD-2024-010', '2024-04-10 11:30:00+00', 8, 'Botswana', 1, 'white diamond', TRUE),
+(7, 'WD-2024-007', '2024-03-10 15:00:00+00', 6, 'Australia', 1, 'white diamond', TRUE),
+(8, 'WD-2024-008', '2024-03-15 09:45:00+00', 7, 'Canada', 2, 'white diamond', TRUE),
+(9, 'WD-2024-009', '2024-04-01 14:15:00+00', 5, 'South Africa', 2, 'white diamond', TRUE),
+(10, 'WD-2024-010', '2024-04-10 11:30:00+00', 8, 'Botswana', 2, 'white diamond', TRUE),
 (11, 'WD-2024-011', '2024-04-20 10:00:00+00', 6, 'India', 2, 'white diamond', TRUE),
-(12, 'WD-2024-012', '2024-05-05 13:45:00+00', 7, 'Russia', 3, 'white diamond', TRUE),
+(12, 'WD-2024-012', '2024-05-05 13:45:00+00', 7, 'Russia', 1, 'white diamond', TRUE),
 (13, 'WD-2024-013', '2024-05-15 09:30:00+00', 5, 'South Africa', 1, 'white diamond', TRUE),
 (14, 'WD-2024-014', '2024-05-25 14:20:00+00', 8, 'Botswana', 1, 'white diamond', TRUE),
-(15, 'WD-2024-015', '2024-06-01 10:15:00+00', 6, 'Australia', 2, 'white diamond', TRUE);
+(15, 'WD-2024-015', '2024-06-01 10:15:00+00', 6, 'Australia', 1, 'white diamond', TRUE);
 
 -- Colored Diamonds (10 items)
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type, is_available) VALUES
-(16, 'CD-2024-001', '2024-01-25 11:00:00+00', 5, 'South Africa', 1, 'colored diamond', TRUE),
-(17, 'CD-2024-002', '2024-02-12 15:30:00+00', 7, 'Australia', 3, 'colored diamond', TRUE),
+(16, 'CD-2024-001', '2024-01-25 11:00:00+00', 5, 'South Africa', 2, 'colored diamond', TRUE),
+(17, 'CD-2024-002', '2024-02-12 15:30:00+00', 7, 'Australia', 2, 'colored diamond', TRUE),
 (18, 'CD-2024-003', '2024-03-08 10:45:00+00', 6, 'India', 2, 'colored diamond', TRUE),
-(19, 'CD-2024-004', '2024-03-22 14:00:00+00', 5, 'South Africa', 1, 'colored diamond', TRUE),
-(20, 'CD-2024-005', '2024-04-15 09:20:00+00', 8, 'Botswana', 1, 'colored diamond', TRUE),
-(21, 'CD-2024-006', '2024-04-28 13:50:00+00', 7, 'Russia', 3, 'colored diamond', TRUE),
+(19, 'CD-2024-004', '2024-03-22 14:00:00+00', 5, 'South Africa', 2, 'colored diamond', TRUE),
+(20, 'CD-2024-005', '2024-04-15 09:20:00+00', 8, 'Botswana', 2, 'colored diamond', TRUE),
+(21, 'CD-2024-006', '2024-04-28 13:50:00+00', 7, 'Russia', 2, 'colored diamond', TRUE),
 (22, 'CD-2024-007', '2024-05-10 11:15:00+00', 6, 'Australia', 2, 'colored diamond', TRUE),
-(23, 'CD-2024-008', '2024-05-20 15:40:00+00', 5, 'South Africa', 1, 'colored diamond', TRUE),
-(24, 'CD-2024-009', '2024-06-05 10:30:00+00', 8, 'Botswana', 1, 'colored diamond', TRUE),
-(25, 'CD-2024-010', '2024-06-15 14:10:00+00', 7, 'Canada', 3, 'colored diamond', TRUE);
+(23, 'CD-2024-008', '2024-05-20 15:40:00+00', 5, 'South Africa', 2, 'colored diamond', TRUE),
+(24, 'CD-2024-009', '2024-06-05 10:30:00+00', 8, 'Botswana', 2, 'colored diamond', TRUE),
+(25, 'CD-2024-010', '2024-06-15 14:10:00+00', 7, 'Canada', 2, 'colored diamond', TRUE);
 
 -- Rubies (8 items)
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type, is_available) VALUES
@@ -177,19 +177,19 @@ INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, respon
 
 -- Jewelry Items (13 items)
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type, is_available) VALUES
-(48, 'JW-2024-001', '2024-01-10 09:00:00+00', 13, 'USA', 1, 'jewelry', TRUE),
+(48, 'JW-2024-001', '2024-01-10 09:00:00+00', 13, 'USA', 3, 'jewelry', TRUE),
 (49, 'JW-2024-002', '2024-01-28 14:30:00+00', 14, 'Switzerland', 3, 'jewelry', TRUE),
-(50, 'JW-2024-003', '2024-02-18 11:15:00+00', 15, 'Japan', 4, 'jewelry', TRUE),
+(50, 'JW-2024-003', '2024-02-18 11:15:00+00', 15, 'Japan', 3, 'jewelry', TRUE),
 (51, 'JW-2024-004', '2024-03-02 15:45:00+00', 16, 'Italy', 3, 'jewelry', TRUE),
-(52, 'JW-2024-005', '2024-03-20 10:20:00+00', 13, 'USA', 1, 'jewelry', TRUE),
+(52, 'JW-2024-005', '2024-03-20 10:20:00+00', 13, 'USA', 3, 'jewelry', TRUE),
 (53, 'JW-2024-006', '2024-04-12 13:40:00+00', 14, 'Switzerland', 3, 'jewelry', TRUE),
-(54, 'JW-2024-007', '2024-04-22 09:25:00+00', 15, 'Japan', 4, 'jewelry', TRUE),
+(54, 'JW-2024-007', '2024-04-22 09:25:00+00', 15, 'Japan', 3, 'jewelry', TRUE),
 (55, 'JW-2024-008', '2024-05-03 14:50:00+00', 16, 'France', 3, 'jewelry', TRUE),
-(56, 'JW-2024-009', '2024-05-16 11:35:00+00', 13, 'USA', 1, 'jewelry', TRUE),
+(56, 'JW-2024-009', '2024-05-16 11:35:00+00', 13, 'USA', 3, 'jewelry', TRUE),
 (57, 'JW-2024-010', '2024-05-30 15:05:00+00', 14, 'Switzerland', 3, 'jewelry', TRUE),
-(58, 'JW-2024-011', '2024-06-06 10:50:00+00', 15, 'Japan', 4, 'jewelry', TRUE),
+(58, 'JW-2024-011', '2024-06-06 10:50:00+00', 15, 'Japan', 3, 'jewelry', TRUE),
 (59, 'JW-2024-012', '2024-06-14 13:20:00+00', 16, 'Italy', 3, 'jewelry', TRUE),
-(60, 'JW-2024-013', '2024-06-20 09:40:00+00', 13, 'USA', 1, 'jewelry', TRUE);
+(60, 'JW-2024-013', '2024-06-20 09:40:00+00', 13, 'USA', 3, 'jewelry', TRUE);
 
 
 -- White Diamonds (15 loose stones)
