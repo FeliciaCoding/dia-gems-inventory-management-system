@@ -539,7 +539,6 @@ INSERT INTO action_update_log (log_time, action_id, employee_id, update_type, ol
 
 -- Update sequences after manual insertions
 SELECT pg_catalog.setval('diamonds_are_forever.action_action_id_seq', 12, true);
-SELECT pg_catalog.setval('diamonds_are_forever.certificate_certificate_id_seq', 47, true);
 SELECT pg_catalog.setval('diamonds_are_forever.counterpart_counterpart_id_seq', 26, true);
 SELECT pg_catalog.setval('diamonds_are_forever.employee_employee_id_seq', 12, true);
 SELECT pg_catalog.setval('diamonds_are_forever.item_lot_id_seq', 60, true);
