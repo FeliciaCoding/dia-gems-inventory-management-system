@@ -34,6 +34,8 @@ def render_sale_details(s: Sale, a: Action, items: list[PricedItem], db):
     with st.container(border=True):
         with st.container(horizontal=True):
             st.markdown(f"### Details for: {s.action_id}")
+            if st.button("", icon=":material/delete:"):
+                delete_sale(db, s, a)
             if st.button("", icon=":material/edit:"):
                 edit_sale(db, s, a)
 
@@ -56,6 +58,16 @@ def render_sale_details(s: Sale, a: Action, items: list[PricedItem], db):
                 col2.write(f"Purchased: {item.purchase_date.date()}")
                 col2.write(f"From: {item.supplier_name}")
                 col2.write(f"Price: {item.price} {item.currency_code}")
+
+
+@st.dialog("Deleting sale")
+def delete_sale(db, s: Sale, a: Action):
+    st.markdown(f"## Are you sure you want to delete this sale (#{s.action_id}) ?")
+    with st.container(horizontal=True, horizontal_alignment="center"):
+        if st.button("Yes", width="stretch"):
+            pass
+        if st.button("No", width="stretch"):
+            st.rerun()
 
 
 @st.dialog("Editing sale")
