@@ -128,6 +128,10 @@ def get_items_for_action(
 def get_items_stored_in_office(
     db: psycopg.Connection,
     office_id: int,
+    item_types: list[str] = [
+        'white diamond', 'colored diamond',
+        'colored gemstone', 'jewelry'
+    ]
 ):
     # NOTE:
     # Basically it is a hack to ensure that
@@ -136,7 +140,7 @@ def get_items_stored_in_office(
     # the ones directed toward office of interest
     # Found on: https://stackoverflow.com/a/54691003
     with db.cursor(row_factory=class_row(PricedItem)) as cur:
-        return cur.execute(
+        q = sql.SQL(
             """
             SELECT lot_id,
                 stock_name,
@@ -174,13 +178,14 @@ def get_items_stored_in_office(
                     ON i.supplier_id = s.counterpart_id
                     INNER JOIN diamonds_are_forever.counterpart ro
                     ON i.responsible_office_id = ro.counterpart_id
-                WHERE i.responsible_office_id = %s
+                WHERE i.responsible_office_id = {office_id}
                 ORDER BY i.lot_id, a.updated_at DESC
             ) q
-            WHERE q.to_counterpart_id = %s
-            """,
-            (office_id, office_id,),
-        ).fetchall()
-
-
+            WHERE q.to_counterpart_id = {office_id} AND q.item_type IN ({item_types})
+            """
+        ).format(
+            office_id=office_id,
+            item_types=sql.SQL(', ').join(map(lambda x: sql.Literal(x), item_types))
+        )
+        return cur.execute(q).fetchall()
 

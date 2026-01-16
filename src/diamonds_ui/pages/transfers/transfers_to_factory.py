@@ -75,12 +75,13 @@ def new_transfer_to_factory(db):
     )
 
     if src_office is not None:
-        # TODO:
-        # ensure that only STONES can be selected
-        # in our constraints we forbid to send jewerly
         items_to_send = st.multiselect(
             "What items you would like to send?",
-            get_items_stored_in_office(db, src_office.counterpart_id),
+            get_items_stored_in_office(
+                db,
+                src_office.counterpart_id,
+                ['white diamond', 'colored diamond', 'colored gemstone']
+            ),
             format_func=lambda item: f"{item.item_type.capitalize()}: {item.stock_name}, supplier: {item.supplier_name}",
             default=None
         )
