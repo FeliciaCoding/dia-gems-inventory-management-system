@@ -30,7 +30,7 @@ def render_white_diamond_details(d: WhiteDiamond, i: Item, actions: list[Action]
         st.markdown(f"**White scale:** {d.white_scale}")
         st.markdown(f"**Clarity:** {d.clarity}")
 
-        st.markdown(f"**Certificate:** {d.certificate_num or '— not certified yet —'}")
+        st.markdown(f"**Certificate:** {d.certificate_num or 'Pending'}")
 
         st.markdown("### Status")
 

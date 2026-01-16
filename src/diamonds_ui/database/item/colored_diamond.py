@@ -16,7 +16,7 @@ class ColoredDiamond(BaseModel):
     fancy_overtone: str
     fancy_color: str
     clarity: str
-    certificate_num: str
+    certificate_num: str | None = None
 
 
 def get_colored_diamonds(
@@ -40,11 +40,10 @@ def get_colored_diamonds(
                 cd.fancy_color,
                 cd.clarity, 
                 c.certificate_num
-            FROM colored_diamond cd
-                INNER JOIN loose_stone ls
-                ON cd.lot_id = ls.lot_id
-                INNER JOIN certificate c
-                ON cd.lot_id = c.lot_id
+            FROM item i
+            JOIN colored_diamond cd ON i.lot_id = cd.lot_id
+            JOIN loose_stone ls ON i.lot_id = ls.lot_id
+            LEFT JOIN certificate c ON i.lot_id = c.lot_id
             WHERE {condition}
             ORDER BY {order}
             """

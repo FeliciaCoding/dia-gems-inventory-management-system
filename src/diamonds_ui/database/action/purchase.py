@@ -98,6 +98,93 @@ def create_purchase_white_diamonds(
         return lot_id
 
 
+def create_purchase_colored_diamonds(
+    db: psycopg.Connection,
+    employee_id: int,
+    stock_name: str,
+    purchase_date: date,
+    purchase_num: str,
+    origin: str,
+    supplier_id: int,
+    office_id: int,
+    price: Decimal,
+    currency: str,
+    weight_ct: Decimal,
+    shape: str,
+    length: Decimal,
+    width: Decimal,
+    depth: Decimal,
+    fancy_color: str,
+    fancy_intensity: str,
+    fancy_overtone: str | None,
+    clarity: str,
+    certificate_num: str | None = None,
+
+) -> int:
+    with db.cursor() as cur:
+        cur.execute("SET search_path TO diamonds_are_forever")
+
+        # action
+        cur.execute("""
+            INSERT INTO action (from_counterpart_id, to_counterpart_id, action_category)
+            VALUES (%s, %s, 'purchase')
+            RETURNING action_id
+        """, (supplier_id, office_id))
+        action_id = cur.fetchone()[0]
+
+        # item
+        cur.execute("""
+            INSERT INTO item (stock_name, purchase_date, supplier_id, origin,
+                              responsible_office_id, item_type)
+            VALUES (%s, %s, %s, %s, %s, 'colored diamond')
+            RETURNING lot_id
+        """, (stock_name, purchase_date, supplier_id, origin, office_id))
+        lot_id = cur.fetchone()[0]
+
+        # loose stone
+        cur.execute("""
+            INSERT INTO loose_stone (lot_id, weight_ct, shape, length, width, depth)
+            VALUES (%s, %s, %s::shape, %s, %s, %s)
+        """, (lot_id, weight_ct, shape, length, width, depth))
+
+        # colored diamond
+        cur.execute("""
+            INSERT INTO colored_diamond
+                (lot_id, gem_type, fancy_color, fancy_intensity, fancy_overtone, clarity)
+            VALUES (%s, 'Diamond', %s, %s, %s, %s::clarity)
+        """, (lot_id, fancy_color, fancy_intensity, fancy_overtone, clarity))
+
+        # action_item
+        cur.execute("""
+            INSERT INTO action_item (action_id, lot_id, price, currency_code)
+            VALUES (%s, %s, %s, %s::code)
+        """, (action_id, lot_id, price, currency))
+
+        # purchase
+        cur.execute("""
+            INSERT INTO purchase (action_id, purchase_num, purchase_date)
+            VALUES (%s, %s, %s)
+        """, (action_id, purchase_num, purchase_date))
+
+        # certificate (optional)
+        if certificate_num:
+            cur.execute("""
+                INSERT INTO certificate (lot_id, certificate_num)
+                VALUES (%s, %s)
+            """, (lot_id, certificate_num))
+
+        # log
+        cur.execute("""
+            INSERT INTO action_update_log (action_id, employee_id, update_type)
+            VALUES (%s, %s, 'Insert')
+        """, (action_id, employee_id))
+
+        db.commit()
+        return lot_id
+
+
+
+
 
 def get_purchases(
         db: psycopg.Connection,

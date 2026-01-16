@@ -80,6 +80,11 @@ def new_purchase():
             index=None,
             format_func=lambda suppl: f"Supplier: (#{suppl.name}) {suppl.category}",
         )
+
+        certificate_num = st.text_input("Certificate number").strip()
+        if certificate_num == "":
+            certificate_num = None
+
         # selector for item type
         item_type = st.selectbox(
             "Item type*",
@@ -96,7 +101,6 @@ def new_purchase():
             if unit_price > 0 and weight_ct > 0:
                 total_price = unit_price * weight_ct
                 st.info(f"**Total Price**: {total_price:.2f} {currency}")
-
 
 
             shape = st.selectbox(
@@ -122,6 +126,7 @@ def new_purchase():
                 key="white_scale_selection",
                 index=None
             )
+
             clarity = st.selectbox(
                 "Clarity*",
                 ['I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS',
@@ -130,18 +135,7 @@ def new_purchase():
                 index=None
             )
 
-            certificate_num = st.text_input("Certificate number").strip()
-            if certificate_num == "":
-                certificate_num = None
-
             if st.button("Submit"):
-                # TODO:
-                # 1) create new action (type=purchase)
-                # 2) create new item/loose stone/white diamond
-                # 3) make action_item link
-                # 4) create new purchase
-                # 5) switch page to purchase with newly created purchase
-                # 6) reflect new action creation in action_update_log for current user
 
                 if not all([stock_name, purchase_num, origin, supplier, shape,
                             white_scale, clarity, weight_ct, length, width, depth]):
@@ -202,7 +196,7 @@ def new_purchase():
 
         elif item_type == "colored diamond":
             fancy_intensity = st.selectbox(
-                "Fancy intensity of a colored diamond",
+                "Fancy intensity*",
                 ['Faint', 'Very Light', 'Light',
                  'Fancy light', 'Fancy','Fansy Vivid',
                  'Fancy intense', 'Fancy Deep', 'Fansy Dark'],
@@ -210,30 +204,83 @@ def new_purchase():
                 index=None
             )
             fancy_overtone = st.text_input(
-                "Fancy overtone of a colored diamond")
+                "Fancy overtone*")
             fancy_color = st.selectbox(
-                "Fancy color of a colored diamond",
-                ['Red', 'Orange', 'Yellow',
+                "Fancy color*",
+                ['Red', 'Pink', 'Orange', 'Yellow',
                  'Green', 'Blue', 'Violet', 'Gray'],
                 key="fancy_color_selection",
                 index=None
             )
             clarity = st.selectbox(
-                "Clarity of a diamond",
+                "Clarity*",
                 ['I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS',
                  'VVS1', 'VVS2','FL', 'IF'],
                 key="clarity_selection",
                 index=None
             )
             if st.button("Submit"):
-                # TODO:
-                # 1) create new action (type=purchase)
-                # 2) create new item/loose stone/colored diamond
-                # 3) make action_item link
-                # 4) create new purchase
-                # 5) switch page to purchase with newly created purchase
-                # 6) reflect new action creation in action_update_log for current user
-                pass
+                if not all([stock_name, purchase_num, origin, supplier, shape,
+                            fancy_intensity, fancy_color, clarity,
+                            weight_ct, length, width, depth]):
+                    st.error("Please fill all required fields marked with *")
+                    return
+
+                st.write("DEBUG: Validation passed!")
+
+                try:
+                    from diamonds_ui.database.action.purchase import create_purchase_colored_diamonds
+
+                    # Get current user's employee info
+                    current_user = user.get()
+                    if not current_user:
+                        st.error("You must be logged in to create purchases")
+                        return
+
+                    employee = get_employee(db_conn, current_user.email)
+                    if not employee:
+                        st.error("Employee not found for current user")
+                        return
+
+                    employee_id = employee.employee_id
+                    office_id = employee.office_id
+
+                    certificate_num = st.text_input("Certificate number").strip() or None
+
+                    lot_id = create_purchase_colored_diamonds(
+                        db=db_conn,
+                        employee_id=employee_id,
+                        stock_name=stock_name,
+                        purchase_date=purchase_date,
+                        purchase_num=purchase_num,
+                        origin=origin,
+                        supplier_id=supplier.counterpart_id,
+                        office_id=office_id,
+                        price=Decimal(str(unit_price)),
+                        currency=currency,
+                        weight_ct=Decimal(str(weight_ct)),
+                        shape=shape,
+                        length=Decimal(str(length)),
+                        width=Decimal(str(width)),
+                        depth=Decimal(str(depth)),
+                        fancy_intensity=fancy_intensity,
+                        fancy_overtone=fancy_overtone,
+                        fancy_color=fancy_color,
+                        clarity=clarity,
+                        certificate_num=certificate_num
+                    )
+
+                    st.success(f"Purchase created successfully! Lot ID: {lot_id}")
+                    st.session_state["colored_diamond_selection_lot_id"] = lot_id
+                    st.switch_page("pages/inventory/inventory_colored_diamonds.py")
+                    # st.rerun()
+
+                except Exception as e:
+                    st.error(f"Error creating purchase: {str(e)}")
+                    import traceback
+                    st.code(traceback.format_exc())
+
+
 
         elif item_type == "colored gemstone":
             # gem_type selector
