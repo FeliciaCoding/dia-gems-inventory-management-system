@@ -93,7 +93,7 @@ def get_pending_items_for_lab(
                 ON i.lot_id = ai.lot_id
                 INNER JOIN diamonds_are_forever.action a
                 ON ai.action_id = a.action_id
-            ORDER BY i.lot_id, a.updated_at DESC
+            ORDER BY i.lot_id, a.created_at DESC
             """
         ).format(
             transfer_id=transfer.action_id

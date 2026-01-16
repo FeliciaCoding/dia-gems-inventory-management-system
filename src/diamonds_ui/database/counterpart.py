@@ -19,42 +19,6 @@ class Counterpart(BaseModel):
     category: str
 
 
-@contextmanager
-def counterpart_cursor(
-    db: psycopg.Connection,
-    condition: sql.SQL = sql.SQL("TRUE"),
-    order: sql.SQL = sql.SQL("updated_at DESC"),
-    **other_params,
-):
-    with db.cursor(row_factory=class_row(Counterpart)) as cur:
-        q = sql.SQL(
-            """
-            SELECT 
-                c.counterpart_id, 
-                name, 
-                phone_number,
-                city, 
-                postal_code, 
-                country, 
-                email, 
-                is_active,
-                cat.type_name,
-                atype.category
-            FROM diamonds_are_forever.counterpart c
-                INNER JOIN diamonds_are_forever.counterpart_account_type cat
-                ON c.counterpart_id = cat.counterpart_id
-                INNER JOIN diamonds_are_forever.account_type atype
-                ON cat.type_name = atype.type_name               
-            WHERE {condition}
-            ORDER BY {order}
-            """
-        ).format(
-            condition=condition,
-            order=order,
-        )
-        yield cur.execute(q, other_params)
-
-
 def get_counterparts(
     db: psycopg.Connection,
     condition: sql.SQL = sql.SQL("TRUE")
@@ -84,4 +48,33 @@ def get_counterparts(
             condition=condition,
         )
         return cur.execute(q).fetchall()
+
+
+def get_counterpart(
+    db: psycopg.Connection,
+    id: int
+):
+    with db.cursor(row_factory=class_row(Counterpart)) as cur:
+        return cur.execute(
+            """
+            SELECT 
+                c.counterpart_id, 
+                name, 
+                phone_number,
+                city, 
+                postal_code, 
+                country, 
+                email, 
+                is_active,
+                cat.type_name,
+                atype.category
+            FROM diamonds_are_forever.counterpart c
+                INNER JOIN diamonds_are_forever.counterpart_account_type cat
+                ON c.counterpart_id = cat.counterpart_id
+                INNER JOIN diamonds_are_forever.account_type atype
+                ON cat.type_name = atype.type_name
+            WHERE c.counterpart_id = %s
+            """,
+            (id,)
+        ).fetchone()
 

@@ -139,21 +139,23 @@ BEGIN
 
     -- save the previous measurements
     SELECT * INTO ls_item
-    FROM loose_stone
+    FROM diamonds_are_forever.loose_stone
     WHERE lot_id = item_id;
 
     new.before_weight_ct = ls_item.weight_ct;
     new.before_shape = ls_item.shape;
     new.before_length = ls_item.length;
-    new.before_widht = ls_item.width;
+    new.before_width = ls_item.width;
     new.before_depth = ls_item.depth;
 
+    new.weight_loss_ct = new.before_weight_ct - new.after_weight_ct;
+
     UPDATE diamonds_are_forever.loose_stone
-    SET weight_ct = new.after_weight_ct,
-        shape = new.after_shape,
-        length = new.after_length,
-        width = new.after_width,
-        depth = new.after_depth
+    SET weight_ct = COALESCE(new.after_weight_ct, new.before_weight_ct),
+        shape = COALESCE(new.after_shape, new.before_shape),
+        length = COALESCE(new.after_length, new.before_length),
+        width = COALESCE(new.after_width, new.before_width),
+        depth = COALESCE(new.after_depth, new.before_depth)
     WHERE lot_id = item_id;
 
     RETURN new;
@@ -161,7 +163,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER after_factory_processing_trigger
-    AFTER INSERT
+    BEFORE INSERT
     ON back_from_factory
     FOR EACH ROW
 EXECUTE FUNCTION trig_a_i_back_from_fac();
