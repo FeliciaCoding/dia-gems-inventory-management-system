@@ -112,13 +112,9 @@ def new_sale():
                 )
                 if err is None:
                     db.commit()
-                    # TODO:
-                    # switch page on the same page doesn't work
-                    # so remove it and find out how to achieve desired result
-                    st.switch_page(
-                        "pages/sales.py",
-                        query_params=dict(action_id=action_id),
-                    )
+                    with query_param("action_id", int) as qp:
+                        qp.set(action_id)
+                    st.rerun()
                 else:
                     st.error(err)
 
@@ -148,7 +144,7 @@ else:
 
     conn = db.connection()
     with conn.connect() as db:
-        with query_param("lot_id", int) as qp:
+        with query_param("action_id", int) as qp:
             with st.container(horizontal=True, vertical_alignment="bottom"):
                 s = select_sale(
                     get_sales(db), qp.get())
