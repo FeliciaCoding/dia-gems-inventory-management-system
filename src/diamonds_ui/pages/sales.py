@@ -26,6 +26,7 @@ from diamonds_ui.database.item.item import (
     get_items_for_action,
     get_items_stored_in_office
 )
+from diamonds_ui.database.action.transfer_to_office import PriceWithCurrency
 
 
 def render_sale_details(s: Sale, a: Action, items: list[PricedItem]):
@@ -106,7 +107,9 @@ def new_sale():
                     items_to_sell,
                     user.get(),
                     payment_method,
-                    payment_status
+                    payment_status,
+                    {item["item"]: PriceWithCurrency(item["price"], item["currency"])
+                     for item in edited_items}
                 )
                 if err is None:
                     db.commit()
