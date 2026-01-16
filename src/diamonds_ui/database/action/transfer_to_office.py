@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from psycopg import sql
 from psycopg.rows import class_row
 from diamonds_ui.database.counterpart import Counterpart
-from diamonds_ui.database.item.item import Item
+from diamonds_ui.database.item.item import Item, PricedItem
 from diamonds_ui.database.employee import Employee
 
 
@@ -49,10 +49,9 @@ def make_new_transfer_to_office(
         to_counterpart: Counterpart,
         terms: str,
         remarks: str,
-        prices: dict[str, PriceWithCurrency],
         transfer_num: str,
         ship_date: date,
-        items_to_send: list[Item],
+        items_to_send: list[PricedItem],
         employee: Employee
 ) -> tuple[int | None, str | None]:
     # create new action
@@ -105,8 +104,8 @@ def make_new_transfer_to_office(
             """).format(
             action_id=action[0],
             lot_id=item.lot_id,
-            price=prices[item.stock_name].price,
-            currency_code=prices[item.stock_name].currency_code,
+            price=item.price,
+            currency_code=item.currency_code,
         ))
 
     # create new transfer to office

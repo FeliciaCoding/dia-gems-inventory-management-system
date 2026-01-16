@@ -139,8 +139,8 @@ def make_new_return_from_lab(
     ({from_counterpart_id}, {to_counterpart_id}, {terms}, {remarks}, 'return from lab')
     RETURNING action_id
     """).format(
-        from_counterpart_id=orig_action.from_counterpart_id,
-        to_counterpart_id=orig_action.to_counterpart_id,
+        from_counterpart_id=orig_action.to_counterpart_id,
+        to_counterpart_id=orig_action.from_counterpart_id,
         terms=terms,
         remarks=remarks,
     )).fetchone()

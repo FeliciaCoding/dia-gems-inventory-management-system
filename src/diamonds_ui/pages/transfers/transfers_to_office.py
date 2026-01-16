@@ -54,68 +54,55 @@ def render_transfer_details(t: TransferToOffice, a: Action, items: list[Item]):
 
 @st.dialog("New transfer between offices")
 def new_transfer_to_office(db):
-    transfer_num = st.text_input("Transfer number")
-    ship_date = st.date_input("Shipment date")
-
     src_office = get_counterpart(db, user.get().office_id)
     st.markdown(f"**Office:** {src_office.name} ({src_office.country}, {src_office.city})")
 
-    if src_office is not None:
-        dest_office = st.selectbox(
-            "Recipient",
-            get_counterparts(db,
-                 sql.SQL("category = 'Office' AND c.counterpart_id != {src}").format(
-                     src=src_office.counterpart_id)),
-            key="dest_office_selection",
-            index=None,
-            format_func=lambda office: f"To office: {office.country} {office.city} {office.postal_code}",
-        )
+    dest_office = st.selectbox(
+        "To office",
+        get_counterparts(db,
+             sql.SQL("category = 'Office' AND c.counterpart_id != {src}").format(
+                 src=src_office.counterpart_id)),
+        key="dest_office_selection",
+        index=None,
+        format_func=lambda office: f"{office.country}, {office.city}, {office.postal_code}",
+    )
+    items_to_send = st.multiselect(
+        "What items you would like to send?",
+        get_items_stored_in_office(db, src_office.counterpart_id),
+        format_func=lambda item: f"{item.item_type.capitalize()}: {item.stock_name}, supplier: {item.supplier_name}",
+        default=None
+    )
 
-        # select items that store in src office
-        items_to_send = st.multiselect(
-            "What items you would like to send?",
-            get_items_stored_in_office(db, src_office.counterpart_id),
-            format_func=lambda item: f"{item.item_type.capitalize()}: {item.stock_name}, supplier: {item.supplier_name}",
-            default=None
-        )
+    if len(items_to_send) > 0:
+        st.write("Prices (editable) of chosen items: ")
+        st.table([
+            {"item": item.stock_name, "price": item.price, "currency": item.currency_code}
+            for item in items_to_send
+        ], border="horizontal")
 
+        transfer_num = st.text_input("Transfer number")
+        ship_date = st.date_input("Shipment date")
         terms = st.text_input("Terms")
         remarks = st.text_input("Remarks")
 
-        if len(items_to_send) > 0:
-            st.write("Prices (editable) of chosen items: ")
-            edited_items = st.data_editor([
-                {"item": item.stock_name, "price": item.price, "currency": item.currency_code}
-                for item in items_to_send
-            ], disabled=["item", "currency"])
+        if st.button("Submit"):
+            action_id, err = make_new_transfer_to_office(db,
+                src_office,
+                dest_office,
+                terms,
+                remarks,
+                transfer_num,
+                ship_date,
+                items_to_send,
+                user.get())
 
-            if st.button("Submit"):
-                # create new action
-                # create new transfer to office
-                # create action_item link for every item in items_to_send
-                action_id, err = make_new_transfer_to_office(db,
-                    src_office,
-                    dest_office,
-                    terms,
-                    remarks,
-                    {item["item"]: PriceWithCurrency(item["price"], item["currency"])
-                     for item in edited_items},
-                    transfer_num,
-                    ship_date,
-                    items_to_send,
-                    user.get())
-
-                if err is None:
-                    db.commit()
-                    st.toast("New transfer to office has been registered!",
-                             icon="✅")
-
-                    st.switch_page(
-                        "pages/transfers/transfers_to_office.py",
-                        query_params=dict(action_id=action_id),
-                    )
-                else:
-                    st.error(err)
+            if err is None:
+                db.commit()
+                with query_param("action_id", int) as qp:
+                    qp.set(action_id)
+                st.rerun()
+            else:
+                st.error(err)
 
 
 def select_transfer(

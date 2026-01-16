@@ -52,7 +52,8 @@ def make_new_sale(
         items_to_sell: list[Item],
         employee: Employee,
         payment_method: str,
-        payment_status: str
+        payment_status: str,
+        prices: dict[str, PriceWithCurrency]
 ) -> tuple[int | None, str | None]:
     # create new action
     action = db.execute(sql.SQL(
@@ -101,11 +102,12 @@ def make_new_sale(
                 currency_code
             ) VALUES
             ({action_id}, {lot_id}, {price}, {currency_code})
-            """).format(
+            """
+        ).format(
             action_id=action[0],
             lot_id=item.lot_id,
-            price=item.price,
-            currency_code=item.currency_code,
+            price=prices[item.stock_name].price,
+            currency_code=prices[item.stock_name].currency_code,
         ))
 
     # create new transfer to office
