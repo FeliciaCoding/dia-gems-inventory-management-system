@@ -139,7 +139,7 @@ BEGIN
 
     -- save the previous measurements
     SELECT * INTO ls_item
-    FROM loose_stone
+    FROM diamonds_are_forever.loose_stone
     WHERE lot_id = item_id;
 
     new.before_weight_ct = ls_item.weight_ct;
