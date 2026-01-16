@@ -6,6 +6,7 @@ This page allows to do:
 import streamlit as st
 from psycopg import sql
 from streamlit_utils import db
+from streamlit_utils.query_param import query_param
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.transfer_to_factory import (
@@ -13,14 +14,17 @@ from diamonds_ui.database.action.transfer_to_factory import (
     get_transfers_to_factories,
     make_new_transfer_to_factory
 )
-from diamonds_ui.database.counterpart import Counterpart, get_counterparts
+from diamonds_ui.database.counterpart import (
+    Counterpart,
+    get_counterparts,
+    get_counterpart
+)
 from diamonds_ui.database.item.item import (
     Item,
     PricedItem,
     get_items_for_action,
     get_items_stored_in_office
 )
-from streamlit_utils.query_param import query_param
 
 
 def render_transfer_details(t: TransferToFactory, a: Action, items: list[Item]):
@@ -49,16 +53,13 @@ def render_transfer_details(t: TransferToFactory, a: Action, items: list[Item]):
 
 @st.dialog("New transfer to factory")
 def new_transfer_to_factory(db):
+    src_office = get_counterpart(db, user.get().office_id)
+
     transfer_num = st.text_input("Transfer number")
     ship_date = st.date_input("Shipment date")
 
-    src_office = st.selectbox(
-        "From office",
-        get_counterparts(db, sql.SQL("category = 'Office'")),
-        key="src_office_selection",
-        index=None,
-        format_func=lambda office: f"From office: {office.country} {office.city} {office.postal_code}",
-    )
+    st.markdown(f"**Office:** {src_office.name}, {src_office.country}, {src_office.city}")
+
     dest_fact = st.selectbox(
         "To factory",
         get_counterparts(db, sql.SQL("category = 'Manufacturer' AND is_active")),
@@ -74,7 +75,9 @@ def new_transfer_to_factory(db):
     )
 
     if src_office is not None:
-        # select items that store in src office
+        # TODO:
+        # ensure that only STONES can be selected
+        # in our constraints we forbid to send jewerly
         items_to_send = st.multiselect(
             "What items you would like to send?",
             get_items_stored_in_office(db, src_office.counterpart_id),
