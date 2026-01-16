@@ -49,6 +49,8 @@ def new_transfer_to_office(db):
     transfer_num = st.text_input("Transfer number")
     ship_date = st.date_input("Shipment date")
 
+    # TODO:
+    # change this selector to user.get().office like to factory
     src_office = st.selectbox(
         "Sender",
         get_counterparts(db, sql.SQL("category = 'Office'")),
@@ -71,7 +73,9 @@ def new_transfer_to_office(db):
     )
 
     if src_office is not None:
-        # select items that store in src office
+        # TODO:
+        # ensure that only STONES can be selected
+        # in our constraints we forbid to send jewerly
         items_to_send = st.multiselect(
             "What items you would like to send?",
             get_items_stored_in_office(db, src_office.counterpart_id),
