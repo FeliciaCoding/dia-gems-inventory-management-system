@@ -1,4 +1,4 @@
--- DROP SCHEMA IF EXISTS diamonds_are_forever CASCADE;
+-- DROP SCHEMA diamonds_are_forever CASCADE;
 CREATE SCHEMA IF NOT EXISTS diamonds_are_forever;
 
 SET search_path TO diamonds_are_forever;
@@ -11,7 +11,7 @@ CREATE TYPE code AS ENUM ('USD', 'HKD', 'CHF', 'EUR', 'NTD');
 CREATE TYPE category AS ENUM ('Supplier', 'Client', 'Office',
    'Lab', 'Manufacturer');
 CREATE TYPE role AS ENUM ('Chief', 'Admin', 'Sales', 'Accountant');
-CREATE TYPE shape AS ENUM ('Brilliant Cut', 'Pear Shape', 'Radiant Cut',
+CREATE TYPE shape AS ENUM ('Brilliant Cut', 'Cushion shape', 'Pear Shape', 'Radiant Cut',
    'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite',
    'Marquise', 'Oval', 'Princess', 'Trillion');
 CREATE TYPE clarity AS ENUM ('I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS',
@@ -20,7 +20,7 @@ CREATE TYPE gem_type AS ENUM ('Sapphire', 'Emerald', 'Ruby', 'Diamond');
 CREATE TYPE fancy_intensity AS ENUM ('Faint', 'Very Light', 'Light',
    'Fancy light', 'Fancy','Fansy Vivid',
    'Fancy intense', 'Fancy Deep', 'Fansy Dark');
-CREATE TYPE fancy_color AS ENUM ('Red', 'Orange', 'Yellow',
+CREATE TYPE fancy_color AS ENUM ('Red', 'Pink', 'Orange', 'Yellow',
    'Green', 'Blue', 'Violet', 'Gray');
 CREATE TYPE jewelry_type AS ENUM ('Earrings', 'Necklace', 'Ring',
    'Brooch', 'Bracelet');
@@ -401,7 +401,7 @@ CREATE TABLE white_diamond
 CREATE TABLE colored_diamond
 (
    lot_id          INTEGER PRIMARY KEY,
-   gem_type        gem_type        NOT NULL,
+   gem_type        gem_type        NOT NULL DEFAULT 'Diamond',
    fancy_intensity fancy_intensity NOT NULL,
    fancy_overtone  TEXT            NOT NULL,
    fancy_color     fancy_color     NOT NULL,
@@ -448,5 +448,5 @@ CREATE TABLE jewelry
 );
 
 END;
--- ROLLBACK;
+--ROLLBACK;
 
