@@ -141,7 +141,6 @@ def make_new_return_from_factory(
     shape: str,
     note: str
 ):
-    # use original action to find office and lab
     orig_action = get_action(db, orig_transfer.action_id)
 
     # create new action
@@ -157,8 +156,8 @@ def make_new_return_from_factory(
     ({from_counterpart_id}, {to_counterpart_id}, {terms}, {remarks}, 'return from factory')
     RETURNING action_id
     """).format(
-        from_counterpart_id=orig_action.from_counterpart_id,
-        to_counterpart_id=orig_action.to_counterpart_id,
+        from_counterpart_id=orig_action.to_counterpart_id,
+        to_counterpart_id=orig_action.from_counterpart_id,
         terms=terms,
         remarks=remarks
     )).fetchone()

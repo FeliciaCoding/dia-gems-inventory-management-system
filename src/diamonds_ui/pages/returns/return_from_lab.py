@@ -8,6 +8,7 @@ allows to register returns:
 """
 
 import streamlit as st
+from psycopg import sql
 from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import (
@@ -234,7 +235,6 @@ else:
         else:
             action = get_action(db, t.action_id)
             items = get_items_for_action(db, action.action_id)
-            cert = get_certificate(db, t.new_certificate_num)
+            cert = get_certificate(db, sql.SQL("c.certificate_num = {0}").format(t.new_certificate_num))
             render_return_details(t, action, items[0], cert)
-
 
