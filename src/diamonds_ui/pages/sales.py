@@ -27,6 +27,7 @@ from diamonds_ui.database.item.item import (
     get_items_stored_in_office
 )
 from diamonds_ui.database.action.transfer_to_office import PriceWithCurrency
+from diamonds_ui.database.item.certificate import get_certificate, Certificate
 
 
 def render_sale_details(s: Sale, a: Action, items: list[PricedItem]):
@@ -76,47 +77,68 @@ def new_sale():
         )
 
         if len(items_to_sell) > 0:
-            st.write("Prices (editable) of chosen items: ")
-            edited_items = st.data_editor([
-                {"item": item.stock_name, "price": item.price, "currency": item.currency_code}
-                for item in items_to_sell
-            ], disabled=["item", "currency"])
-
-            sale_num = st.text_input("Sale number")
-            sale_date = st.date_input("Sale date")
-            payment_method = st.text_input("Payment method")
-            payment_status = st.selectbox(
-                "Payment status",
-                ['Partial paid', 'Unpaid', 'Paid'],
-                key="payment_status_selection",
-                index=None
-            )
-            terms = st.text_input("Terms")
-            remarks = st.text_input("Remarks")
-
-            if st.button("Submit"):
-                action_id, err = make_new_sale(
+            items = list()
+            no_cert_stones = list()
+            for item in items_to_sell:
+                c = get_certificate(
                     db,
-                    office,
-                    client,
-                    terms,
-                    remarks,
-                    sale_num,
-                    sale_date,
-                    items_to_sell,
-                    user.get(),
-                    payment_method,
-                    payment_status,
-                    {item["item"]: PriceWithCurrency(item["price"], item["currency"])
-                     for item in edited_items}
+                    sql.SQL("c.is_valid AND c.lot_id = {0}").format(item.lot_id)
                 )
-                if err is None:
-                    db.commit()
-                    with query_param("action_id", int) as qp:
-                        qp.set(action_id)
-                    st.rerun()
+                if c is None and item.item_type != "jewelry":
+                    cert_num = "no valid certificates"
+                    no_cert_stones.append(item.stock_name)
                 else:
-                    st.error(err)
+                    cert_num = c.certificate_num
+
+                items.append({
+                    "item": item.stock_name,
+                    "price": item.price,
+                    "currency": item.currency_code,
+                    "certificate": "not available for jewelry" if item.item_type == "jewelry" else cert_num
+                })
+
+            st.write("Prices (editable) of chosen items: ")
+            edited_items = st.data_editor(
+                items, disabled=["item", "currency", "certificate"])
+
+            if len(no_cert_stones) > 0:
+                st.error("You cannot sell uncertified stones: " + ", ".join(no_cert_stones))
+            else:
+                sale_num = st.text_input("Sale number")
+                sale_date = st.date_input("Sale date")
+                payment_method = st.text_input("Payment method")
+                payment_status = st.selectbox(
+                    "Payment status",
+                    ['Partial paid', 'Unpaid', 'Paid'],
+                    key="payment_status_selection",
+                    index=None
+                )
+                terms = st.text_input("Terms")
+                remarks = st.text_input("Remarks")
+
+                if st.button("Submit"):
+                    action_id, err = make_new_sale(
+                        db,
+                        office,
+                        client,
+                        terms,
+                        remarks,
+                        sale_num,
+                        sale_date,
+                        items_to_sell,
+                        user.get(),
+                        payment_method,
+                        payment_status,
+                        {item["item"]: PriceWithCurrency(item["price"], item["currency"])
+                         for item in edited_items}
+                    )
+                    if err is None:
+                        db.commit()
+                        with query_param("action_id", int) as qp:
+                            qp.set(action_id)
+                        st.rerun()
+                    else:
+                        st.error(err)
 
 
 def select_sale(
