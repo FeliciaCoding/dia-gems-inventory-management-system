@@ -19,7 +19,7 @@ BEGIN
         counterpart_col_name := 'from_counterpart_id';
         item_availability := FALSE;
     ELSE -- transfer_to_office
-        counterpart_col_name := 'from_counterpart_id';
+        counterpart_col_name := 'to_counterpart_id';
         item_availability := TRUE;
     END IF;
 
