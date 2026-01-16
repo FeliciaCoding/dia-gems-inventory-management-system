@@ -56,19 +56,6 @@ def render_sale_details(s: Sale, a: Action, items: list[PricedItem]):
 
 @st.dialog("New sale")
 def new_sale():
-    sale_num = st.text_input("Sale number")
-    sale_date = st.date_input("Sale date")
-    payment_method = st.text_input("Payment method")
-    terms = st.text_input("Terms")
-    remarks = st.text_input("Remarks")
-
-    payment_status = st.selectbox(
-        "Payment status",
-        ['Partial paid', 'Unpaid', 'Paid'],
-        key="payment_status_selection",
-        index=None
-    )
-
     office = get_counterpart(db, user.get().office_id)
     st.markdown(f"**Responsible office:** {office.name} ({office.country}, {office.city})")
 
@@ -95,6 +82,18 @@ def new_sale():
                 for item in items_to_sell
             ], disabled=["item", "currency"])
 
+            sale_num = st.text_input("Sale number")
+            sale_date = st.date_input("Sale date")
+            payment_method = st.text_input("Payment method")
+            payment_status = st.selectbox(
+                "Payment status",
+                ['Partial paid', 'Unpaid', 'Paid'],
+                key="payment_status_selection",
+                index=None
+            )
+            terms = st.text_input("Terms")
+            remarks = st.text_input("Remarks")
+
             if st.button("Submit"):
                 action_id, err = make_new_sale(
                     db,
@@ -113,6 +112,9 @@ def new_sale():
                 )
                 if err is None:
                     db.commit()
+                    # TODO:
+                    # switch page on the same page doesn't work
+                    # so remove it and find out how to achieve desired result
                     st.switch_page(
                         "pages/sales.py",
                         query_params=dict(action_id=action_id),
