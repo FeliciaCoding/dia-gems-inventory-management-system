@@ -14,7 +14,8 @@ from diamonds_ui.database.action.sale import (
     Sale,
     get_sales,
     make_new_sale,
-    update_sale
+    update_sale,
+    delete_sale
 )
 from diamonds_ui.database.counterpart import (
     Counterpart,
@@ -38,7 +39,7 @@ def render_sale_details(s: Sale, a: Action, items: list[PricedItem], db):
             if st.button("", icon=":material/autorenew:"):
                 st.rerun()
             if st.button("", icon=":material/delete:"):
-                delete_sale(db, s, a)
+                remove_sale(db, s, items)
             if st.button("", icon=":material/edit:"):
                 edit_sale(db, s, a)
 
@@ -64,14 +65,19 @@ def render_sale_details(s: Sale, a: Action, items: list[PricedItem], db):
 
 
 @st.dialog("Deleting sale")
-def delete_sale(db, s: Sale, a: Action):
+def remove_sale(db, s: Sale, items: list[Item]):
     st.markdown(f"## Are you sure you want to delete this sale (#{s.action_id}) ?")
     with st.container(horizontal=True, horizontal_alignment="center"):
         if st.button("Yes", width="stretch"):
-            # TODO:
-            # While deleting the sale
-            # responsible office and items availability must be restored
-            pass
+            delete_sale(
+                db,
+                s.action_id,
+                user.get().employee_id,
+                items
+            )
+            with query_param("action_id", int) as qp:
+                qp.set(None)
+            st.rerun()
         if st.button("No", width="stretch"):
             st.rerun()
 

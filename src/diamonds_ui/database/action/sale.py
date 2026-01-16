@@ -197,3 +197,56 @@ def update_sale(
     ))
     db.commit()
 
+
+def delete_sale(
+        db: psycopg.Connection,
+        action_id: int,
+        employee_id: int,
+        concerned_items: list[Item]
+):
+    db.execute(sql.SQL(
+    """
+    INSERT INTO diamonds_are_forever.action_update_log (
+        action_id,
+        employee_id,
+        update_type
+    ) VALUES
+    ({action_id}, {employee_id}, 'Delete')
+    """).format(
+        action_id=action_id,
+        employee_id=employee_id
+    ))
+
+    db.execute(
+        """
+        DELETE FROM diamonds_are_forever.sale
+        WHERE action_id = %s 
+        """,
+        (action_id,)
+    )
+    db.execute(
+        """
+        DELETE FROM diamonds_are_forever.action_item
+        WHERE action_id = %s 
+        """,
+        (action_id,)
+    )
+    db.execute(
+        """
+        DELETE FROM diamonds_are_forever.action
+        WHERE action_id = %s 
+        """,
+        (action_id,)
+    )
+
+    for item in concerned_items:
+        db.execute(
+            """
+            UPDATE diamonds_are_forever.item
+            SET is_available = TRUE
+            WHERE lot_id = %s 
+            """,
+            (item.lot_id,)
+        )
+    db.commit()
+
