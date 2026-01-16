@@ -163,7 +163,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER after_factory_processing_trigger
-    AFTER INSERT
+    BEFORE INSERT
     ON back_from_factory
     FOR EACH ROW
 EXECUTE FUNCTION trig_a_i_back_from_fac();
