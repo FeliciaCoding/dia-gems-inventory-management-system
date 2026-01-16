@@ -88,13 +88,13 @@ def new_sale():
                     cert_num = "no valid certificates"
                     no_cert_stones.append(item.stock_name)
                 else:
-                    cert_num = c.certificate_num
+                    cert_num = "not available for jewelry" if item.item_type == "jewelry" else c.certificate_num
 
                 items.append({
                     "item": item.stock_name,
                     "price": item.price,
                     "currency": item.currency_code,
-                    "certificate": "not available for jewelry" if item.item_type == "jewelry" else cert_num
+                    "certificate": cert_num
                 })
 
             st.write("Prices (editable) of chosen items: ")
