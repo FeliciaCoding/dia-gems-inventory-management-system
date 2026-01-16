@@ -114,13 +114,9 @@ def new_transfer_to_office(db):
 
                 if err is None:
                     db.commit()
-                    st.toast("New transfer to lab has been registered!",
-                             icon="✅")
-
-                    st.switch_page(
-                    "pages/transfers/transfers_to_lab.py",
-                        query_params=dict(action_id=action_id),
-                    )
+                    with query_param("action_id", int) as qp:
+                        qp.set(action_id)
+                    st.rerun()
                 else:
                     st.error(err)
 

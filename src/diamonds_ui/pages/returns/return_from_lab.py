@@ -187,10 +187,9 @@ def new_return_from_lab(db):
                         db.commit()
                         st.toast("New return from lab has been registered!",
                             icon="✅")
-                        st.switch_page(
-                        "pages/returns/return_from_lab.py",
-                            query_params=dict(action_id=action_id),
-                        )
+                        with query_param("action_id", int) as qp:
+                            qp.set(action_id)
+                        st.rerun()
                     else:
                         st.error(err)
 
