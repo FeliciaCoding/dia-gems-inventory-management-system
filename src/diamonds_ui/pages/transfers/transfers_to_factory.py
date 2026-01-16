@@ -9,7 +9,9 @@ from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.transfer_to_factory import (
-    TransferToFactory, get_transfers_to_factories
+    TransferToFactory,
+    get_transfers_to_factories,
+    make_new_transfer_to_factory
 )
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
 from diamonds_ui.database.item.item import (
@@ -91,34 +93,30 @@ def new_transfer_to_factory(db):
             ], border="horizontal")
 
             if st.button("Submit"):
-                pass
                 # create new action
                 # create new transfer to office
                 # create action_item link for every item in items_to_send
-                # action_id, err = make_new_transfer_to_lab(
-                #     db,
-                #     src_office,
-                #     dest_lab,
-                #     terms,
-                #     remarks,
-                #     transfer_num,
-                #     ship_date,
-                #     items_to_send,
-                #     user.get(),
-                #     lab_purpose
-                # )
-                #
-                # if err is None:
-                #     db.commit()
-                #     st.toast("New transfer to lab has been registered!",
-                #              icon="✅")
-                #
-                #     st.switch_page(
-                #     "pages/transfers/transfers_to_lab.py",
-                #         query_params=dict(action_id=action_id),
-                #     )
-                # else:
-                #     st.error(err)
+                action_id, err = make_new_transfer_to_factory(
+                    db,
+                    src_office,
+                    dest_fact,
+                    terms,
+                    remarks,
+                    transfer_num,
+                    ship_date,
+                    items_to_send,
+                    user.get(),
+                    processing_type
+                )
+
+                if err is None:
+                    db.commit()
+                    st.switch_page(
+                    "pages/transfers/transfers_to_factory.py",
+                        query_params=dict(action_id=action_id),
+                    )
+                else:
+                    st.error(err)
 
 
 def select_transfer(
