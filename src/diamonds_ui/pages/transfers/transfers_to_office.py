@@ -7,18 +7,26 @@ This page allows to do
 import streamlit as st
 from psycopg import sql
 from streamlit_utils import db
+from streamlit_utils.query_param import query_param
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.transfer_to_office import (
-    TransferToOffice, get_transfers_between_offices,
-    make_new_transfer_to_office, PriceWithCurrency
+    TransferToOffice,
+    get_transfers_between_offices,
+    make_new_transfer_to_office,
+    PriceWithCurrency
 )
-from diamonds_ui.database.counterpart import Counterpart, get_counterparts
+from diamonds_ui.database.counterpart import (
+    Counterpart,
+    get_counterparts,
+    get_counterpart
+)
 from diamonds_ui.database.item.item import (
-    Item, PricedItem,
-    get_items_for_action, get_items_stored_in_office
+    Item,
+    PricedItem,
+    get_items_for_action,
+    get_items_stored_in_office
 )
-from streamlit_utils.query_param import query_param
 
 
 def render_transfer_details(t: TransferToOffice, a: Action, items: list[Item]):
@@ -49,13 +57,8 @@ def new_transfer_to_office(db):
     transfer_num = st.text_input("Transfer number")
     ship_date = st.date_input("Shipment date")
 
-    src_office = st.selectbox(
-        "Sender",
-        get_counterparts(db, sql.SQL("category = 'Office'")),
-        key="src_office_selection",
-        index=None,
-        format_func=lambda office: f"From office: {office.country} {office.city} {office.postal_code}",
-    )
+    src_office = get_counterpart(db, user.get().office_id)
+    st.markdown(f"**Office:** {src_office.name} ({src_office.country}, {src_office.city})")
 
     if src_office is not None:
         dest_office = st.selectbox(
