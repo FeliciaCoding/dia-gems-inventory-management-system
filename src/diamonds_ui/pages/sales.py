@@ -13,7 +13,8 @@ from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.sale import (
     Sale,
     get_sales,
-    make_new_sale
+    make_new_sale,
+    update_sale
 )
 from diamonds_ui.database.counterpart import (
     Counterpart,
@@ -34,6 +35,8 @@ def render_sale_details(s: Sale, a: Action, items: list[PricedItem], db):
     with st.container(border=True):
         with st.container(horizontal=True):
             st.markdown(f"### Details for: {s.action_id}")
+            if st.button("", icon=":material/autorenew:"):
+                st.rerun()
             if st.button("", icon=":material/delete:"):
                 delete_sale(db, s, a)
             if st.button("", icon=":material/edit:"):
@@ -65,6 +68,9 @@ def delete_sale(db, s: Sale, a: Action):
     st.markdown(f"## Are you sure you want to delete this sale (#{s.action_id}) ?")
     with st.container(horizontal=True, horizontal_alignment="center"):
         if st.button("Yes", width="stretch"):
+            # TODO:
+            # While deleting the sale
+            # responsible office and items availability must be restored
             pass
         if st.button("No", width="stretch"):
             st.rerun()
@@ -98,8 +104,19 @@ def edit_sale(db, s: Sale, a: Action):
     )
 
     if is_valid:
-        if st.button("done"):
-            st.info("Processing")
+        if st.button("Done"):
+            update_sale(
+                db,
+                a.action_id,
+                terms,
+                remarks,
+                sale_num,
+                sale_date,
+                user.get(),
+                payment_method,
+                payment_status
+            )
+            st.rerun()
     else:
         st.warning("Some of the required (*) fields are empty, please fill them first before going any further")
 

@@ -136,3 +136,64 @@ def make_new_sale(
     return action[0], None
 
 
+def update_sale(
+        db: psycopg.Connection,
+        action_id: int,
+        terms: str,
+        remarks: str,
+        sale_num: str,
+        sale_date: date,
+        employee: Employee,
+        payment_method: str,
+        payment_status: str
+):
+    # create new action
+    db.execute(sql.SQL(
+    """
+    UPDATE diamonds_are_forever.action 
+    SET (terms, remarks) = ({terms}, {remarks})
+    WHERE action_id = {action_id}
+    """).format(
+        terms=terms,
+        remarks=remarks,
+        action_id=action_id
+    ))
+
+    # reflect action creation in action_update_log
+    db.execute(sql.SQL(
+    """
+    INSERT INTO diamonds_are_forever.action_update_log (
+        action_id,
+        employee_id,
+        update_type
+    ) VALUES
+    ({action_id}, {employee_id}, 'Update')
+    """).format(
+        action_id=action_id,
+        employee_id=employee.employee_id
+    ))
+
+    db.execute(sql.SQL(
+    """
+    UPDATE diamonds_are_forever.sale 
+    SET (
+        sale_num,
+        sale_date,
+        payment_method,
+        payment_status
+    ) = (
+        {sale_num},
+        {sale_date},
+        {payment_method},
+        {payment_status}   
+    )
+    WHERE action_id = {action_id}
+    """).format(
+        action_id=action_id,
+        sale_num=sale_num,
+        sale_date=sale_date,
+        payment_method=payment_method,
+        payment_status=payment_status
+    ))
+    db.commit()
+
