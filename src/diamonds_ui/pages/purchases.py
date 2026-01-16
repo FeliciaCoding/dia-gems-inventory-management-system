@@ -181,7 +181,9 @@ def new_purchase():
                     )
 
                     st.success(f"Purchase created successfully! Lot ID: {lot_id}")
-                    st.rerun()
+                    st.session_state["white_diamond_selection_new_lot_id"] = lot_id
+                    st.switch_page("pages/inventory/inventory_white_diamonds.py")
+                    #st.rerun()
 
                 except Exception as e:
                     st.error(f"Error creating purchase: {str(e)}")

@@ -91,6 +91,7 @@ def create_purchase_white_diamonds(
         return lot_id
 
 
+
 def get_purchases(
         db: psycopg.Connection,
         condition: sql.SQL = sql.SQL("TRUE"),
