@@ -148,6 +148,8 @@ BEGIN
     new.before_width = ls_item.width;
     new.before_depth = ls_item.depth;
 
+    new.weight_loss_ct = new.before_weight_ct - new.after_weight_ct;
+
     UPDATE diamonds_are_forever.loose_stone
     SET weight_ct = COALESCE(new.after_weight_ct, new.before_weight_ct),
         shape = COALESCE(new.after_shape, new.before_shape),
