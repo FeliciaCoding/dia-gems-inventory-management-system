@@ -115,7 +115,7 @@ INSERT INTO employee (employee_id, counterpart_id, first_name, last_name, email,
 
 -- White Diamonds (15 items)
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type, is_available) VALUES
-(1, 'WD-2024-001', '2024-01-15 10:00:00+00', 5, 'South Africa', 1, 'white diamond', TRUE),
+(1, 'WD-2024-001', '2024-01-15 10:00:00+00', 5, 'South Africa', 1, 'white diamond', FALSE),
 (2, 'WD-2024-002', '2024-01-20 14:30:00+00', 5, 'Botswana', 1, 'white diamond', TRUE),
 (3, 'WD-2024-003', '2024-02-05 09:15:00+00', 6, 'India', 1, 'white diamond', TRUE),
 (4, 'WD-2024-004', '2024-02-10 11:45:00+00', 7, 'Russia', 2, 'white diamond', TRUE),
@@ -128,16 +128,16 @@ INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, respon
 (11, 'WD-2024-011', '2024-04-20 10:00:00+00', 6, 'India', 2, 'white diamond', TRUE),
 (12, 'WD-2024-012', '2024-05-05 13:45:00+00', 7, 'Russia', 1, 'white diamond', TRUE),
 (13, 'WD-2024-013', '2024-05-15 09:30:00+00', 5, 'South Africa', 1, 'white diamond', TRUE),
-(14, 'WD-2024-014', '2024-05-25 14:20:00+00', 8, 'Botswana', 1, 'white diamond', TRUE),
+(14, 'WD-2024-014', '2024-05-25 14:20:00+00', 8, 'Botswana', 1, 'white diamond', FALSE),
 (15, 'WD-2024-015', '2024-06-01 10:15:00+00', 6, 'Australia', 1, 'white diamond', TRUE);
 
 -- Colored Diamonds (10 items)
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type, is_available) VALUES
 (16, 'CD-2024-001', '2024-01-25 11:00:00+00', 5, 'South Africa', 2, 'colored diamond', TRUE),
 (17, 'CD-2024-002', '2024-02-12 15:30:00+00', 7, 'Australia', 2, 'colored diamond', TRUE),
-(18, 'CD-2024-003', '2024-03-08 10:45:00+00', 6, 'India', 2, 'colored diamond', TRUE),
-(19, 'CD-2024-004', '2024-03-22 14:00:00+00', 5, 'South Africa', 2, 'colored diamond', TRUE),
-(20, 'CD-2024-005', '2024-04-15 09:20:00+00', 8, 'Botswana', 2, 'colored diamond', TRUE),
+(18, 'CD-2024-003', '2024-03-08 10:45:00+00', 6, 'India', 2, 'colored diamond', FALSE),
+(19, 'CD-2024-004', '2024-03-22 14:00:00+00', 5, 'South Africa', 2, 'colored diamond', FALSE),
+(20, 'CD-2024-005', '2024-04-15 09:20:00+00', 8, 'Botswana', 2, 'colored diamond', FALSE),
 (21, 'CD-2024-006', '2024-04-28 13:50:00+00', 7, 'Russia', 2, 'colored diamond', TRUE),
 (22, 'CD-2024-007', '2024-05-10 11:15:00+00', 6, 'Australia', 2, 'colored diamond', TRUE),
 (23, 'CD-2024-008', '2024-05-20 15:40:00+00', 5, 'South Africa', 2, 'colored diamond', TRUE),
@@ -157,7 +157,7 @@ INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, respon
 
 -- Sapphires (8 items)
 INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type, is_available) VALUES
-(34, 'SP-2024-001', '2024-01-22 10:15:00+00', 11, 'Kashmir', 2, 'colored gemstone', TRUE),
+(34, 'SP-2024-001', '2024-01-22 10:15:00+00', 11, 'Kashmir', 2, 'colored gemstone', FALSE),
 (35, 'SP-2024-002', '2024-02-14 15:30:00+00', 9, 'Sri Lanka', 2, 'colored gemstone', TRUE),
 (36, 'SP-2024-003', '2024-03-05 09:45:00+00', 11, 'Kashmir', 2, 'colored gemstone', TRUE),
 (37, 'SP-2024-004', '2024-03-28 14:20:00+00', 9, 'Madagascar', 2, 'colored gemstone', TRUE),
@@ -187,8 +187,8 @@ INSERT INTO item (lot_id, stock_name, purchase_date, supplier_id, origin, respon
 (55, 'JW-2024-008', '2024-05-03 14:50:00+00', 16, 'France', 3, 'jewelry', TRUE),
 (56, 'JW-2024-009', '2024-05-16 11:35:00+00', 13, 'USA', 3, 'jewelry', TRUE),
 (57, 'JW-2024-010', '2024-05-30 15:05:00+00', 14, 'Switzerland', 3, 'jewelry', TRUE),
-(58, 'JW-2024-011', '2024-06-06 10:50:00+00', 15, 'Japan', 3, 'jewelry', TRUE),
-(59, 'JW-2024-012', '2024-06-14 13:20:00+00', 16, 'Italy', 3, 'jewelry', TRUE),
+(58, 'JW-2024-011', '2024-06-06 10:50:00+00', 15, 'Japan', 3, 'jewelry', FALSE),
+(59, 'JW-2024-012', '2024-06-14 13:20:00+00', 16, 'Italy', 3, 'jewelry', FALSE),
 (60, 'JW-2024-013', '2024-06-20 09:40:00+00', 13, 'USA', 3, 'jewelry', TRUE);
 
 
