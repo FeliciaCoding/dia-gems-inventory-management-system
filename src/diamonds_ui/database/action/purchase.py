@@ -29,7 +29,8 @@ def create_purchase_white_diamonds(
         width: Decimal,
         depth: Decimal,
         white_scale: str,
-        clarity: str
+        clarity: str,
+        certificate_num: str | None = None
  # return lot id for new stone
 ) -> int :
     with db.cursor() as cur:
@@ -45,6 +46,12 @@ def create_purchase_white_diamonds(
         """, (supplier_id, office_id)) # should return {int}
         action_id = cur.fetchone()[0]
 
+        # add cert
+        if certificate_num is not None:
+            cur.execute("""
+                INSERT INTO certificate (lot_id, certificate_num)
+                VALUES (%s, %s)
+            """, (lot_id, certificate_num))
 
         # add into item
         cur.execute("""

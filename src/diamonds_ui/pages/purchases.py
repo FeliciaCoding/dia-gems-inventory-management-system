@@ -61,10 +61,10 @@ def new_purchase():
     with conn.connect() as db_conn:
 
         st.write(f"Adding new purchase")
-        stock_name = st.text_input("Stock name")
-        purchase_date = st.date_input("Purchase date")
-        purchase_num = st.text_input("Purchase number")
-        origin = st.text_input("Origin")
+        stock_name = st.text_input("Stock name*")
+        purchase_date = st.date_input("Purchase date*")
+        purchase_num = st.text_input("Purchase number*")
+        origin = st.text_input("Origin*")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -74,7 +74,7 @@ def new_purchase():
 
         # selector for supplier
         supplier = st.selectbox(
-            "Chosen supplier",
+            "Chosen supplier*",
             get_counterparts(db_conn),
             key="supplier_selection",
             index=None,
@@ -82,7 +82,7 @@ def new_purchase():
         )
         # selector for item type
         item_type = st.selectbox(
-            "Item type",
+            "Item type*",
             ['white diamond', 'colored diamond', 'colored gemstone', 'jewelry'],
             key="item_type_selection",  # required for sync with query parameter (otherwise needs a rerun)
             index=None
@@ -100,20 +100,20 @@ def new_purchase():
 
 
             shape = st.selectbox(
-                "Loose stone shape",
+                "Loose stone shape*",
                 ['Brilliant Cut', 'Cushion Shape', 'Pear Shape', 'Radiant Cut',
                  'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite',
                  'Marquise', 'Oval', 'Princess', 'Trillion'],
                 key="shape_selection",
                 index=None
             )
-            length = st.text_input("Length in mm")
-            width = st.text_input("Width in mm")
-            depth = st.text_input("Depth in mm")
+            length = st.text_input("Length in mm*")
+            width = st.text_input("Width in mm*")
+            depth = st.text_input("Depth in mm*")
 
         if item_type == "white diamond":
             white_scale = st.selectbox(
-                "White scale of a diamond",
+                "White scale*",
                 ['D', 'E', 'F', 'G', 'H',
                  'I', 'J', 'K', 'L', 'M',
                  'N', 'O', 'P', 'Q', 'R',
@@ -123,12 +123,17 @@ def new_purchase():
                 index=None
             )
             clarity = st.selectbox(
-                "Clarity of a diamond",
+                "Clarity*",
                 ['I1', 'I2', 'VS', 'VS1', 'VS2', 'VVS',
                  'VVS1', 'VVS2','FL', 'IF'],
                 key="clarity_selection",
                 index=None
             )
+
+            certificate_num = st.text_input("Certificate number").strip()
+            if certificate_num == "":
+                certificate_num = None
+
             if st.button("Submit"):
                 # TODO:
                 # 1) create new action (type=purchase)
@@ -159,6 +164,7 @@ def new_purchase():
 
                     employee_id = employee.employee_id
                     office_id = employee.office_id
+                    certificate_num = st.text_input("Certificate number").strip() or None
 
                     lot_id = create_purchase_white_diamonds(
                         db=db_conn,
@@ -177,7 +183,8 @@ def new_purchase():
                         width=Decimal(str(width)),
                         depth=Decimal(str(depth)),
                         white_scale=white_scale,
-                        clarity=clarity
+                        clarity=clarity,
+                        certificate_num = certificate_num
                     )
 
                     st.success(f"Purchase created successfully! Lot ID: {lot_id}")
