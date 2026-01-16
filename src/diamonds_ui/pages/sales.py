@@ -30,9 +30,12 @@ from diamonds_ui.database.action.transfer_to_office import PriceWithCurrency
 from diamonds_ui.database.item.certificate import get_certificate, Certificate
 
 
-def render_sale_details(s: Sale, a: Action, items: list[PricedItem]):
+def render_sale_details(s: Sale, a: Action, items: list[PricedItem], db):
     with st.container(border=True):
-        st.markdown(f"### Details for: {s.action_id}")
+        with st.container(horizontal=True):
+            st.markdown(f"### Details for: {s.action_id}")
+            if st.button("", icon=":material/edit:"):
+                edit_sale(db, s, a)
 
         st.markdown(f"#### {a.action_category.capitalize()}")
 
@@ -55,8 +58,42 @@ def render_sale_details(s: Sale, a: Action, items: list[PricedItem]):
                 col2.write(f"Price: {item.price} {item.currency_code}")
 
 
+@st.dialog("Editing sale")
+def edit_sale(db, s: Sale, a: Action):
+    sale_num = st.text_input("Sale number *", value=s.sale_num)
+    sale_date = st.date_input("Sale date *", value=s.sale_date)
+    payment_method = st.text_input("Payment method *", value=s.payment_method)
+
+    statuses =  ['Partial paid', 'Unpaid', 'Paid']
+    payment_status = st.selectbox(
+        "Payment status *",
+        statuses,
+        key="payment_status_reselection",
+        index=statuses.index(s.payment_status)
+    )
+    terms = st.text_input("Terms", value=a.terms)
+    remarks = st.text_input("Remarks", value=a.remarks)
+
+    not_empty_num = sale_num is not None and len(sale_num) > 0
+    not_empty_date = sale_date is not None
+    not_empty_method = payment_method is not None and len(payment_method) > 0
+    not_empty_status = payment_status is not None
+    is_valid = (
+        not_empty_num and
+        not_empty_date and
+        not_empty_method and
+        not_empty_status
+    )
+
+    if is_valid:
+        if st.button("done"):
+            st.info("Processing")
+    else:
+        st.warning("Some of the required (*) fields are empty, please fill them first before going any further")
+
+
 @st.dialog("New sale")
-def new_sale():
+def new_sale(db):
     office = get_counterpart(db, user.get().office_id)
     st.markdown(f"**Responsible office:** {office.name} ({office.country}, {office.city})")
 
@@ -174,12 +211,12 @@ else:
                     qp.set(s.action_id)
 
                 if st.button("Add sale"):
-                    new_sale()
+                    new_sale(db)
 
         if s is None:
             st.info("Please select sale to inspect it")
         else:
             action = get_action(db, s.action_id)
             items = get_items_for_action(db, action.action_id)
-            render_sale_details(s, action, items)
+            render_sale_details(s, action, items, db)
 
