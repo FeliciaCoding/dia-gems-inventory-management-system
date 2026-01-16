@@ -30,7 +30,7 @@ def render_white_diamond_details(d: WhiteDiamond, i: Item, actions: list[Action]
         st.markdown(f"**White scale:** {d.white_scale}")
         st.markdown(f"**Clarity:** {d.clarity}")
 
-        st.markdown(f"**Certificate:** {d.certificate_num}")
+        st.markdown(f"**Certificate:** {d.certificate_num or '— not certified yet —'}")
 
         st.markdown("### Status")
 
@@ -48,10 +48,13 @@ def select_white_diamond(
     diamonds: list[WhiteDiamond],
     wd_id: int | None = None,
 ):
-    if wd_id is None:
-        index = None
+    # check if lot id before calling .index()
+    lot_ids = [d.lot_id for d in diamonds]
+
+    if wd_id in lot_ids:
+        index = lot_ids.index(wd_id)
     else:
-        index = [d.lot_id for d in diamonds].index(wd_id)
+        index = None
 
     diamond = st.selectbox(
         "Current white diamond",

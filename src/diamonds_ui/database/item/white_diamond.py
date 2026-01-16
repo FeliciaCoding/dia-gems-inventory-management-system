@@ -16,7 +16,7 @@ class WhiteDiamond(BaseModel):
     depth: Decimal
     white_scale: str
     clarity: str
-    certificate_num: str
+    certificate_num: str | None = None
 
 
 def get_white_diamonds(
