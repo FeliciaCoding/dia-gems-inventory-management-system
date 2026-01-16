@@ -7,17 +7,25 @@ Besides it allows to register a new sale
 import streamlit as st
 from psycopg import sql
 from streamlit_utils import db
+from streamlit_utils.query_param import query_param
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.sale import (
-    Sale, get_sales, make_new_sale
+    Sale,
+    get_sales,
+    make_new_sale
 )
-from diamonds_ui.database.counterpart import Counterpart, get_counterparts
+from diamonds_ui.database.counterpart import (
+    Counterpart,
+    get_counterparts,
+    get_counterpart
+)
 from diamonds_ui.database.item.item import (
-    Item, PricedItem, get_items_for_action,
+    Item,
+    PricedItem,
+    get_items_for_action,
     get_items_stored_in_office
 )
-from streamlit_utils.query_param import query_param
 
 
 def render_sale_details(s: Sale, a: Action, items: list[PricedItem]):
@@ -59,13 +67,10 @@ def new_sale():
         key="payment_status_selection",
         index=None
     )
-    office = st.selectbox(
-        "Sender",
-        get_counterparts(db, sql.SQL("category = 'Office'")),
-        key="src_office_selection",
-        index=None,
-        format_func=lambda office: f"From office: {office.country} {office.city} {office.postal_code}",
-    )
+
+    office = get_counterpart(db, user.get().office_id)
+    st.markdown(f"**Responsible office:** {office.name} ({office.country}, {office.city})")
+
     client = st.selectbox(
         "Recipient",
         get_counterparts(db, sql.SQL("category = 'Client' AND is_active")),
