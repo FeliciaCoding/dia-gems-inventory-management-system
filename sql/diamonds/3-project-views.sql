@@ -166,7 +166,7 @@ SELECT DISTINCT ON (i.lot_id)
        INNER JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
- ORDER BY i.lot_id, c.certificate_id DESC;
+ ORDER BY i.lot_id, c.created_at DESC;
 -- END VIEW
 
 
@@ -257,7 +257,7 @@ SELECT DISTINCT ON (i.lot_id)
        INNER JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
- ORDER BY i.lot_id, c.certificate_id DESC;
+ ORDER BY i.lot_id, c.created_at DESC;
 -- END VIEW
 
 
@@ -351,7 +351,7 @@ SELECT DISTINCT ON (i.lot_id)
        INNER JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
- ORDER BY i.lot_id, c.certificate_id DESC;
+ ORDER BY i.lot_id, c.created_at DESC;
 -- END VIEW
 
 

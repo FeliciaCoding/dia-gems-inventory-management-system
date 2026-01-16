@@ -6,17 +6,24 @@ This page allows to do
 import streamlit as st
 from psycopg import sql
 from streamlit_utils import db
+from streamlit_utils.query_param import query_param
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
 from diamonds_ui.database.action.transfer_to_lab import (
-    TransferToLab, get_transfers_to_labs, make_new_transfer_to_lab
+    TransferToLab,
+    get_transfers_to_labs,
+    make_new_transfer_to_lab
 )
-from diamonds_ui.database.counterpart import Counterpart, get_counterparts
+from diamonds_ui.database.counterpart import (
+    Counterpart,
+    get_counterparts,
+    get_counterpart
+)
 from diamonds_ui.database.item.item import (
     Item, PricedItem,
-    get_items_for_action, get_items_stored_in_office
+    get_items_for_action,
+    get_items_stored_in_office
 )
-from streamlit_utils.query_param import query_param
 
 
 def render_transfer_details(t: TransferToLab, a: Action, items: list[Item]):
@@ -46,77 +53,67 @@ def render_transfer_details(t: TransferToLab, a: Action, items: list[Item]):
 
 @st.dialog("New transfer to lab")
 def new_transfer_to_office(db):
-    transfer_num = st.text_input("Transfer number")
-    ship_date = st.date_input("Shipment date")
+    src_office = get_counterpart(db, user.get().office_id)
+    st.markdown(f"**Office:** {src_office.name} ({src_office.country}, {src_office.city})")
 
-    src_office = st.selectbox(
-        "Sender",
-        get_counterparts(db, sql.SQL("category = 'Office'")),
-        key="src_office_selection",
-        index=None,
-        format_func=lambda office: f"From office: {office.country} {office.city} {office.postal_code}",
-    )
     dest_lab = st.selectbox(
-        "Recipient",
+        "To laboratory",
         get_counterparts(db, sql.SQL("category = 'Lab' AND is_active")),
         key="dest_lab_selection",
         index=None,
         format_func=lambda lab: f"To lab: {lab.type_name} {lab.country} {lab.city}",
     )
-    lab_purpose = st.selectbox(
-        "Purpose",
-        ['Certify', 'Re-certify'],
-        key="lab_purpose_selection",
-        index=None
+    items_to_send = st.multiselect(
+        "What items you would like to send?",
+        get_items_stored_in_office(
+            db,
+            src_office.counterpart_id,
+            ['white diamond', 'colored diamond', 'colored gemstone']
+        ),
+        format_func=lambda item: f"{item.item_type.capitalize()}: {item.stock_name}, supplier: {item.supplier_name}",
+        default=None
     )
 
-    if src_office is not None:
-        # select items that store in src office
-        items_to_send = st.multiselect(
-            "What items you would like to send?",
-            get_items_stored_in_office(db, src_office.counterpart_id),
-            format_func=lambda item: f"{item.item_type.capitalize()}: {item.stock_name}, supplier: {item.supplier_name}",
-            default=None
+    if len(items_to_send) > 0:
+        st.write("Prices of chosen items: ")
+        st.table([
+            {"item": item.stock_name, "price": item.price, "currency": item.currency_code}
+            for item in items_to_send
+        ], border="horizontal")
+
+        lab_purpose = st.selectbox(
+            "Purpose",
+            ['Certify', 'Re-certify'],
+            key="lab_purpose_selection",
+            index=None
         )
+        transfer_num = st.text_input("Transfer number")
+        ship_date = st.date_input("Shipment date")
 
         terms = st.text_input("Terms")
         remarks = st.text_input("Remarks")
 
-        if len(items_to_send) > 0:
-            st.write("Prices of chosen items: ")
-            st.table([
-                {"item": item.stock_name, "price": item.price, "currency": item.currency_code}
-                for item in items_to_send
-            ], border="horizontal")
+        if st.button("Submit"):
+            action_id, err = make_new_transfer_to_lab(
+                db,
+                src_office,
+                dest_lab,
+                terms,
+                remarks,
+                transfer_num,
+                ship_date,
+                items_to_send,
+                user.get(),
+                lab_purpose
+            )
 
-            if st.button("Submit"):
-                # create new action
-                # create new transfer to office
-                # create action_item link for every item in items_to_send
-                action_id, err = make_new_transfer_to_lab(
-                    db,
-                    src_office,
-                    dest_lab,
-                    terms,
-                    remarks,
-                    transfer_num,
-                    ship_date,
-                    items_to_send,
-                    user.get(),
-                    lab_purpose
-                )
-
-                if err is None:
-                    db.commit()
-                    st.toast("New transfer to lab has been registered!",
-                             icon="✅")
-
-                    st.switch_page(
-                    "pages/transfers/transfers_to_lab.py",
-                        query_params=dict(action_id=action_id),
-                    )
-                else:
-                    st.error(err)
+            if err is None:
+                db.commit()
+                with query_param("action_id", int) as qp:
+                    qp.set(action_id)
+                st.rerun()
+            else:
+                st.error(err)
 
 
 def select_transfer(

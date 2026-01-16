@@ -1,4 +1,5 @@
 import streamlit as st
+from psycopg import sql
 from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.components.pagination import pagination_element
@@ -44,12 +45,24 @@ if user.get() is None:
     st.error("Somehow you have accessed this page while not being logged !!!")
 else:
     st.header("Inventory")
-    st.subheader("All sorts of the registered items in the system")
+
+    with st.container(horizontal=True):
+        only_office = st.toggle("Office items only")
+        only_available = st.toggle("Available only")
 
     conn = db.connection()
     with conn.connect() as db:
         with items_cursor(
-            db
+            db,
+            condition = sql.SQL(" AND ").join ([
+                    sql.SQL("i.responsible_office_id = %(user_office_id)s")
+                    if only_office else
+                    sql.SQL("TRUE"),
+                    sql.SQL("i.is_available")
+                    if only_available else
+                    sql.SQL("TRUE")
+            ]),
+            user_office_id=user.get().office_id
         ) as cur:
             if cur.rowcount == 0:
                 st.info("No results")

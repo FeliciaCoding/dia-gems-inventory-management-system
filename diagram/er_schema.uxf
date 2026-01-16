@@ -47,7 +47,7 @@ lab_purpose</panel_attributes><additional_attributes></additional_attributes></e
 --
 back_from_lab_num
 back_date
-new_certificate_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1116</x><y>711</y><w>108</w><h>108</h></coordinates><panel_attributes>Transfer To Factory
+new_certificate_num</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1116</x><y>711</y><w>108</w><h>108</h></coordinates><panel_attributes>Transfer To Factory
 --
 transfer_num
 ship_date
@@ -232,8 +232,7 @@ m1=1..1
 m2=0..*
 is based on ^</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>216</x><y>549</y><w>81</w><h>450</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>70;10;70;480;10;480</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1260</x><y>171</y><w>153</w><h>234</h></coordinates><panel_attributes>Certificate
 --
-_certificate_id_
-certificate_num
+_certificate_num_
 issue_date
 shape
 weight_ct

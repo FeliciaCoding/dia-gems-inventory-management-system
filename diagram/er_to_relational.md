@@ -91,10 +91,10 @@ transfer_to_lab(**action_id**, transfer_num, ship_date, lab_purpose) <br>
     `action_id` references `action.action_id`
 
 
-back_from_lab(**action_id**, orig_transfer_id, back_from_lab_num, back_date, new_certificate_id)  <br>
+back_from_lab(**action_id**, orig_transfer_id, back_from_lab_num, back_date, new_certificate_num)  <br>
     `action_id` references `action.action_id` <br>
     `orig_transfer_id` references `transfer_to_lab.action_id` NOT NULL <br>
-    `new_certificate_id` references `certificate.certificate_id` NOT NULL
+    `new_certificate_num` references `certificate.certificate_num` NOT NULL
 
 
 transfer_to_factory(**action_id**, transfer_num, ship_date, processing_type) <br>
@@ -141,7 +141,7 @@ total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)  <br>
 
 ### `certificate`
 
-certificate(**certificate_id**, lot_id, lab_id, certificate_num, issue_date, shape, weight_ct, length, width, depth, clarity, color, treatment, gem_type, is_valid, created_at, updated_at) <br>
+certificate(**certificate_num**, lot_id, lab_id, issue_date, shape, weight_ct, length, width, depth, clarity, color, treatment, gem_type, is_valid, created_at, updated_at) <br>
     `lot_id` references `item.lot_id` NOT NULL <br>
     `lab_id` references `counterpart.counterpart_id` NOT NULL
 
