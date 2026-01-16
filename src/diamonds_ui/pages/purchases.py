@@ -141,7 +141,7 @@ def new_purchase():
                             white_scale, clarity, weight_ct, length, width, depth]):
                     st.error("Please fill all required fields marked with *")
                     return
-                st.write("DEBUG: Validation passed!")
+
                 try:
                     from diamonds_ui.database.action.purchase import create_purchase_white_diamonds
 
@@ -226,7 +226,7 @@ def new_purchase():
                     st.error("Please fill all required fields marked with *")
                     return
 
-                st.write("DEBUG: Validation passed!")
+                
 
                 try:
                     from diamonds_ui.database.action.purchase import create_purchase_colored_diamonds
