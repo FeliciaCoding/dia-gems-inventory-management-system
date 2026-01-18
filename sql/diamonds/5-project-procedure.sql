@@ -124,5 +124,78 @@ END;
 $$;
 -- END PROCEDURE #3
 
+
+-- BEGIN PROCEDURE #4
+-- Description:
+-- Transfer item to lab for certification
+-- 1 Insert into action with category = 'transfer to lab'
+-- 2 Insert into transfer_to_lab
+-- 3 Insert into action_item
+-- 4 Update item availability to FALSE
+CREATE OR REPLACE PROCEDURE pcd_transfer_to_lab(
+    p_office_id      INT,
+    p_lab_id         INT,
+    p_transfer_num   TEXT,
+    p_ship_date      DATE,
+    p_lab_purpose    lab_purpose,
+    p_lot_id         INT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_action_id INT;
+BEGIN
+    INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category, remarks)
+    VALUES (p_office_id, p_lab_id, 'transfer to lab', 'Item sent to lab for certification')
+    RETURNING action_id INTO v_action_id;
+
+    INSERT INTO transfer_to_lab(action_id, transfer_num, ship_date, lab_purpose)
+    VALUES (v_action_id, p_transfer_num, p_ship_date, p_lab_purpose);
+
+    INSERT INTO action_item(action_id, lot_id, price, currency_code)
+    VALUES (v_action_id, p_lot_id, 0, 'USD');
+
+    UPDATE item SET is_available = FALSE WHERE lot_id = p_lot_id;
+END;
+$$;
+-- END PROCEDURE #4
+
+
+-- BEGIN PROCEDURE #5
+-- Description:
+-- Transfer item to factory for processing
+-- 1 Insert into action with category = 'transfer to factory'
+-- 2 Insert into transfer_to_factory
+-- 3 Insert into action_item
+-- 4 Update item availability to FALSE
+CREATE OR REPLACE PROCEDURE pcd_transfer_to_factory(
+    p_office_id         INT,
+    p_factory_id        INT,
+    p_transfer_num      TEXT,
+    p_ship_date         DATE,
+    p_processing_type   processing_type,
+    p_lot_id            INT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_action_id INT;
+BEGIN
+    INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category, remarks)
+    VALUES (p_office_id, p_factory_id, 'transfer to factory', 'Item sent to factory for processing')
+    RETURNING action_id INTO v_action_id;
+
+    INSERT INTO transfer_to_factory(action_id, transfer_num, ship_date, processing_type)
+    VALUES (v_action_id, p_transfer_num, p_ship_date, p_processing_type);
+
+    INSERT INTO action_item(action_id, lot_id, price, currency_code)
+    VALUES (v_action_id, p_lot_id, 0, 'USD');
+
+    UPDATE item SET is_available = FALSE WHERE lot_id = p_lot_id;
+END;
+$$;
+-- END PROCEDURE #5
+
+
 --ROLLBACK;
 COMMIT ;
