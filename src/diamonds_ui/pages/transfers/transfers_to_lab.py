@@ -27,6 +27,10 @@ from diamonds_ui.database.item.item import (
 
 
 def render_transfer_details(t: TransferToLab, a: Action, items: list[Item]):
+    """
+    Render detailed information about a transfer to laboratory,
+    including action metadata, lab purpose, and transferred items.
+    """
     with st.container(border=True):
         st.markdown(f"### Details for: #{t.action_id}")
 
@@ -53,6 +57,11 @@ def render_transfer_details(t: TransferToLab, a: Action, items: list[Item]):
 
 @st.dialog("New transfer to lab")
 def new_transfer_to_office(db):
+    """
+    Dialog for registering a new transfer to a laboratory.
+    Allows selecting destination lab, choosing items from the user's office,
+    reviewing prices, entering transfer metadata, and submitting the transfer.
+    """
     src_office = get_counterpart(db, user.get().office_id)
     st.markdown(f"**Office:** {src_office.name} ({src_office.country}, {src_office.city})")
 
@@ -120,6 +129,10 @@ def select_transfer(
     transfers: list[TransferToLab],
     transfer_id: int | None = None,
 ):
+    """
+    Display a selectbox for lab transfers and return
+    the selected transfer (optionally preselected by action_id).
+    """
     if transfer_id is None:
         index = None
     else:

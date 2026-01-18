@@ -15,6 +15,7 @@ from diamonds_ui.database.action.action import (
 
 
 class ReturnFromLab(BaseModel):
+    """Represents an item returned from laboratory with new certificate"""
     action_id: int
     orig_transfer_id: int
     back_from_lab_num: str
@@ -26,6 +27,11 @@ def get_returns_from_labs(
         db: psycopg.Connection,
         condition: sql.SQL = sql.SQL("TRUE")
 ):
+    """
+    Retrieves all returns from laboratory with optional filtering.
+
+    Returns items that have been certified or re-certified and returned to office.
+    """
     with db.cursor(row_factory=class_row(ReturnFromLab)) as cur:
         q = sql.SQL(
             """
@@ -48,6 +54,12 @@ def get_pending_items_for_lab(
         db: psycopg.Connection,
         transfer: TransferToLab
 ):
+    """
+    Finds items still at laboratory (not yet returned).
+
+    Compares items sent to lab vs items returned to identify pending items.
+    Returns items that are still being certified.
+    """
     with db.cursor(row_factory=class_row(PricedItem)) as cur:
         q = sql.SQL(
             """
@@ -123,6 +135,14 @@ def make_new_return_from_lab(
     gem_color: str | None,
     treatment: str | None
 ):
+    """
+    Registers an item's return from laboratory with new certificate.
+
+    Creates action, action_item, certificate, and back_from_lab records.
+    Logs the action and updates item status.
+    Returns (action_id, error_message) tuple.
+    """
+
     # use original action to find office and lab
     orig_action = get_action(db, orig_transfer.action_id)
 

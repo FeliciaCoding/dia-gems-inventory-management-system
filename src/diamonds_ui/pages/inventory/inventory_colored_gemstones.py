@@ -17,6 +17,10 @@ from streamlit_utils.query_param import query_param
 
 
 def render_colored_gemstone_details(s: ColoredGemStone, i: Item, actions: list[Action]):
+    """
+    Render detailed information and action history
+    for a selected colored gemstone.
+    """
     with st.container(border=True):
         st.markdown(f"### Details for: {s.lot_id}")
 
@@ -52,6 +56,10 @@ def select_colored_gemstone(
     diamonds: list[ColoredGemStone],
     cd_id: int | None = None,
 ):
+    """
+    Display a selectbox for colored gemstones and return
+    the selected gemstone (optionally preselected by lot_id).
+    """
     if cd_id is None:
         index = None
     else:

@@ -19,6 +19,11 @@ def get_transfers_to_labs(
         db: psycopg.Connection,
         condition: sql.SQL = sql.SQL("TRUE")
 ):
+:
+    """
+    Fetch transfer-to-lab records matching the given SQL condition.
+    Returns a list of TransferToLab models.
+    """
     with db.cursor(row_factory=class_row(TransferToLab)) as cur:
         q = sql.SQL(
             """
@@ -48,6 +53,12 @@ def make_new_transfer_to_lab(
         employee: Employee,
         lab_purpose: str
 ) -> tuple[int | None, str | None]:
+   """
+    Create a new "transfer to lab" action, link items to it,
+    and insert the transfer_to_lab record.
+    Returns (action_id, error_message).
+    """
+
     # create new action
     action = db.execute(sql.SQL(
     """
@@ -127,6 +138,9 @@ def make_new_transfer_to_lab(
 
 
 def get_transfers_to_labs_where_empl_works(db: psycopg.Connection, empl: Employee):
+    """
+    Fetch transfer-to-lab records initiated from the employee's office.
+    """
     with db.cursor(row_factory=class_row(TransferToLab)) as cur:
         q = sql.SQL(
             """

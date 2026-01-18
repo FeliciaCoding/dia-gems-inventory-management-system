@@ -27,6 +27,10 @@ def get_transfers_between_offices(
         condition: sql.SQL = sql.SQL("TRUE"),
         **other_params
 ):
+    """
+    Fetch transfer-to-office records matching the given SQL condition.
+    Returns a list of TransferToOffice models.
+    """
     with db.cursor(row_factory=class_row(TransferToOffice)) as cur:
         q = sql.SQL(
             """
@@ -54,6 +58,11 @@ def make_new_transfer_to_office(
         items_to_send: list[PricedItem],
         employee: Employee
 ) -> tuple[int | None, str | None]:
+    """
+    Create a new "transfer to office" action, link priced items to it,
+    and insert the transfer_to_office record.
+    Returns (action_id, error_message).
+    """
     # create new action
     action = db.execute(sql.SQL(
     """
