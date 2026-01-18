@@ -25,21 +25,36 @@ DECLARE
     v_action_id INT;
 BEGIN
     -- Create the item (lot_id generated automatically)
-    INSERT INTO item(stock_name, supplier_id, origin, responsible_office_id, item_type)
-    VALUES (p_stock_name, p_supplier_id, p_origin, p_office_id, p_item_type)
-    RETURNING lot_id INTO v_lot_id;
+    INSERT INTO diamonds_are_forever.item(
+        stock_name,
+        supplier_id,
+        origin,
+        responsible_office_id,
+        item_type
+    ) VALUES (
+        p_stock_name,
+        p_supplier_id,
+        p_origin,
+        p_office_id,
+        p_item_type
+    ) RETURNING lot_id INTO v_lot_id;
 
     -- Create action header for purchase (supplier -> office)
-    INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category, remarks)
-    VALUES (p_supplier_id, p_office_id, 'purchase', 'Purchase created via procedure')
-    RETURNING action_id INTO v_action_id;
+    INSERT INTO diamonds_are_forever.action(
+        from_counterpart_id, to_counterpart_id,
+        action_category, remarks
+    )
+    VALUES (
+        p_supplier_id, p_office_id,
+        'purchase', 'Purchase created via procedure'
+    ) RETURNING action_id INTO v_action_id;
 
     -- specify the purchase
-    INSERT INTO purchase(action_id, purchase_num)
+    INSERT INTO diamonds_are_forever.purchase(action_id, purchase_num)
     VALUES (v_action_id, p_purchase_num);
 
     -- Link item to action with price/currency
-    INSERT INTO action_item(action_id, lot_id, price, currency_code)
+    INSERT INTO diamonds_are_forever.action_item(action_id, lot_id, price, currency_code)
     VALUES (v_action_id, v_lot_id, p_price, p_currency_code);
 END;
 $$;
@@ -70,18 +85,25 @@ AS $$
 DECLARE
     v_action_id INT;
 BEGIN
-    INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category, remarks)
-    VALUES (office_id, client_id, 'memo out', 'Memo out created via procedure')
-    RETURNING action_id INTO v_action_id;
+    INSERT INTO diamonds_are_forever.action(
+        from_counterpart_id, to_counterpart_id, action_category, remarks)
+    VALUES (
+        office_id, client_id,
+        'memo out', 'Memo out created via procedure'
+    ) RETURNING action_id INTO v_action_id;
 
-    INSERT INTO memo_out(action_id, memo_out_num, ship_date, expected_return_date)
-    VALUES (v_action_id, in_memo_out_num, in_ship_date, in_expected_return);
+    INSERT INTO diamonds_are_forever.memo_out(
+        action_id, memo_out_num, ship_date, expected_return_date)
+    VALUES (v_action_id, in_memo_out_num,
+        in_ship_date, in_expected_return);
 
-    INSERT INTO action_item(action_id, lot_id, price, currency_code)
-    VALUES (v_action_id, in_lot_id, memo_price, in_currency_code);
+    INSERT INTO diamonds_are_forever.action_item(
+        action_id, lot_id, price, currency_code)
+    VALUES (v_action_id, in_lot_id,
+        memo_price, in_currency_code);
 
     -- update availability
-    UPDATE item
+    UPDATE diamonds_are_forever.item
     SET is_available = FALSE
     WHERE lot_id = in_lot_id;
 END;
@@ -111,14 +133,17 @@ AS $$
 DECLARE
     v_action_id INT;
 BEGIN
-    INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category, remarks)
+    INSERT INTO diamonds_are_forever.action(
+        from_counterpart_id, to_counterpart_id, action_category, remarks)
     VALUES (office_id, client_id, 'sale', 'Sale created via procedure')
     RETURNING action_id INTO v_action_id;
 
-    INSERT INTO sale(action_id, sale_num, payment_method, payment_status)
+    INSERT INTO diamonds_are_forever.sale(
+        action_id, sale_num, payment_method, payment_status)
     VALUES (v_action_id, in_sale_num, in_payment_method, in_payment_status);
 
-    INSERT INTO action_item(action_id, lot_id, price, currency_code)
+    INSERT INTO diamonds_are_forever.action_item(
+        action_id, lot_id, price, currency_code)
     VALUES (v_action_id, in_lot_id, final_sale_price, in_currency_code);
 END;
 $$;
@@ -145,17 +170,21 @@ AS $$
 DECLARE
     v_action_id INT;
 BEGIN
-    INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category, remarks)
-    VALUES (p_office_id, p_lab_id, 'transfer to lab', 'Item sent to lab for certification')
+    INSERT INTO diamonds_are_forever.action(
+        from_counterpart_id, to_counterpart_id, action_category, remarks)
+    VALUES (p_office_id, p_lab_id, 'transfer to lab',
+        'Item sent to lab for certification')
     RETURNING action_id INTO v_action_id;
 
-    INSERT INTO transfer_to_lab(action_id, transfer_num, ship_date, lab_purpose)
+    INSERT INTO diamonds_are_forever.transfer_to_lab(
+        action_id, transfer_num, ship_date, lab_purpose)
     VALUES (v_action_id, p_transfer_num, p_ship_date, p_lab_purpose);
 
-    INSERT INTO action_item(action_id, lot_id, price, currency_code)
+    INSERT INTO diamonds_are_forever.action_item(
+        action_id, lot_id, price, currency_code)
     VALUES (v_action_id, p_lot_id, 0, 'USD');
 
-    UPDATE item SET is_available = FALSE WHERE lot_id = p_lot_id;
+    UPDATE diamonds_are_forever.item SET is_available = FALSE WHERE lot_id = p_lot_id;
 END;
 $$;
 -- END PROCEDURE #4
@@ -181,21 +210,26 @@ AS $$
 DECLARE
     v_action_id INT;
 BEGIN
-    INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category, remarks)
-    VALUES (p_office_id, p_factory_id, 'transfer to factory', 'Item sent to factory for processing')
+    INSERT INTO diamonds_are_forever.action(
+        from_counterpart_id, to_counterpart_id, action_category, remarks)
+    VALUES (p_office_id, p_factory_id, 'transfer to factory',
+        'Item sent to factory for processing')
     RETURNING action_id INTO v_action_id;
 
-    INSERT INTO transfer_to_factory(action_id, transfer_num, ship_date, processing_type)
+    INSERT INTO diamonds_are_forever.transfer_to_factory(
+        action_id, transfer_num, ship_date, processing_type)
     VALUES (v_action_id, p_transfer_num, p_ship_date, p_processing_type);
 
-    INSERT INTO action_item(action_id, lot_id, price, currency_code)
+    INSERT INTO diamonds_are_forever.action_item(
+        action_id, lot_id, price, currency_code)
     VALUES (v_action_id, p_lot_id, 0, 'USD');
 
-    UPDATE item SET is_available = FALSE WHERE lot_id = p_lot_id;
+    UPDATE diamonds_are_forever.item SET is_available = FALSE WHERE lot_id = p_lot_id;
 END;
 $$;
 -- END PROCEDURE #5
 
 
 --ROLLBACK;
-COMMIT ;
+COMMIT;
+
