@@ -15,6 +15,7 @@ SELECT lot_id,
  WHERE location_status = 'In stock'
    AND is_available = TRUE
  ORDER BY weight_ct DESC;
+-- End Query #1
 
 
 -- Query #2
@@ -40,6 +41,7 @@ SELECT lot_id, stock_name, physical_location, supplier_name, weight_ct, 'Colored
 SELECT lot_id, stock_name, physical_location, supplier_name, NULL AS weight_ct, 'Jewelry'
   FROM complete_inventory_jewelry
  WHERE location_status = 'On memo';
+-- End Query #2
 
 
 -- Query # 3
@@ -62,6 +64,7 @@ SELECT 'Colored Gemstone', lot_id, stock_name,
        physical_location, location_status
 FROM complete_inventory_colored_gem_stones
 WHERE location_status IN ('At lab', 'In process');
+-- End Query #3
 
 
 -- Query # 4
@@ -77,6 +80,8 @@ FROM (
     SELECT location_status FROM complete_inventory_jewelry
 ) all_items
 GROUP BY location_status;
+-- End Query #4
+
 
 -- Query # 5
 -- Make a purchase (without certificate)
@@ -97,6 +102,7 @@ CALL diamonds_are_forever.pcd_create_white_diamond(
     'S',
     'VS'
 );
+-- End Query #5
 
 -- Query #6
 -- Make a new sale
@@ -110,6 +116,7 @@ CALL pcd_create_sale(
     52000.00,
     'USD'::code
 );
+-- End Query #6
 
 
 -- Query #7
