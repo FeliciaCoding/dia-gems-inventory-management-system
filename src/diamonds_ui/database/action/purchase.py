@@ -30,8 +30,9 @@ def create_purchase_white_diamonds(
         depth: Decimal,
         white_scale: str,
         clarity: str,
-        certificate_num: str | None = None
- # return lot id for new stone
+        certificate_num: str | None = None,
+        cert_lab_id: int | None = None,
+        cert_issue_date: date | None = None
 ) -> int :
     with db.cursor() as cur:
         cur.execute("SET search_path TO diamonds_are_forever")
@@ -46,13 +47,6 @@ def create_purchase_white_diamonds(
         """, (supplier_id, office_id)) # should return {int}
         action_id = cur.fetchone()[0]
 
-        # add cert
-        if certificate_num is not None:
-            cur.execute("""
-                INSERT INTO certificate (lot_id, certificate_num)
-                VALUES (%s, %s)
-            """, (lot_id, certificate_num))
-
         # add into item
         cur.execute("""
         insert into item(stock_name, purchase_date, supplier_id, origin, responsible_office_id, item_type)
@@ -61,12 +55,25 @@ def create_purchase_white_diamonds(
         """, (stock_name, purchase_date, supplier_id, origin, office_id))
         lot_id = cur.fetchone()[0]
 
+        # add cert
+        if certificate_num is not None:
+            cur.execute("""
+                INSERT INTO certificate (
+                    certificate_num, lot_id, lab_id, issue_date,
+                    shape, weight_ct, length, width, depth,
+                    clarity, gem_type)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                certificate_num, lot_id, cert_lab_id, cert_issue_date,
+                shape, weight_ct, length, width, depth,
+                clarity, 'Diamond'
+            ))
+
         # add into loose stone
         cur.execute("""
             INSERT INTO loose_stone (lot_id, weight_ct, shape, length, width, depth)
             VALUES (%s, %s, %s::shape, %s, %s, %s)
         """, (lot_id, weight_ct, shape, length, width, depth))
-
 
         # add white diamond
         cur.execute("""
@@ -85,7 +92,6 @@ def create_purchase_white_diamonds(
             INSERT INTO purchase (action_id, purchase_num, purchase_date)
             VALUES (%s, %s, %s)
         """, (action_id, purchase_num, purchase_date))
-
 
         # add log
         cur.execute("""
@@ -181,9 +187,6 @@ def create_purchase_colored_diamonds(
 
         db.commit()
         return lot_id
-
-
-
 
 
 def get_purchases(
