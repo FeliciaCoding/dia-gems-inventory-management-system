@@ -5,7 +5,7 @@ member:  Liao Pei-Wen, Maksym Makovskyi, Wu Guo Yu
 
 ---
 
-# Introduction / Conclusion
+# Introduction
 
 This project aims to develop a comprehensive inventory management system for the B2B diamond, gemstone, and jewelry trade.
 
@@ -363,15 +363,54 @@ certificate(**certificate_num**, lot_id, lab_id, issue_date, shape, weight_ct, l
 
 ## 5. List of Functions 
 
----- not completed yet, there is excel, please douuble check and update 
-![feature_list.png](img/feature_list.png)
-
-| Feature                                         | Imlemented |
-|-------------------------------------------------|------------|
-| Inventory operations:                           |            | 
-| Purchase: registering new items                 | yes        | 
-| Memo Out: sending items to clients for approval | yes        | 
-| Sale: registering sales with payment details    | yes        | 
+| Feature                                                                | Imlemented |
+|------------------------------------------------------------------------|------------|
+| Inventory operations:                                                  |            | 
+| Purchase: registering new items                                        | yes        | 
+| Memo Out: sending items to clients for approval                        | yes        | 
+| Return Memo Out: returning items sent for approval                     | yes        | 
+| Sale: registering sales with payment details                           | yes        | 
+| Transfer to Lab: sending to laboratory for certification               | yes        | 
+| Back from Lab: returning items with new certificates                   | yes        | 
+| Transfer to Factory: sending to factory for processing                 | yes        | 
+| Back from Factory: returning items with new dimensions                 | yes        | 
+| Memo In: receiving goods on consignment                                | yes        | 
+| Return Memo In: returning consigned goods                              | yes        | 
+| Transfer To Office: transfering goods between offices                  | yes        | 
+|                                                                        |            | 
+| Consultation and Reporting                                             | yes        | 
+| Complete view by item type                                             | yes        | 
+| Automation location status calculation                                 | yes        | 
+| Complete action history per lot                                        | yes        | 
+| Inventory by type with statistics                                      | yes        | 
+| Filtering by status, availability, location                            | yes        | 
+|                                                                        |            | 
+| Traceability                                                           | yes        | 
+| Timestamped recording of all actions                                   | yes        | 
+| Linking between actions (returns referencing original transfers)       | yes        | 
+| Complete item history via `get_item_history` function                  | yes        | 
+| Update logs in `action_update_log`                                     | yes        | 
+|                                                                        |            | 
+| Financial Features                                                     | yes        | 
+|                                                                        |            | 
+| Financial reports: revenue analysis by period                          | no         | 
+| Grouping by clients: revenue by client                                 | no         | 
+| Grouping by category: revenue by item type                             | no         | 
+| Revenue charts: temporal visualizations                                | no         | 
+|                                                                        |            | 
+| Application                                                            |            | 
+| Registering new white/colored diamond via purchase                     | yes        | 
+| Registering new sale                                                   | yes        | 
+| Transfering item to lab/factory/office                                 | yes        | 
+| Returning item from lab/factory/office                                 | yes        | 
+| Inspecting item (white/colore diamond, gemstone, jewelry)              | yes        | 
+| Inspecting certificate details                                         | no         | 
+| Basic authentication (via email)                                       | yes        | 
+| Counterpart management interface : add/modify suppliers, clients, labs | no         | 
+| Employee account management: add/modify user accounts                  | no         | 
+| PDF generation of administrative reports                               | no         | 
+| Verification that user has filled all the requirement fields           | no         | 
+| Registering Memo In, Memo Out and corresponding returns                | no         | 
 
 ---
 
