@@ -61,7 +61,7 @@ def new_transfer_to_office(db):
         get_counterparts(db, sql.SQL("category = 'Lab' AND is_active")),
         key="dest_lab_selection",
         index=None,
-        format_func=lambda lab: f"To lab: {lab.type_name} {lab.country} {lab.city}",
+        format_func=lambda lab: f"Lab: {lab.name} ({lab.country}, {lab.city})"
     )
     items_to_send = st.multiselect(
         "What items you would like to send?",

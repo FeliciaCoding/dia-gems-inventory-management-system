@@ -112,8 +112,8 @@ CREATE TABLE employee
 CREATE TABLE action
 (
    action_id           SERIAL PRIMARY KEY,
-   from_counterpart_id INTEGER,
-   to_counterpart_id   INTEGER,
+   from_counterpart_id INTEGER NOT NULL,
+   to_counterpart_id   INTEGER NOT NULL,
    terms               TEXT,
    remarks             TEXT,
    action_category     transfer_category                      NOT NULL,

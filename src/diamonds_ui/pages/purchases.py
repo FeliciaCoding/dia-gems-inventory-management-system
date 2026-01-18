@@ -8,10 +8,16 @@ It should highlight personal purchases.
 
 import streamlit as st
 from decimal import Decimal
+from psycopg import sql
 from streamlit_utils import db
 from diamonds_ui.auth import user
 from diamonds_ui.database.action.action import Action, get_action
-from diamonds_ui.database.action.purchase import Purchase, get_purchases
+from diamonds_ui.database.action.purchase import (
+    Purchase,
+    get_purchases,
+    create_purchase_white_diamonds,
+    create_purchase_colored_diamonds
+)
 from diamonds_ui.database.counterpart import Counterpart, get_counterparts
 from diamonds_ui.database.employee import get_employee
 from diamonds_ui.database.item.item import (
@@ -55,65 +61,71 @@ def render_purchase_details(p: Purchase, a: Action, items: list[PricedItem]):
 
 
 @st.dialog("New purchase")
-def new_purchase():
+def new_purchase(db_conn):
+    st.write(f"Adding new purchase")
+    stock_name = st.text_input("Stock name*")
+    purchase_date = st.date_input("Purchase date*")
+    purchase_num = st.text_input("Purchase number*")
+    origin = st.text_input("Origin*")
 
-    conn = db.connection()
-    with conn.connect() as db_conn:
+    col1, col2 = st.columns(2)
+    with col1:
+        unit_price = st.number_input("Unit Price (per carat)*", min_value=0.0, step=0.01)
+    with col2:
+        currency = st.selectbox("Currency*", ['USD', 'HKD', 'CHF', 'EUR', 'NTD'])
 
-        st.write(f"Adding new purchase")
-        stock_name = st.text_input("Stock name*")
-        purchase_date = st.date_input("Purchase date*")
-        purchase_num = st.text_input("Purchase number*")
-        origin = st.text_input("Origin*")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            unit_price = st.number_input("Unit Price (per carat)*", min_value=0.0, step=0.01)
-        with col2:
-            currency = st.selectbox("Currency*", ['USD', 'HKD', 'CHF', 'EUR', 'NTD'])
-
-        # selector for supplier
-        supplier = st.selectbox(
-            "Chosen supplier*",
-            get_counterparts(db_conn),
-            key="supplier_selection",
-            index=None,
-            format_func=lambda suppl: f"Supplier: (#{suppl.name}) {suppl.category}",
-        )
-
+    # selector for supplier
+    supplier = st.selectbox(
+        "Chosen supplier*",
+        get_counterparts(db_conn, sql.SQL("category = 'Supplier' AND is_active")),
+        key="supplier_selection",
+        index=None,
+        format_func=lambda suppl: f"Supplier: (#{suppl.name}) {suppl.category}",
+    )
+    item_type = st.selectbox(
+        "Item type*",
+        ['white diamond', 'colored diamond', 'colored gemstone', 'jewelry'],
+        key="item_type_selection",  # required for sync with query parameter (otherwise needs a rerun)
+        index=None
+    )
+    if item_type in ["white diamond", "colored diamond", "colored gemstone"]:
         certificate_num = st.text_input("Certificate number").strip()
+
+        cert_lab = st.selectbox(
+            "Certificate laboratory",
+            get_counterparts(db_conn, sql.SQL("category = 'Lab' AND is_active")),
+            key="cert_lab_selection",
+            index=None,
+            format_func=lambda lab: f"Lab: {lab.name} ({lab.country}, {lab.city})"
+        )
+        cert_issue_date = st.date_input("Issue date")
+
         if certificate_num == "":
             certificate_num = None
+            cert_lab = None
+            cert_issue_date = None
+        else:
+            cert_lab = cert_lab.counterpart_id
 
-        # selector for item type
-        item_type = st.selectbox(
-            "Item type*",
-            ['white diamond', 'colored diamond', 'colored gemstone', 'jewelry'],
-            key="item_type_selection",  # required for sync with query parameter (otherwise needs a rerun)
-            index=None
-        )
+        weight_ct = st.number_input("Weight in carats*", min_value=0.0, step=0.01)
 
         # calculate total price = unit price * weight in ct
-        if item_type in ["white diamond", "colored diamond", "colored gemstone"]:
-            weight_ct = st.number_input("Weight in carats*", min_value=0.0, step=0.01)
+        # Show calculated total price
+        if unit_price > 0 and weight_ct > 0:
+            total_price = unit_price * weight_ct
+            st.info(f"**Total Price**: {total_price:.2f} {currency}")
 
-            # Show calculated total price
-            if unit_price > 0 and weight_ct > 0:
-                total_price = unit_price * weight_ct
-                st.info(f"**Total Price**: {total_price:.2f} {currency}")
-
-
-            shape = st.selectbox(
-                "Loose stone shape*",
-                ['Brilliant Cut', 'Cushion Shape', 'Pear Shape', 'Radiant Cut',
-                 'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite',
-                 'Marquise', 'Oval', 'Princess', 'Trillion'],
-                key="shape_selection",
-                index=None
-            )
-            length = st.text_input("Length in mm*")
-            width = st.text_input("Width in mm*")
-            depth = st.text_input("Depth in mm*")
+        shape = st.selectbox(
+            "Loose stone shape*",
+            ['Brilliant Cut', 'Cushion shape', 'Pear Shape', 'Radiant Cut',
+             'Heart Shape', 'Emerald Cut', 'Baquette', 'Briolette', 'Kite',
+             'Marquise', 'Oval', 'Princess', 'Trillion'],
+            key="shape_selection",
+            index=None
+        )
+        length = st.number_input("Length in mm*", 0.0, 10.0)
+        width = st.number_input("Width in mm*", 0.0, 10.0)
+        depth = st.number_input("Depth in mm*", 0.0, 10.0)
 
         if item_type == "white diamond":
             white_scale = st.selectbox(
@@ -136,20 +148,14 @@ def new_purchase():
             )
 
             if st.button("Submit"):
-
                 if not all([stock_name, purchase_num, origin, supplier, shape,
                             white_scale, clarity, weight_ct, length, width, depth]):
                     st.error("Please fill all required fields marked with *")
                     return
 
                 try:
-                    from diamonds_ui.database.action.purchase import create_purchase_white_diamonds
-
                     # Get current user's employee info
                     current_user = user.get()
-                    if not current_user:
-                        st.error("You must be logged in to create purchases")
-                        return
 
                     employee = get_employee(db_conn, current_user.email)
                     if not employee:
@@ -158,7 +164,6 @@ def new_purchase():
 
                     employee_id = employee.employee_id
                     office_id = employee.office_id
-                    certificate_num = st.text_input("Certificate number").strip() or None
 
                     lot_id = create_purchase_white_diamonds(
                         db=db_conn,
@@ -169,16 +174,18 @@ def new_purchase():
                         origin=origin,
                         supplier_id=supplier.counterpart_id,
                         office_id=office_id,
-                        price=Decimal(str(unit_price)),
+                        price=unit_price,
                         currency=currency,
-                        weight_ct=Decimal(str(weight_ct)),
+                        weight_ct=weight_ct,
                         shape=shape,
-                        length=Decimal(str(length)),
-                        width=Decimal(str(width)),
-                        depth=Decimal(str(depth)),
+                        length=length,
+                        width=width,
+                        depth=depth,
                         white_scale=white_scale,
                         clarity=clarity,
-                        certificate_num = certificate_num
+                        certificate_num=certificate_num,
+                        cert_lab_id=cert_lab,
+                        cert_issue_date=cert_issue_date
                     )
 
                     st.success(f"Purchase created successfully! Lot ID: {lot_id}")
@@ -190,9 +197,6 @@ def new_purchase():
                     st.error(f"Error creating purchase: {str(e)}")
                     import traceback
                     st.code(traceback.format_exc())
-
-
-
 
         elif item_type == "colored diamond":
             fancy_intensity = st.selectbox(
@@ -226,16 +230,9 @@ def new_purchase():
                     st.error("Please fill all required fields marked with *")
                     return
 
-                
-
                 try:
-                    from diamonds_ui.database.action.purchase import create_purchase_colored_diamonds
-
                     # Get current user's employee info
                     current_user = user.get()
-                    if not current_user:
-                        st.error("You must be logged in to create purchases")
-                        return
 
                     employee = get_employee(db_conn, current_user.email)
                     if not employee:
@@ -244,8 +241,6 @@ def new_purchase():
 
                     employee_id = employee.employee_id
                     office_id = employee.office_id
-
-                    certificate_num = st.text_input("Certificate number").strip() or None
 
                     lot_id = create_purchase_colored_diamonds(
                         db=db_conn,
@@ -267,7 +262,9 @@ def new_purchase():
                         fancy_overtone=fancy_overtone,
                         fancy_color=fancy_color,
                         clarity=clarity,
-                        certificate_num=certificate_num
+                        certificate_num=certificate_num,
+                        cert_lab_id=cert_lab.counterpart_id,
+                        cert_issue_date=cert_issue_date
                     )
 
                     st.success(f"Purchase created successfully! Lot ID: {lot_id}")
@@ -279,8 +276,6 @@ def new_purchase():
                     st.error(f"Error creating purchase: {str(e)}")
                     import traceback
                     st.code(traceback.format_exc())
-
-
 
         elif item_type == "colored gemstone":
             # gem_type selector
@@ -317,57 +312,57 @@ def new_purchase():
                 # 6) reflect new action creation in action_update_log for current user
                 pass
 
-        elif item_type == "jewelry":
-            jewelry_type = st.selectbox(
-                "Type of a jewelry",
-                ['Earrings', 'Necklace', 'Ring',
-                 'Brooch', 'Bracelet'],
-                key="jewelry_type_selection",
-                index=None
-            )
-            gross_weight_gr = st.number_input(
-                "Whole weight of a jewelry in g",
-                min_value=0
-            )
-            metal_type = st.selectbox(
-                "Type of metal",
-                ['PT900', 'PT950', '18k white gold',
-                 '14k white gold', '18k white/yellow gold',
-                 '18k rose gold', '18k white gold + PT'],
-                key="metal_type_selection",
-                index=None
-            )
-            metal_weight_gr = st.number_input(
-                "Weight of the metal in g",
-                min_value=0.0
-            )
-            centered_stone_type = st.text_input("Type of the center stones")
-            total_center_stone_qty = st.number_input(
-                "Total quantity of center stones",
-                min_value=0
-            )
-            total_center_stone_weight_ct = st.number_input(
-                "Total weight of the center stones in carats",
-                min_value=0.0
-            )
-            side_stone_type = st.text_input("Type of the side stones")
-            total_side_stone_qty = st.number_input(
-                "Total quantity of side stones",
-                min_value=0
-            )
-            total_side_stone_weight_ct = st.number_input(
-                "Total weight of the side stones in carats",
-                min_value=0.0
-            )
-            if st.button("Submit"):
-                # TODO:
-                # 1) create new action (type=purchase)
-                # 2) create new item/jewelry
-                # 3) make action_item link
-                # 4) create new purchase
-                # 5) switch page to purchase with newly created purchase
-                # 6) reflect new action creation in action_update_log for current user
-                pass
+    elif item_type == "jewelry":
+        jewelry_type = st.selectbox(
+            "Type of a jewelry",
+            ['Earrings', 'Necklace', 'Ring',
+             'Brooch', 'Bracelet'],
+            key="jewelry_type_selection",
+            index=None
+        )
+        gross_weight_gr = st.number_input(
+            "Whole weight of a jewelry in g",
+            min_value=0
+        )
+        metal_type = st.selectbox(
+            "Type of metal",
+            ['PT900', 'PT950', '18k white gold',
+             '14k white gold', '18k white/yellow gold',
+             '18k rose gold', '18k white gold + PT'],
+            key="metal_type_selection",
+            index=None
+        )
+        metal_weight_gr = st.number_input(
+            "Weight of the metal in g",
+            min_value=0.0
+        )
+        centered_stone_type = st.text_input("Type of the center stones")
+        total_center_stone_qty = st.number_input(
+            "Total quantity of center stones",
+            min_value=0
+        )
+        total_center_stone_weight_ct = st.number_input(
+            "Total weight of the center stones in carats",
+            min_value=0.0
+        )
+        side_stone_type = st.text_input("Type of the side stones")
+        total_side_stone_qty = st.number_input(
+            "Total quantity of side stones",
+            min_value=0
+        )
+        total_side_stone_weight_ct = st.number_input(
+            "Total weight of the side stones in carats",
+            min_value=0.0
+        )
+        if st.button("Submit"):
+            # TODO:
+            # 1) create new action (type=purchase)
+            # 2) create new item/jewelry
+            # 3) make action_item link
+            # 4) create new purchase
+            # 5) switch page to purchase with newly created purchase
+            # 6) reflect new action creation in action_update_log for current user
+            pass
 
 
 def select_purchase(
@@ -403,7 +398,7 @@ else:
                     qp.set(p.action_id)
 
                 if st.button("Add purchase"):
-                    new_purchase()
+                    new_purchase(database)
 
         if p is None:
             st.info("Please select purchase to inspect it")
