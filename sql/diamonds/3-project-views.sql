@@ -1,8 +1,12 @@
 SET search_path TO diamonds_are_forever;
 
--- BEGIN VIEW
--- Description:
--- Status for every jewelry registered in the system
+-- BEGIN VIEW #1
+-- Complete inventory view for all jewelry items registered in the system.
+-- Details :
+-- Shows basic item information, supplier and office details, current physical location,
+-- and dynamically calculated location status based on the item's action history.
+-- Location status can be: 'Sold', 'On memo', 'In process', 'At lab', or 'In stock'.
+-- Physical location is determined by the most recent action's destination counterpart.
 CREATE OR REPLACE VIEW complete_inventory_jewelry AS
 SELECT i.lot_id,
        i.stock_name,
@@ -26,37 +30,37 @@ SELECT i.lot_id,
          LIMIT 1) AS physical_location,
 
        CASE
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN sale s
-                               ON ai.action_id = s.action_id
-                         WHERE ai.lot_id = i.lot_id) THEN 'Sold'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN memo_out mo
-                               ON ai.action_id = mo.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM return_memo_out rmo
-                                            WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN transfer_to_factory ttf
-                               ON ai.action_id = ttf.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM back_from_factory bff
-                                            WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN transfer_to_lab ttl
-                               ON ai.action_id = ttl.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM back_from_lab bfl
-                                            WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
-           ELSE 'In stock'
-           END    AS location_status,
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN sale s
+                              ON ai.action_id = s.action_id
+                        WHERE ai.lot_id = i.lot_id) THEN 'Sold'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN memo_out mo
+                              ON ai.action_id = mo.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM return_memo_out rmo
+                                           WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_factory ttf
+                              ON ai.action_id = ttf.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_factory bff
+                                           WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_lab ttl
+                              ON ai.action_id = ttl.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_lab bfl
+                                           WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
+          ELSE 'In stock'
+          END     AS location_status,
 
        i.created_at,
        i.updated_at
@@ -72,15 +76,15 @@ SELECT i.lot_id,
        ON i.responsible_office_id = o.counterpart_id
 
  ORDER BY i.lot_id DESC;
--- END VIEW
+-- END VIEW #1
 
 
--- BEGIN VIEW
--- Description:
--- Status on all colored gemstones
--- NOTE:
--- We use `DISTINCT ON (i.lot_id)` because a stone could have several certificates,
--- and we are interested to show the most recent one here
+-- BEGIN VIEW #2
+-- Complete inventory view for all colored gemstones (rubies, sapphires, emeralds).
+-- Details :
+-- Shows item info, gemological characteristics (gem_color, treatment), physical location,
+-- and dynamically calculated location status ('Sold', 'On memo', 'In process', 'At lab', 'In stock').
+-- NOTE: Uses DISTINCT ON (i.lot_id) to show only the most recent certificate when multiple exist.
 CREATE OR REPLACE VIEW complete_inventory_colored_gem_stones AS
 SELECT DISTINCT ON (i.lot_id)
        i.lot_id,
@@ -105,37 +109,37 @@ SELECT DISTINCT ON (i.lot_id)
          LIMIT 1) AS physical_location,
 
        CASE
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN sale s
-                               ON ai.action_id = s.action_id
-                         WHERE ai.lot_id = i.lot_id) THEN 'Sold'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN memo_out mo
-                               ON ai.action_id = mo.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM return_memo_out rmo
-                                            WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN transfer_to_factory ttf
-                               ON ai.action_id = ttf.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM back_from_factory bff
-                                            WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN transfer_to_lab ttl
-                               ON ai.action_id = ttl.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM back_from_lab bfl
-                                            WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
-           ELSE 'In stock'
-           END    AS location_status,
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN sale s
+                              ON ai.action_id = s.action_id
+                        WHERE ai.lot_id = i.lot_id) THEN 'Sold'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN memo_out mo
+                              ON ai.action_id = mo.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM return_memo_out rmo
+                                           WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_factory ttf
+                              ON ai.action_id = ttf.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_factory bff
+                                           WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_lab ttl
+                              ON ai.action_id = ttl.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_lab bfl
+                                           WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
+          ELSE 'In stock'
+          END     AS location_status,
 
        ls.weight_ct,
        ls.shape,
@@ -167,12 +171,16 @@ SELECT DISTINCT ON (i.lot_id)
        ON c.lab_id = lab.counterpart_id
 
  ORDER BY i.lot_id, c.created_at DESC;
--- END VIEW
+-- END VIEW #2
 
 
--- BEGIN VIEW
+-- BEGIN VIEW # 3
 -- Description:
--- Status on all white diamonds
+-- Complete inventory view for all white diamonds.
+-- Details:
+-- Shows item info, gemological characteristics (white_scale, clarity), physical location,
+-- and dynamically calculated location status ('Sold', 'On memo', 'In process', 'At lab', 'In stock').
+-- NOTE: Uses DISTINCT ON (i.lot_id) to show only the most recent certificate when multiple exist.
 CREATE OR REPLACE VIEW complete_inventory_white_diamonds AS
 SELECT DISTINCT ON (i.lot_id)
        i.lot_id,
@@ -197,37 +205,37 @@ SELECT DISTINCT ON (i.lot_id)
          LIMIT 1) AS physical_location,
 
        CASE
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN sale s
-                               ON ai.action_id = s.action_id
-                         WHERE ai.lot_id = i.lot_id) THEN 'Sold'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN memo_out mo
-                               ON ai.action_id = mo.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM return_memo_out rmo
-                                            WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN transfer_to_factory ttf
-                               ON ai.action_id = ttf.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM back_from_factory bff
-                                            WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN transfer_to_lab ttl
-                               ON ai.action_id = ttl.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM back_from_lab bfl
-                                            WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
-           ELSE 'In stock'
-           END    AS location_status,
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN sale s
+                              ON ai.action_id = s.action_id
+                        WHERE ai.lot_id = i.lot_id) THEN 'Sold'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN memo_out mo
+                              ON ai.action_id = mo.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM return_memo_out rmo
+                                           WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_factory ttf
+                              ON ai.action_id = ttf.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_factory bff
+                                           WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_lab ttl
+                              ON ai.action_id = ttl.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_lab bfl
+                                           WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
+          ELSE 'In stock'
+          END     AS location_status,
 
        ls.weight_ct,
        ls.shape,
@@ -258,12 +266,17 @@ SELECT DISTINCT ON (i.lot_id)
        ON c.lab_id = lab.counterpart_id
 
  ORDER BY i.lot_id, c.created_at DESC;
--- END VIEW
+-- END VIEW #3
 
 
--- BEGIN VIEW
+-- BEGIN VIEW #4
 -- Description:
--- Status on all the colored diamonds
+-- Complete inventory view for all colored diamonds (fancy color diamonds).
+-- Details :
+-- Shows item info, gemological characteristics (fancy_color, fancy_intensity, clarity), physical location,
+-- and dynamically calculated location status ('Sold', 'On memo', 'In process', 'At lab', 'In stock').
+-- NOTE: Uses DISTINCT ON (i.lot_id) to show only the most recent certificate when multiple exist.
+
 CREATE OR REPLACE VIEW complete_inventory_colored_diamonds AS
 SELECT DISTINCT ON (i.lot_id)
        i.lot_id,
@@ -288,37 +301,37 @@ SELECT DISTINCT ON (i.lot_id)
          LIMIT 1) AS physical_location,
 
        CASE
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN sale s
-                               ON ai.action_id = s.action_id
-                         WHERE ai.lot_id = i.lot_id) THEN 'Sold'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN memo_out mo
-                               ON ai.action_id = mo.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM return_memo_out rmo
-                                            WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN transfer_to_factory ttf
-                               ON ai.action_id = ttf.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM back_from_factory bff
-                                            WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
-           WHEN EXISTS (SELECT 1
-                          FROM action_item ai
-                               JOIN transfer_to_lab ttl
-                               ON ai.action_id = ttl.action_id
-                         WHERE ai.lot_id = i.lot_id
-                           AND NOT EXISTS (SELECT 1
-                                             FROM back_from_lab bfl
-                                            WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
-           ELSE 'In stock'
-           END    AS location_status,
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN sale s
+                              ON ai.action_id = s.action_id
+                        WHERE ai.lot_id = i.lot_id) THEN 'Sold'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN memo_out mo
+                              ON ai.action_id = mo.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM return_memo_out rmo
+                                           WHERE rmo.orig_transfer_id = mo.action_id)) THEN 'On memo'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_factory ttf
+                              ON ai.action_id = ttf.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_factory bff
+                                           WHERE bff.orig_transfer_id = ttf.action_id)) THEN 'In process'
+          WHEN EXISTS (SELECT 1
+                         FROM action_item ai
+                              JOIN transfer_to_lab ttl
+                              ON ai.action_id = ttl.action_id
+                        WHERE ai.lot_id = i.lot_id
+                          AND NOT EXISTS (SELECT 1
+                                            FROM back_from_lab bfl
+                                           WHERE bfl.orig_transfer_id = ttl.action_id)) THEN 'At lab'
+          ELSE 'In stock'
+          END     AS location_status,
 
        ls.weight_ct,
        ls.shape,
@@ -352,19 +365,23 @@ SELECT DISTINCT ON (i.lot_id)
        ON c.lab_id = lab.counterpart_id
 
  ORDER BY i.lot_id, c.created_at DESC;
--- END VIEW
+-- END VIEW #4
 
 
---  Inventory by Type
---  -> Count how many white diamonds, colored diamonds, gemstones, and jewelry pieces we have
+-- BEGIN VIEW #5
+-- Description:
+-- Aggregate inventory statistics grouped by item type.
+-- Details :
+-- Counts total items, available/unavailable items, and calculates total/average weight for loose stones.
+-- Useful for dashboard and high-level inventory overview.
 CREATE OR REPLACE VIEW inventory_by_type AS
 SELECT CASE
-           WHEN wd.lot_id IS NOT NULL THEN 'White Diamond'
-           WHEN cd.lot_id IS NOT NULL THEN 'Colored Diamond'
-           WHEN cgs.lot_id IS NOT NULL THEN 'Colored Gemstone'
-           WHEN j.lot_id IS NOT NULL THEN 'Jewelry'
-           ELSE 'Unknown'
-           END                                                 AS item_tp,
+          WHEN wd.lot_id IS NOT NULL THEN 'White Diamond'
+          WHEN cd.lot_id IS NOT NULL THEN 'Colored Diamond'
+          WHEN cgs.lot_id IS NOT NULL THEN 'Colored Gemstone'
+          WHEN j.lot_id IS NOT NULL THEN 'Jewelry'
+          ELSE 'Unknown'
+          END                                                  AS item_tp,
 
 
        COUNT(*)                                                AS total_count,
@@ -390,6 +407,8 @@ SELECT CASE
 
  GROUP BY item_tp
  ORDER BY total_count DESC;
+-- ENd view #5
+
 
 --test
 -- SELECT * FROM complete_inventory_jewelry;
