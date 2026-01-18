@@ -2,7 +2,7 @@ SET search_path TO diamonds_are_forever;
 BEGIN ;
 
 -- BEGIN TEST CASE PROCEDURE #1
-CALL pcd_create_purchase(
+CALL diamonds_are_forever.pcd_create_purchase(
     5,
     1,
     'PO-TEST-0001',
@@ -13,10 +13,11 @@ CALL pcd_create_purchase(
     'USD'::code
 );
 
-SELECT *
+SELECT i.lot_id, p.purchase_num, p.purchase_date, i.is_available, a.from_counterpart_id, a.to_counterpart_id, action_category, ai.price, ai.currency_code
 FROM purchase p
 JOIN action a USING (action_id)
 JOIN action_item ai USING (action_id)
+JOIN item i ON ai.lot_id = i.lot_id
 ORDER BY p.action_id DESC
 LIMIT 1;
 
@@ -27,7 +28,7 @@ LIMIT 1;
 CALL pcd_create_memo_out(
     1,
     13,
-    'MO-TEST-0001',
+    'MO-TEST-0002',
     CURRENT_DATE,
     (CURRENT_DATE + 14)::DATE,
     42,
@@ -36,10 +37,11 @@ CALL pcd_create_memo_out(
 );
 
 
-SELECT *
+SELECT ai.lot_id, is_available, memo_out_num, ship_date, expected_return_date, price, currency_code
 FROM memo_out m
 JOIN action a USING (action_id)
 JOIN action_item ai USING (action_id)
+JOIN item i ON ai.lot_id = i.lot_id
 ORDER BY m.action_id DESC
 LIMIT 1;
 --END TEST CASE PROCEDURE #2
@@ -65,3 +67,6 @@ JOIN diamonds_are_forever.action_item ai USING (action_id)
 ORDER BY s.action_id DESC
 LIMIT 1;
 -- END TEST CASE PROCEDURE #3
+
+ROLLBACK ;
+COMMIT;

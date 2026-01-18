@@ -1,6 +1,6 @@
 SET search_path TO diamonds_are_forever;
 BEGIN;
-ROLLBACK;
+
 
 --Begin procedure # 1
 -- Description:
@@ -54,6 +54,7 @@ $$;
 -- 1 Insert into action with category = 'memo out', to_counterpart_id = client/partner receiving goods
 -- 2 Insert into memo_out
 -- 3 Insert into action_item with price + currency
+-- 4 update availability
 CREATE OR REPLACE PROCEDURE pcd_create_memo_out(
     office_id           INT,
     client_id           INT,
@@ -78,6 +79,11 @@ BEGIN
 
     INSERT INTO action_item(action_id, lot_id, price, currency_code)
     VALUES (v_action_id, in_lot_id, memo_price, in_currency_code);
+
+    -- update availability
+    UPDATE item
+    SET is_available = FALSE
+    WHERE lot_id = in_lot_id;
 END;
 $$;
 -- END PROCEDURE #2
@@ -117,3 +123,6 @@ BEGIN
 END;
 $$;
 -- END PROCEDURE #3
+
+--ROLLBACK;
+COMMIT ;
