@@ -230,9 +230,8 @@ $$;
 -- END PROCEDURE #5
 
 
--- BEGIN PROC #6
+-- BEGIN PROCEDURE #6
 -- Description: register item's details, in this case it's white diamond
--- DROP FUNCTION IF EXISTS diamonds_are_forever.pcd_create_white_diamond_details;
 CREATE OR REPLACE PROCEDURE pcd_create_white_diamond_details(
     it_lot_id      INT,
     ls_weight_ct   DECIMAL(5, 2),
@@ -261,10 +260,14 @@ BEGIN
 
 END;
 $$;
--- END PROC #6
+-- END PROCEDURE #6
 
--- BEGIN PROC #7
--- Registering purchase of white diamond in one transaction
+-- BEGIN PROCEDURE #7
+-- Description :
+-- Registers purchase of a white diamond in a single transaction.
+-- Details :
+-- Creates the purchase action, item record, and white diamond details (loose_stone + white_diamond tables).
+-- Combines pcd_create_purchase with pcd_create_white_diamond_details for complete white diamond registration.
 CREATE OR REPLACE PROCEDURE pcd_create_white_diamond(
     p_supplier_id           INT,
     p_office_id             INT,
@@ -298,6 +301,7 @@ BEGIN
         p_currency_code::diamonds_are_forever.code,
         lot_id
     );
+
     CALL diamonds_are_forever.pcd_create_white_diamond_details(
         lot_id,
         ls_weight_ct,
