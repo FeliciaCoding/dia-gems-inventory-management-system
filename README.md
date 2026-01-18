@@ -17,21 +17,32 @@ docker compose up --build --watch
 
 Access at: http://localhost:8501
 
-## File Structure
+## File Structure (the graph is generated with a help of ChatGPT)
 ```
-.
+project-p_wu_liao_makovskyi/
+├── diagram/                         # ER diagrams and documentation
+│   ├── er_schema.png
+│   ├── er_schema.uxf
+│   ├── er_to_relational.md
+│   └── er_to_relational.pdf
+├── queries/                         # Example queries and procedure calls
+│   └── project-queries.sql
+├── report/                          # Project reports and documentation
+├── Slides/                          # Presentation materials
+├── specs/                           # Requirements specifications
 ├── sql/diamonds/                    # Database schema and data
 │   ├── 1-project-schema.sql
 │   ├── 2-project-insert-dummy-data.sql
 │   ├── 3-project-views.sql
-│   └── 4-project-triggers.sql
-├── src/diamonds_ui/                 # Streamlit application
-│   ├── pages/                      # App pages
-│   ├── database/                   # Database models
-│   └── app.py                      # Main entry point
-├── docker-compose.yml              # Container orchestration
-├── Dockerfile                      # Application container
-└── pyproject.toml                  # Python dependencies
+│   ├── 4-project-triggers.sql
+│   └── 5-project-procedure.sql
+├── src/                             # Application source code
+│   ├── diamonds_ui/                # Streamlit UI components
+│   └── streamlit_utils/            # Utility functions
+├── docker-compose.yml               # Container orchestration
+├── Dockerfile                       # Application container
+├── pyproject.toml                   # Python dependencies
+└── README.md                        # Project overview
 ```
 
 ## Development Commands
