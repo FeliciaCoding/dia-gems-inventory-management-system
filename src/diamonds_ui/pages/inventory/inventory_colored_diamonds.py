@@ -33,7 +33,7 @@ def render_colored_diamond_details(d: ColoredDiamond, i: Item, actions: list[Act
         st.markdown(f"**Fancy overtone:** {d.fancy_overtone}")
         st.markdown(f"**Fancy color:** {d.fancy_color}")
 
-        st.markdown(f"**Certificate:** {d.certificate_num}")
+        st.markdown(f"**Certificate:** {d.certificate_num or 'Pending'}")
 
         st.markdown("### Status")
 
@@ -51,17 +51,16 @@ def select_colored_diamond(
     diamonds: list[ColoredDiamond],
     cd_id: int | None = None,
 ):
-    if cd_id is None:
-        index = None
-    else:
-        index = [d.lot_id for d in diamonds].index(cd_id)
+
+    lot_ids = [d.lot_id for d in diamonds]
+    index = lot_ids.index(cd_id) if cd_id in lot_ids else None
 
     return st.selectbox(
         "Current colored diamond",
         diamonds,
         key="colored_diamond_selection",  # required for sync with query parameter (otherwise needs a rerun)
         index=index,
-        format_func=lambda wd: f"colored diamond: (#{wd.lot_id}) {wd.weight_ct} ct, {wd.shape}",
+        format_func=lambda d: f"colored diamond: (#{d.lot_id}) {d.weight_ct} ct, {d.shape}",
     )
 
 
@@ -72,9 +71,23 @@ else:
 
     conn = db.connection()
     with conn.connect() as db:
+
+        diamonds = get_colored_diamonds(db)
+
         with query_param("lot_id", int) as qp:
+            requested_lot_id = (
+                    st.session_state.pop("colored_diamond_selection_lot_id", None)
+                    or qp.get()
+            )
+
+            if requested_lot_id is None and diamonds:
+                requested_lot_id = diamonds[0].lot_id
+
             diamond = select_colored_diamond(
-                get_colored_diamonds(db), qp.get())
+                diamonds,
+                requested_lot_id,
+            )
+
             if diamond is not None:
                 qp.set(diamond.lot_id)
 

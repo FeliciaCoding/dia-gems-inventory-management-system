@@ -16,13 +16,13 @@ class WhiteDiamond(BaseModel):
     depth: Decimal
     white_scale: str
     clarity: str
-    certificate_num: str
+    certificate_num: str | None = None
 
 
 def get_white_diamonds(
     db: psycopg.Connection,
     condition: sql.SQL = sql.SQL("TRUE"),
-    order: sql.SQL = sql.SQL("updated_at DESC"),
+    order: sql.SQL = sql.SQL("i.updated_at DESC"),
     **other_params,
 ):
     with db.cursor(row_factory=class_row(WhiteDiamond)) as cur:
@@ -37,11 +37,13 @@ def get_white_diamonds(
                 ls.depth,
                 wd.white_scale,
                 wd.clarity,
-                certificate_num
-            FROM white_diamond wd
+                c.certificate_num
+            FROM item i
+                INNER JOIN white_diamond wd 
+                ON wd.lot_id = i.lot_id
                 INNER JOIN loose_stone ls
                 ON wd.lot_id = ls.lot_id
-                INNER JOIN certificate c
+                LEFT JOIN certificate c
                 ON wd.lot_id = c.lot_id
             WHERE {condition}
             ORDER BY {order}

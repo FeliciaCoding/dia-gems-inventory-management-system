@@ -30,7 +30,7 @@ def render_white_diamond_details(d: WhiteDiamond, i: Item, actions: list[Action]
         st.markdown(f"**White scale:** {d.white_scale}")
         st.markdown(f"**Clarity:** {d.clarity}")
 
-        st.markdown(f"**Certificate:** {d.certificate_num}")
+        st.markdown(f"**Certificate:** {d.certificate_num or 'Pending'}")
 
         st.markdown("### Status")
 
@@ -48,10 +48,10 @@ def select_white_diamond(
     diamonds: list[WhiteDiamond],
     wd_id: int | None = None,
 ):
-    if wd_id is None:
-        index = None
-    else:
-        index = [d.lot_id for d in diamonds].index(wd_id)
+    # check if lot id before calling .index()
+    lot_ids = [d.lot_id for d in diamonds]
+
+    index = lot_ids.index(wd_id) if wd_id in lot_ids else None
 
     diamond = st.selectbox(
         "Current white diamond",
@@ -69,17 +69,36 @@ else:
 
     conn = db.connection()
     with conn.connect() as db:
+
+        diamonds = get_white_diamonds(db)
+
         with query_param("lot_id", int) as qp:
-            white_diamond = select_white_diamond(get_white_diamonds(db), qp.get())
+            requested_lot_id = (
+                    st.session_state.pop("white_diamond_selection_lot_id", None)
+                    or qp.get()
+            )
+
+            # fall back to the first diamond
+            if requested_lot_id is None and diamonds:
+                requested_lot_id = diamonds[0].lot_id
+
+            white_diamond = select_white_diamond(
+                diamonds,
+                requested_lot_id
+            )
+
             if white_diamond is not None:
                 qp.set(white_diamond.lot_id)
 
-        if white_diamond is None:
-            st.info("Please select white diamond to inspect its details")
-        else:
-            general_item = get_item(db, white_diamond.lot_id)
-            actions = get_actions(db, white_diamond.lot_id)
-            render_white_diamond_details(white_diamond, general_item, actions)
-
+            if white_diamond is None:
+                st.info("Please select white diamond to inspect its details")
+            else:
+                general_item = get_item(db, white_diamond.lot_id)
+                actions = get_actions(db, white_diamond.lot_id)
+                render_white_diamond_details(
+                    white_diamond,
+                    general_item,
+                    actions,
+                )
 
 
