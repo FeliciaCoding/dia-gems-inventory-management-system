@@ -3,9 +3,11 @@ CREATE SCHEMA IF NOT EXISTS diamonds_are_forever;
 
 SET search_path TO diamonds_are_forever;
 
-BEGIN;
+-- BEGIN;
 
---ENUM TYPE
+--
+-- ENUM TYPE
+--
 
 CREATE TYPE code AS ENUM ('USD', 'HKD', 'CHF', 'EUR', 'NTD');
 CREATE TYPE category AS ENUM ('Supplier', 'Client', 'Office',
@@ -47,8 +49,9 @@ CREATE TYPE transfer_category AS ENUM ('purchase', 'memo in',
 CREATE TYPE item_category AS ENUM ('white diamond', 'colored diamond',
    'colored gemstone', 'jewelry');
 
-
---Create tables
+--
+-- Create tables
+--
 
 CREATE TABLE currency
 (
@@ -108,12 +111,12 @@ CREATE TABLE employee
    CONSTRAINT valid_update_time CHECK (updated_at >= created_at)
 );
 
--- !! 8. move counterparties' keys from counterpart_action relation directly to the action
+
 CREATE TABLE action
 (
    action_id           SERIAL PRIMARY KEY,
-   from_counterpart_id INTEGER NOT NULL,
-   to_counterpart_id   INTEGER NOT NULL,
+   from_counterpart_id INTEGER                                NOT NULL,
+   to_counterpart_id   INTEGER                                NOT NULL,
    terms               TEXT,
    remarks             TEXT,
    action_category     transfer_category                      NOT NULL,
@@ -128,7 +131,7 @@ CREATE TABLE action
 );
 
 
--- !! 6. update_log is maybe a weak entity with action as its strong entity
+
 CREATE TABLE action_update_log
 (
    log_time    TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -184,7 +187,7 @@ CREATE TABLE action_item
 
 CREATE TABLE certificate
 (
-   certificate_num TEXT                                   PRIMARY KEY,
+   certificate_num TEXT PRIMARY KEY,
    lot_id          INTEGER                                NOT NULL,
    lab_id          INTEGER                                NOT NULL,
    issue_date      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -197,7 +200,7 @@ CREATE TABLE certificate
    color           fancy_color,
    treatment       treatment,
    gem_type        gem_type,
-   is_valid        BOOL NOT NULL DEFAULT TRUE,
+   is_valid        bool                                   NOT NULL DEFAULT TRUE,
    created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
    FOREIGN KEY (lab_id) REFERENCES counterpart (counterpart_id)
@@ -210,7 +213,10 @@ CREATE TABLE certificate
 );
 
 
--- Actions tables
+--
+-- Creating tables for actions
+--
+
 CREATE TABLE purchase
 (
    action_id     INTEGER PRIMARY KEY,
@@ -218,7 +224,7 @@ CREATE TABLE purchase
    purchase_date DATE DEFAULT CURRENT_DATE,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
-      CONSTRAINT purchase_date_no_future CHECK (purchase_date <= CURRENT_DATE)
+   CONSTRAINT purchase_date_no_future CHECK (purchase_date <= CURRENT_DATE)
 );
 
 
@@ -292,14 +298,14 @@ CREATE TABLE transfer_to_lab
       ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- back_from_lab(**action_id, back_from_lab_num**, back_date)
+
 CREATE TABLE back_from_lab
 (
-   action_id         INTEGER PRIMARY KEY,
-   orig_transfer_id  INTEGER NOT NULL,
-   back_from_lab_num TEXT NOT NULL,
-   back_date         DATE    NOT NULL,
-   new_certificate_num TEXT NOT NULL,
+   action_id           INTEGER PRIMARY KEY,
+   orig_transfer_id    INTEGER NOT NULL,
+   back_from_lab_num   TEXT    NOT NULL,
+   back_date           DATE    NOT NULL,
+   new_certificate_num TEXT    NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (orig_transfer_id) REFERENCES transfer_to_lab (action_id)
@@ -354,18 +360,17 @@ CREATE TABLE back_from_factory
 CREATE TABLE sale
 (
    action_id      INTEGER PRIMARY KEY,
-   sale_num       TEXT UNIQUE                     NOT NULL,
-   sale_date      DATE DEFAULT CURRENT_DATE       NOT NULL,
-   payment_method TEXT                            NOT NULL,
-   payment_status payment_status DEFAULT 'Unpaid' NOT NULL,
+   sale_num       TEXT UNIQUE                         NOT NULL,
+   sale_date      DATE           DEFAULT CURRENT_DATE NOT NULL,
+   payment_method TEXT                                NOT NULL,
+   payment_status payment_status DEFAULT 'Unpaid'     NOT NULL,
    FOREIGN KEY (action_id) REFERENCES action (action_id)
       ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
-
--- loose_stone (**lot_id**, weight_ct, length, width, depth)
---    loose_stone.lot_id references item.lot_id
+--
+-- Creating tables for inventory
+--
 
 CREATE TABLE loose_stone
 (
@@ -382,8 +387,6 @@ CREATE TABLE loose_stone
 );
 
 
--- white_diamond (**lot_id**, white_level, shape, clarity)
---     white_diamond.lot_id references loose_stone.lot_id
 
 CREATE TABLE white_diamond
 (
@@ -394,8 +397,6 @@ CREATE TABLE white_diamond
       ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, shape, clarity)
---     colored_diamond.lot_id references loose_stone.lot_id
 
 
 CREATE TABLE colored_diamond
@@ -410,8 +411,6 @@ CREATE TABLE colored_diamond
       ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- colored_gem_stone (**lot_id**, gem_type, shape, color, treatment, origin)
---     colored_gem_stone.lot_id references loose_stone.lot_id
 
 
 CREATE TABLE colored_gem_stone
@@ -424,9 +423,7 @@ CREATE TABLE colored_gem_stone
       ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- jewerly (**lot_id**, jew_type, gross_weight_gr, metal_type, metal_weight_gr,
---     total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
---    total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)
+
 CREATE TABLE jewelry
 (
    lot_id                       INTEGER PRIMARY KEY,
@@ -447,6 +444,6 @@ CREATE TABLE jewelry
 
 );
 
-END;
---ROLLBACK;
+-- END;
+-- ROLLBACK;
 
