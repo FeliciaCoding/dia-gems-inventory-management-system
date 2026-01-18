@@ -490,7 +490,35 @@ EXECUTE FUNCTION trig_b_i_return_items_check();
 
 ```
 
+6. Procedure : When creating new sale, update automatically `action_category = 'sale'` and link the price to the final sale price.
 
+```
+CREATE OR REPLACE PROCEDURE pcd_create_sale(
+    office_id        INT,
+    client_id        INT,
+    in_sale_num         TEXT,
+    in_payment_method   TEXT,
+    in_payment_status   payment_status,
+    in_lot_id           INT,
+    final_sale_price            NUMERIC,
+    in_currency_code    code
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_action_id INT;
+BEGIN
+    INSERT INTO action(from_counterpart_id, to_counterpart_id, action_category, remarks)
+    VALUES (office_id, client_id, 'sale', 'Sale created via procedure')
+    RETURNING action_id INTO v_action_id;
+
+    INSERT INTO sale(action_id, sale_num, payment_method, payment_status)
+    VALUES (v_action_id, in_sale_num, in_payment_method, in_payment_status);
+
+    INSERT INTO action_item(action_id, lot_id, price, currency_code)
+    VALUES (v_action_id, in_lot_id, final_sale_price, in_currency_code);
+END;
+$$;
 ```
 
 
