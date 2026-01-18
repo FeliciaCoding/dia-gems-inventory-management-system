@@ -41,7 +41,7 @@ Le rapport doit contenir:
 * La contribution des différents membres de l'équipe
 * Quelques captures d'écran des différentes interfaces de l'application
 
-*Mettez à jour le lien ci-après pour pointer vers votre rapport: link:report.asciidoc[Mon rapport].*
+*Mettez à jour le lien ci-après pour pointer vers votre rapport: link:report/report.md[Mon rapport].*
 
 
 == Phases précédentes mises à jour
@@ -60,7 +60,7 @@ Le script doit inclure:
 * La création des tables, vues, fonctions/procédures, triggers
 * Le peuplement initial de la base de données (pour avoir un exemple de contenu)
 
-*Mettez à jour le lien ci-après pour pointer vers votre script de création de la BD: link:create.sql[Mon script].*
+*Mettez à jour le lien ci-après pour pointer vers votre script de création de la BD: link:sql/diamonds[Mon script].*
 
 
 == Code
