@@ -125,7 +125,8 @@ def create_purchase_colored_diamonds(
     fancy_overtone: str | None,
     clarity: str,
     certificate_num: str | None = None,
-
+    cert_lab_id: int | None = None,
+    cert_issue_date: date | None = None,
 ) -> int:
     with db.cursor() as cur:
         cur.execute("SET search_path TO diamonds_are_forever")
@@ -172,12 +173,18 @@ def create_purchase_colored_diamonds(
             VALUES (%s, %s, %s)
         """, (action_id, purchase_num, purchase_date))
 
-        # certificate (optional)
-        if certificate_num:
+        if certificate_num is not None:
             cur.execute("""
-                INSERT INTO certificate (lot_id, certificate_num)
-                VALUES (%s, %s)
-            """, (lot_id, certificate_num))
+                INSERT INTO certificate (
+                    certificate_num, lot_id, lab_id, issue_date,
+                    shape, weight_ct, length, width, depth,
+                    clarity, color, gem_type)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                certificate_num, lot_id, cert_lab_id, cert_issue_date,
+                shape, weight_ct, length, width, depth,
+                clarity, fancy_color, 'Diamond'
+            ))
 
         # log
         cur.execute("""

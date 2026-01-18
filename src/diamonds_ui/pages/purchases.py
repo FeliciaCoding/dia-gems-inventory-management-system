@@ -77,7 +77,7 @@ def new_purchase(db_conn):
     # selector for supplier
     supplier = st.selectbox(
         "Chosen supplier*",
-        get_counterparts(db_conn),
+        get_counterparts(db_conn, sql.SQL("category = 'Supplier' AND is_active")),
         key="supplier_selection",
         index=None,
         format_func=lambda suppl: f"Supplier: (#{suppl.name}) {suppl.category}",
@@ -92,11 +92,11 @@ def new_purchase(db_conn):
         certificate_num = st.text_input("Certificate number").strip()
 
         cert_lab = st.selectbox(
-            "To laboratory",
+            "Certificate laboratory",
             get_counterparts(db_conn, sql.SQL("category = 'Lab' AND is_active")),
             key="cert_lab_selection",
             index=None,
-            format_func=lambda lab: f"Lab: {lab.type_name} {lab.country} {lab.city}",
+            format_func=lambda lab: f"Lab: {lab.name} ({lab.country}, {lab.city})"
         )
         cert_issue_date = st.date_input("Issue date")
 
@@ -104,6 +104,8 @@ def new_purchase(db_conn):
             certificate_num = None
             cert_lab = None
             cert_issue_date = None
+        else:
+            cert_lab = cert_lab.counterpart_id
 
         weight_ct = st.number_input("Weight in carats*", min_value=0.0, step=0.01)
 
@@ -182,7 +184,7 @@ def new_purchase(db_conn):
                         white_scale=white_scale,
                         clarity=clarity,
                         certificate_num=certificate_num,
-                        cert_lab_id=cert_lab.counterpart_id,
+                        cert_lab_id=cert_lab,
                         cert_issue_date=cert_issue_date
                     )
 
@@ -260,7 +262,9 @@ def new_purchase(db_conn):
                         fancy_overtone=fancy_overtone,
                         fancy_color=fancy_color,
                         clarity=clarity,
-                        certificate_num=certificate_num
+                        certificate_num=certificate_num,
+                        cert_lab_id=cert_lab.counterpart_id,
+                        cert_issue_date=cert_issue_date
                     )
 
                     st.success(f"Purchase created successfully! Lot ID: {lot_id}")
