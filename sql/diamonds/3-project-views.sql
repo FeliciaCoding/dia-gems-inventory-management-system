@@ -160,10 +160,10 @@ SELECT DISTINCT ON (i.lot_id)
        INNER JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
 
-       INNER JOIN certificate c
+       LEFT JOIN certificate c
        ON i.lot_id = c.lot_id
 
-       INNER JOIN counterpart lab
+       LEFT JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
  ORDER BY i.lot_id, c.created_at DESC;
@@ -251,10 +251,10 @@ SELECT DISTINCT ON (i.lot_id)
        INNER JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
 
-       INNER JOIN certificate c
+       LEFT JOIN certificate c
        ON i.lot_id = c.lot_id
 
-       INNER JOIN counterpart lab
+       LEFT JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
  ORDER BY i.lot_id, c.created_at DESC;
@@ -345,10 +345,10 @@ SELECT DISTINCT ON (i.lot_id)
        INNER JOIN counterpart o
        ON i.responsible_office_id = o.counterpart_id
 
-       INNER JOIN certificate c
+       LEFT JOIN certificate c
        ON i.lot_id = c.lot_id
 
-       INNER JOIN counterpart lab
+       LEFT JOIN counterpart lab
        ON c.lab_id = lab.counterpart_id
 
  ORDER BY i.lot_id, c.created_at DESC;
