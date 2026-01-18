@@ -46,3 +46,41 @@ SELECT lot_id, stock_name, physical_location, supplier_name, NULL AS weight_ct, 
  WHERE location_status = 'On memo';
 
 -- END QUERY #2
+
+-- BEGIN QUERY # 3
+-- Identify items which need to be follow up for updating data
+SELECT 'Colored Diamond' as item_type, lot_id, stock_name,
+       physical_location, location_status
+FROM complete_inventory_colored_diamonds
+WHERE location_status IN ('At lab', 'In process')
+
+UNION ALL
+
+SELECT 'White Diamond', lot_id, stock_name,
+       physical_location, location_status
+FROM complete_inventory_white_diamonds
+WHERE location_status IN ('At lab', 'In process')
+
+UNION ALL
+
+SELECT 'Colored Gemstone', lot_id, stock_name,
+       physical_location, location_status
+FROM complete_inventory_colored_gem_stones
+WHERE location_status IN ('At lab', 'In process');
+
+
+
+-- Query # 4
+-- Quick summery if the inventory, catagory by location_status
+SELECT location_status, COUNT(*) as count
+FROM (
+    SELECT location_status FROM complete_inventory_colored_diamonds
+    UNION ALL
+    SELECT location_status FROM complete_inventory_white_diamonds
+    UNION ALL
+    SELECT location_status FROM complete_inventory_colored_gem_stones
+    UNION ALL
+    SELECT location_status FROM complete_inventory_jewelry
+) all_items
+GROUP BY location_status;
+
