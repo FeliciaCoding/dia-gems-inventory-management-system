@@ -24,6 +24,12 @@ def get_actions(
         db: psycopg.Connection,
         lot_id: int
 ):
+    """
+    Retrieves complete action history for a specific item.
+
+    Returns all actions (purchase, sale, transfers, memos) associated with a lot,
+    including counterparty details, prices, and timestamps.
+    """
     with db.cursor(row_factory=class_row(Action)) as cur:
         return cur.execute(
             """
@@ -56,6 +62,12 @@ def get_action(
         db: psycopg.Connection,
         action_id: int
 ):
+    """
+    Retrieves a single action by its ID.
+
+    Returns action details with counterparty information but without item-specific
+    price data (price/currency set to NULL).
+    """
     with db.cursor(row_factory=class_row(Action)) as cur:
         return cur.execute(
             """

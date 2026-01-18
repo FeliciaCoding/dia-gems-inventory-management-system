@@ -16,6 +16,7 @@ from diamonds_ui.database.action.action import (
 
 
 class ReturnFromFactory(BaseModel):
+    """Represents an item returned from factory after processing (recutting/polishing)"""
     action_id: int
     orig_transfer_id: int
     back_from_fac_num: str
@@ -38,6 +39,11 @@ def get_returns_from_factories(
         db: psycopg.Connection,
         condition: sql.SQL = sql.SQL("TRUE")
 ):
+    """
+    Retrieves all returns from factory with optional filtering.
+
+    Returns complete before/after measurements for items that underwent factory processing.
+    """
     with db.cursor(row_factory=class_row(ReturnFromFactory)) as cur:
         q = sql.SQL(
             """
@@ -71,6 +77,12 @@ def get_pending_items_for_factory(
         db: psycopg.Connection,
         transfer: TransferToFactory
 ):
+    """
+    Finds items still at factory (not yet returned).
+
+    Compares items sent to factory vs items returned to identify pending items.
+    Returns items that are still being processed.
+    """
     with db.cursor(row_factory=class_row(PricedItem)) as cur:
         q = sql.SQL(
             """
@@ -141,6 +153,13 @@ def make_new_return_from_factory(
     shape: str,
     note: str
 ):
+    """
+    Registers an item's return from factory after processing.
+
+    Creates action, action_item, and back_from_factory records with new measurements.
+    Logs the action and updates item status.
+    Returns (action_id, error_message) tuple.
+    """
     orig_action = get_action(db, orig_transfer.action_id)
 
     # create new action
