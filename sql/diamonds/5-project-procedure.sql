@@ -1,27 +1,28 @@
 SET search_path TO diamonds_are_forever;
 BEGIN;
 
-
 --Begin procedure # 1
 -- Description:
 -- Create a new purchase :
 -- 1. Creates a new item (lot_id auto-generated)
 -- 2. creates a purchase action,
 -- 3. links the new lot to the purchase with price/currency.
+-- DROP FUNCTION IF EXISTS diamonds_are_forever.pcd_create_purchase;
+-- DROP PROCEDURE IF EXISTS diamonds_are_forever.pcd_create_purchase;
 CREATE OR REPLACE PROCEDURE pcd_create_purchase(
-    p_supplier_id           INT,
-    p_office_id             INT,
-    p_purchase_num          TEXT,
-    p_stock_name            TEXT,
-    p_origin                TEXT,
-    p_item_type             item_category,
-    p_price                 NUMERIC,
-    p_currency_code         code
+    IN p_supplier_id           INT,
+    IN p_office_id             INT,
+    IN p_purchase_num          TEXT,
+    IN p_stock_name            TEXT,
+    IN p_origin                TEXT,
+    IN p_item_type             diamonds_are_forever.item_category,
+    IN p_price                 NUMERIC,
+    IN p_currency_code         diamonds_are_forever.code,
+    OUT v_lot_id INT
 )
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    v_lot_id    INT;
     v_action_id INT;
 BEGIN
     -- Create the item (lot_id generated automatically)
@@ -54,13 +55,12 @@ BEGIN
     VALUES (v_action_id, p_purchase_num);
 
     -- Link item to action with price/currency
-    INSERT INTO diamonds_are_forever.action_item(action_id, lot_id, price, currency_code)
+    INSERT INTO diamonds_are_forever.action_item(
+        action_id, lot_id, price, currency_code)
     VALUES (v_action_id, v_lot_id, p_price, p_currency_code);
 END;
 $$;
 -- END PROCEDURE #1
-
-
 
 
 -- BEGIN PROCEDURE #2
@@ -73,12 +73,12 @@ $$;
 CREATE OR REPLACE PROCEDURE pcd_create_memo_out(
     office_id           INT,
     client_id           INT,
-    in_memo_out_num        TEXT,
-    in_ship_date           DATE,
-    in_expected_return     DATE,
-    in_lot_id              INT,
-    memo_price               NUMERIC,
-    in_currency_code       code
+    in_memo_out_num     TEXT,
+    in_ship_date        DATE,
+    in_expected_return  DATE,
+    in_lot_id           INT,
+    memo_price          NUMERIC,
+    in_currency_code    diamonds_are_forever.code
 )
 LANGUAGE plpgsql
 AS $$
@@ -119,14 +119,14 @@ $$;
 -- 3 Links the sold lot to the sale action in action_item with its price and currency.
 --
 CREATE OR REPLACE PROCEDURE pcd_create_sale(
-    office_id        INT,
-    client_id        INT,
+    office_id           INT,
+    client_id           INT,
     in_sale_num         TEXT,
     in_payment_method   TEXT,
-    in_payment_status   payment_status,
+    in_payment_status   diamonds_are_forever.payment_status,
     in_lot_id           INT,
-    final_sale_price            NUMERIC,
-    in_currency_code    code
+    final_sale_price    NUMERIC,
+    in_currency_code    diamonds_are_forever.code
 )
 LANGUAGE plpgsql
 AS $$
@@ -162,7 +162,7 @@ CREATE OR REPLACE PROCEDURE pcd_transfer_to_lab(
     p_lab_id         INT,
     p_transfer_num   TEXT,
     p_ship_date      DATE,
-    p_lab_purpose    lab_purpose,
+    p_lab_purpose    diamonds_are_forever.lab_purpose,
     p_lot_id         INT
 )
 LANGUAGE plpgsql
@@ -202,7 +202,7 @@ CREATE OR REPLACE PROCEDURE pcd_transfer_to_factory(
     p_factory_id        INT,
     p_transfer_num      TEXT,
     p_ship_date         DATE,
-    p_processing_type   processing_type,
+    p_processing_type   diamonds_are_forever.processing_type,
     p_lot_id            INT
 )
 LANGUAGE plpgsql
@@ -230,6 +230,90 @@ $$;
 -- END PROCEDURE #5
 
 
---ROLLBACK;
+-- BEGIN PROC #6
+-- Description: register item's details, in this case it's white diamond
+-- DROP FUNCTION IF EXISTS diamonds_are_forever.pcd_create_white_diamond_details;
+CREATE OR REPLACE PROCEDURE pcd_create_white_diamond_details(
+    it_lot_id      INT,
+    ls_weight_ct   DECIMAL(5, 2),
+    ls_shape       TEXT,
+    ls_length      DECIMAL(4, 2),
+    ls_width       DECIMAL(4, 2),
+    ls_depth       DECIMAL(4, 2),
+    wd_white_scale TEXT,
+    wd_clarity     TEXT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    ls_lot_id INT;
+BEGIN
+    INSERT INTO diamonds_are_forever.loose_stone (
+        lot_id, weight_ct, shape, length, width, depth)
+    VALUES (it_lot_id, ls_weight_ct,
+        ls_shape::diamonds_are_forever.shape, ls_length, ls_width, ls_depth)
+    RETURNING lot_id INTO ls_lot_id;
+
+    INSERT INTO diamonds_are_forever.white_diamond (lot_id, white_scale, clarity)
+    VALUES (ls_lot_id,
+        wd_white_scale::diamonds_are_forever.white_scale,
+        wd_clarity::diamonds_are_forever.clarity);
+
+END;
+$$;
+-- END PROC #6
+
+-- BEGIN PROC #7
+-- Registering purchase of white diamond in one transaction
+CREATE OR REPLACE PROCEDURE pcd_create_white_diamond(
+    p_supplier_id           INT,
+    p_office_id             INT,
+    p_purchase_num          TEXT,
+    p_stock_name            TEXT,
+    p_origin                TEXT,
+    p_item_type             TEXT,
+    p_price                 NUMERIC,
+    p_currency_code         TEXT,
+    ls_weight_ct   DECIMAL(5, 2),
+    ls_shape       TEXT,
+    ls_length      DECIMAL(4, 2),
+    ls_width       DECIMAL(4, 2),
+    ls_depth       DECIMAL(4, 2),
+    wd_white_scale TEXT,
+    wd_clarity     TEXT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    lot_id INT;
+BEGIN
+    CALL diamonds_are_forever.pcd_create_purchase(
+        p_supplier_id,
+        p_office_id,
+        p_purchase_num,
+        p_stock_name,
+        p_origin,
+        p_item_type::diamonds_are_forever.item_category,
+        p_price,
+        p_currency_code::diamonds_are_forever.code,
+        lot_id
+    );
+    CALL diamonds_are_forever.pcd_create_white_diamond_details(
+        lot_id,
+        ls_weight_ct,
+        ls_shape,
+        ls_length,
+        ls_width,
+        ls_depth,
+        wd_white_scale,
+        wd_clarity
+    );
+END;
+$$;
+-- END PROC #7
+
+
+
+-- ROLLBACK;
 COMMIT;
 
