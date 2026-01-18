@@ -229,11 +229,43 @@ PENDING - copy paste the content here
 ---
 
 
-## 4. Encountered Challenge 
+##  Encountered Challenge 
+
+1. Database Schema Design: 
+
+    The biggest challenge was converting the requirements document into a working Entity-Relationship schema. We actually went back and forth many time to modify the schema. This was critical because the ER schema affects every design decision and code implementation throughout the project. Key difficulties included modeling complex relationships between items, actions, and counterparts, implementing SQL inheritance (Item → Loose_Stone → specific stone types), and designing action traceability where actions reference each other (e.g., returns linking to original transfers).
+
+
+2. User Interface Development with Streamlit : 
+
+    As we are not familiar with developing the application interface with Python and Streamlit, this part took us a lot of time to complete 
+
+
+3. Project Scope Reduction : 
+
+    Time constraints forced us to prioritize features. We deferred some planned functionality (memo in/out, financial reports, admin interfaces) and focused on essential operations: purchase, memo out, sale, and lab/factory transfers. We also simplified some features, like limiting to one certificate per item although the system supports multiple.
+
 
 ## 5. List of Functions 
 
-## 6. Known bugs 
+---- not completed yet, there is excel, please douuble check and update 
+![feature_list.png](img/feature_list.png)
+
+
+
+## 6. Confirmed Bugs 
+
+Currently, no critical bugs identified in the database or stored procedures. Tests performed have not revealed inconsistencies in:
+
+- Status management
+- Availability updates
+- Location calculations
+- Referential integrity
+
+## Known Limitations
+
+
+
 
 ## 7. Members contribution 
 
