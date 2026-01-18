@@ -421,7 +421,6 @@ Currently, no critical bugs identified in the database or stored procedures. Tes
 - Status management
 - Availability updates
 - Location calculations
-- Referential integrity
 
 ## Known Limitations
 
@@ -445,8 +444,28 @@ or if the action of our interest is the last one in some lifecycle.
 ## 7. Members contribution 
 
 - Liao Pei-Wen (requirements document, ER design, SQL schema design, dummy data, views, procedures, application)
-- Makovskyi Maksym (ER design, SQL schema, dummy data, triggers, queries, application)
-- 
+- Makovskyi Maksym (ER design, relational schema, SQL schema, dummy data, triggers, queries, application)
+- Wu Guo Yu (ER design, SQL schema, views, queries)
 
-## 8. App interface with screenshot 
+## 8. Screenshorts of the app
+
+Screenshots presented below are only a little part of the created user interface.
+
+### All items registered in the system
+
+![inventory all](./img/app_screenShot/inventory_all_items.png)
+
+### Registering new purchase
+
+![new purchase](./img/app_screenShot/new_purchase.png)
+
+
+### White diamond's details
+
+![wd details](./img/app_screenShot/white_diamond_detail.png)
+
+### New transfer to another office
+
+![new transfer office](./img/app_screenShot/new_transfer_office.png)
+
 
