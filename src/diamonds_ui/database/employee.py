@@ -19,6 +19,10 @@ def get_employee(
         db: psycopg.Connection,
         email: str
 ):
+    """
+    Fetch a single employee by email (includes joined office/counterpart name).
+    Returns one Employee or None.
+    """
     with db.cursor(row_factory=class_row(Employee)) as cur:
         return cur.execute(
             """

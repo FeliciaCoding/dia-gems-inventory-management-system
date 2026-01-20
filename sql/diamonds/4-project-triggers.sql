@@ -1,8 +1,9 @@
 SET search_path TO diamonds_are_forever;
 
 -- BEGIN TRIGGER #1
--- Description: responsible_office_id should be updated everytime
--- item has been 'moved' as well as its availability
+-- Description:
+-- Automatically updates item's responsible_office_id and is_available whenever an action occurs.
+-- Applied to all action tables: purchase, memo_in/out, returns, transfers to/from lab/factory, and sale.
 
 CREATE OR REPLACE FUNCTION trig_a_i_keep_track_responsible_office()
     RETURNS TRIGGER AS
@@ -12,6 +13,7 @@ DECLARE
     item_availability bool;
     dynamic_sql text;
 BEGIN
+   -- update from_counterpart_id & to_counterpart_id according to different cases
     IF TG_TABLE_NAME IN ('return_memo_out', 'back_from_factory', 'back_from_lab') THEN
         counterpart_col_name := 'to_counterpart_id';
         item_availability := TRUE;
@@ -49,6 +51,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- applying to all actions
 CREATE TRIGGER responsible_office_after_purchase_trigger
     AFTER INSERT
     ON purchase
@@ -118,10 +121,9 @@ EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
 
 -- BEGIN TRIGGER #2
 -- Description:
--- Stone measurement update trigger (after factory processing)
--- When items return from factory with new measurements (after repolishing),
--- automatically update the loose_stone table with the new weight, dimensions,
--- and shape.
+-- Automatically updates loose_stone measurements when items return from factory after processing (recutting/polishing).
+-- Saves original measurements (before_weight_ct, before_shape, etc.), calculates weight_loss_ct,
+-- and updates the loose_stone table with new dimensions.
 
 CREATE OR REPLACE FUNCTION trig_a_i_back_from_fac()
     RETURNS TRIGGER AS
@@ -167,20 +169,15 @@ CREATE TRIGGER after_factory_processing_trigger
     ON back_from_factory
     FOR EACH ROW
 EXECUTE FUNCTION trig_a_i_back_from_fac();
-
 -- END TRIGGER #2
 
--- BEGIN TRIGGER #6
 
--- DROP TRIGGER IF EXISTS verify_supplier_on_purchase_trigger ON purchase;
--- DROP FUNCTION IF EXISTS trig_b_i_purchase;
 
--- Purchase:
--- When inserting into Purchase table supplier_id of all concerned items
--- should equal to from_counterpart_id of Purchase.Action
--- (connected via Action Item relationship)
--- If it is not - update and raise a warning
-
+-- BEGIN TRIGGER #3
+-- Description :
+-- Validates that item.supplier_id matches action.from_counterpart_id when creating a purchase.
+-- If mismatch detected, updates the item's supplier_id to match the purchase action and raises a warning.
+-- Ensures data consistency between item records and purchase actions.
 CREATE OR REPLACE FUNCTION trig_b_i_purchase()
     RETURNS TRIGGER AS
 $$
@@ -189,7 +186,7 @@ DECLARE
     supplier_id INTEGER;
     item_id INTEGER;
 BEGIN
-    -- action.from_counterpart_id == item.supplier_id
+    -- get the supplier (from_counterpart_id) from the purchase action
     counterpart_id := (
         SELECT from_counterpart_id
         FROM diamonds_are_forever.action a
@@ -197,8 +194,7 @@ BEGIN
         LIMIT 1
     );
 
-    -- since one purchase (from one counterpart) can
-    -- include several items we need to look at every of them
+   -- we check each item in this purchase (one purchase can include multiple items)
     FOR supplier_id, item_id IN
         SELECT it.supplier_id, it.lot_id
         FROM diamonds_are_forever.action_item ai
@@ -207,9 +203,10 @@ BEGIN
         WHERE ai.action_id = new.action_id
     LOOP
 
+        -- If supplier_id doesn't match, update it to counterpart_id and warn
         IF counterpart_id <> supplier_id THEN
             UPDATE diamonds_are_forever.item
-            SET supplier_id = supplier_id
+            SET supplier_id = counterpart_id
             WHERE item.lot_id = item_id;
             RAISE WARNING 'item(%).supplier(%) does not equal to purchase.action(%).from_counterpart_id(%). Updating item.supplier_id ...',
                 item_id, supplier_id, new.action_id, counterpart_id;
@@ -225,11 +222,9 @@ CREATE TRIGGER verify_supplier_on_purchase_trigger
     ON purchase
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_purchase();
+-- END TRIGGER #3
 
-
--- END TRIGGER #6
-
--- BEGIN TRIGGER #7
+-- BEGIN TRIGGER #4
 -- Description based on an example:
 -- 4 items were put in Memo Out and send somewhere
 -- 2 items came back
@@ -304,9 +299,9 @@ CREATE TRIGGER check_returning_items_back_from_factory_trigger
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_return_items_check();
 
--- END TRIGGER #7
+-- END TRIGGER #4
 
--- BEGIN TRIGGER #8
+-- BEGIN TRIGGER #5
 -- Description:
 -- On every purchase check if purchase-action is indeed
 -- involving a supplier counterpart
@@ -348,10 +343,10 @@ CREATE TRIGGER check_if_true_supplier_purchase_trigger
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_true_supplier_check();
 
--- END TRIGGER #8
+-- END TRIGGER #5
 
 
--- BEGIN TRIGGER #9
+-- BEGIN TRIGGER #6
 -- Description:
 -- Check that client-counterpart is involved in sale
 CREATE OR REPLACE FUNCTION trig_b_i_client_sale_check()
@@ -388,9 +383,9 @@ CREATE TRIGGER check_if_true_client_sale_trigger
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_client_sale_check();
 
--- END TRIGGER #9
+-- END TRIGGER #6
 
--- BEGIN TRIGGER #10
+-- BEGIN TRIGGER #7
 -- Description: verify that item has not been already sold
 -- before registering a sale-action
 CREATE OR REPLACE FUNCTION trig_b_i_not_sold_twice()
@@ -430,10 +425,10 @@ CREATE TRIGGER check_sold_twice_trigger
     ON sale
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_not_sold_twice();
--- END TRIGGER #10
+-- END TRIGGER #7
 
 
--- BEGIN TRIGGER #10
+-- BEGIN TRIGGER #8
 -- Description:
 -- update updated_at timestamp whenever records in action, item, certificate,
 -- counterpart, or employee tables are modified
@@ -476,10 +471,10 @@ CREATE TRIGGER certificate_updated_at_trigger
     FOR EACH ROW
 EXECUTE FUNCTION trig_a_u_keep_updated_at_fresh();
 
--- END TRIGGER #10
+-- END TRIGGER #8
 
 
--- BEGIN TRIGGER #11
+-- BEGIN TRIGGER #9
 -- Description:
 -- After stone has been returned from factory
 -- all its certificates should be no longer valid
@@ -522,14 +517,14 @@ CREATE TRIGGER invalidate_certificates_after_factory_trigger
     ON back_from_factory
     FOR EACH ROW
 EXECUTE FUNCTION trig_a_i_invalidate_certificates();
--- END TRIGGER #11
+-- END TRIGGER #9
 
 
--- BEGIN TRIGGER #11
+-- BEGIN TRIGGER #10
 -- Description:
 -- Since we would like to reflect:
--- - new certificates after re-certification
--- - new measurements after re-cutting/polishing
+-- 1. new certificates after re-certification
+-- 2. new measurements after re-cutting/polishing
 -- We would like to reduce relationship between Action and Item
 -- from many-to-many to many-to-one for certain cases: Back from lab, Back from Factory
 -- (if we've received 10 items back from factory we must insert
@@ -566,10 +561,10 @@ CREATE TRIGGER ensure_one_item_per_one_back_from_factory_trigger
     ON back_from_factory
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_one_item_per_back_from_lab_factory();
--- END TRIGGER #11
+-- END TRIGGER #10
 
 
--- BEGIN TRIGGER #12
+-- BEGIN TRIGGER #11
 -- Description:
 -- Disallow selling stones (white diamonds/colored diamonds/colore gemstones)
 -- without valid certificate
@@ -605,4 +600,4 @@ CREATE TRIGGER disallow_sell_stones_without_valid_cert_trigger
     ON sale
     FOR EACH ROW
 EXECUTE FUNCTION trig_b_i_sale_without_valid_certificate();
--- END TRIGGER #12
+-- END TRIGGER #11

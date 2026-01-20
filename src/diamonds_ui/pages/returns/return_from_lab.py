@@ -39,6 +39,11 @@ def render_return_details(
     item: Item,
     cert: Certificate
 ):
+    """
+    Render detailed information about a return from lab,
+    including action metadata, concerned item, and
+    newly issued certificate details.
+    """
     with st.container(border=True):
         st.markdown(f"### Details for: #{t.action_id}")
 
@@ -77,6 +82,12 @@ def render_return_details(
 
 @st.dialog("New return from lab")
 def new_return_from_lab(db):
+    """
+    Dialog for registering a new return from lab.
+    Allows selecting the original transfer, choosing a pending item,
+    entering certification and measurement details, and submitting
+    the return action.
+    """
     # list of transfers to lab done by office where user works
     orig_transfer = st.selectbox(
         "Sender",
@@ -199,6 +210,10 @@ def select_transfer(
     transfers: list[TransferToLab],
     transfer_id: int | None = None,
 ):
+    """
+    Display a selectbox for lab returns and return
+    the selected transfer (optionally preselected by action_id).
+    """
     if transfer_id is None:
         index = None
     else:

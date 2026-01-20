@@ -17,6 +17,10 @@ from streamlit_utils.query_param import query_param
 
 
 def render_jewelry_details(j: Jewelry, i: Item, actions: list[Action]):
+    """
+    Render detailed information and action history
+    for a selected jewelry item.
+    """
     with st.container(border=True):
         st.markdown(f"### Details for: {j.lot_id}")
 
@@ -51,6 +55,10 @@ def select_jewelry(
     diamonds: list[Jewelry],
     cd_id: int | None = None,
 ):
+    """
+    Display a selectbox for jewelry items and return the selected item
+    (optionally preselected by lot_id).
+    """
     if cd_id is None:
         index = None
     else:

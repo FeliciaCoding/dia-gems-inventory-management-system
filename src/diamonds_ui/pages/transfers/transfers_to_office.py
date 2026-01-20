@@ -30,6 +30,10 @@ from diamonds_ui.database.item.item import (
 
 
 def render_transfer_details(t: TransferToOffice, a: Action, items: list[Item]):
+    """
+    Render detailed information about a transfer between offices,
+    including action metadata and transferred items.
+    """
     with st.container(border=True):
         st.markdown(f"### Details for: {t.action_id}")
 
@@ -54,6 +58,11 @@ def render_transfer_details(t: TransferToOffice, a: Action, items: list[Item]):
 
 @st.dialog("New transfer between offices")
 def new_transfer_to_office(db):
+    """
+    Dialog for registering a new transfer between offices.
+    Allows selecting destination office, choosing items from the source office,
+    reviewing prices, entering transfer metadata, and submitting the transfer.
+    """
     src_office = get_counterpart(db, user.get().office_id)
     st.markdown(f"**Office:** {src_office.name} ({src_office.country}, {src_office.city})")
 
@@ -109,6 +118,10 @@ def select_transfer(
     transfers: list[TransferToOffice],
     transfer_id: int | None = None,
 ):
+    """
+    Display a selectbox for inter-office transfers and return
+    the selected transfer (optionally preselected by action_id).
+    """
     if transfer_id is None:
         index = None
     else:

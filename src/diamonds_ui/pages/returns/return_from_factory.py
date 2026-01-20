@@ -40,6 +40,11 @@ def render_return_details(
     a: Action,
     item: Item
 ):
+    """
+    Render detailed information about a return from factory,
+    including action metadata, concerned item, and measurements
+    before and after processing.
+    """
     with st.container(border=True):
         st.markdown(f"### Details for: #{t.action_id}")
 
@@ -79,6 +84,11 @@ def render_return_details(
 
 @st.dialog("New return from factory")
 def new_return_from_factory(db):
+    """
+    Dialog for registering a new return from factory.
+    Allows selecting the original transfer, choosing a pending item,
+    entering updated measurements, and submitting the return action.
+    """
     orig_transfer = st.selectbox(
         "Original transfer",
         get_transfers_to_factory_from_empl_office(
@@ -169,6 +179,10 @@ def select_transfer(
     transfers: list[ReturnFromFactory],
     transfer_id: int | None = None,
 ):
+    """
+    Display a selectbox for factory returns and return
+    the selected transfer (optionally preselected by action_id).
+    """
     if transfer_id is None:
         index = None
     else:

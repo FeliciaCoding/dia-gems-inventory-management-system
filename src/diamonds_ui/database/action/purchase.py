@@ -34,6 +34,14 @@ def create_purchase_white_diamonds(
         cert_lab_id: int | None = None,
         cert_issue_date: date | None = None
 ) -> int :
+
+    """
+    Registers a white diamond purchase in a single transaction.
+
+    Creates all necessary records: action, item, loose_stone, white_diamond,
+    action_item, purchase, optional certificate, and audit log.
+    Returns the generated lot_id.
+    """
     with db.cursor() as cur:
         cur.execute("SET search_path TO diamonds_are_forever")
 
@@ -128,6 +136,14 @@ def create_purchase_colored_diamonds(
     cert_lab_id: int | None = None,
     cert_issue_date: date | None = None,
 ) -> int:
+    """
+    Registers a colored diamond (fancy color) purchase in a single transaction.
+
+    Creates all necessary records: action, item, loose_stone, colored_diamond,
+    action_item, purchase, optional certificate, and audit log.
+    Returns the generated lot_id.
+    """
+
     with db.cursor() as cur:
         cur.execute("SET search_path TO diamonds_are_forever")
 
@@ -201,6 +217,12 @@ def get_purchases(
         condition: sql.SQL = sql.SQL("TRUE"),
         **other_params,
 ):
+    """
+    Retrieves purchase records with optional filtering.
+
+    Uses dynamic SQL conditions for flexible querying.
+    Returns list of Purchase objects.
+    """
     with db.cursor(row_factory=class_row(Purchase)) as cur:
         q = sql.SQL(
             """

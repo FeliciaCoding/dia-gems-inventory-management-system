@@ -23,6 +23,10 @@ def get_sales(
         condition: sql.SQL = sql.SQL("TRUE"),
         **other_params,
 ):
+    """
+    Fetch sales records matching the given SQL condition.
+    Returns a list of Sale models.
+    """
     with db.cursor(row_factory=class_row(Sale)) as cur:
         q = sql.SQL(
             """
@@ -55,6 +59,11 @@ def make_new_sale(
         payment_status: str,
         prices: dict[str, PriceWithCurrency]
 ) -> tuple[int | None, str | None]:
+    """
+    Create a new sale action with linked items and pricing.
+    Returns (action_id, error_message).
+    """
+
     # create new action
     action = db.execute(sql.SQL(
     """
@@ -147,6 +156,10 @@ def update_sale(
         payment_method: str,
         payment_status: str
 ):
+    """
+    Update sale and action details and log the change.
+    """
+
     # create new action
     db.execute(sql.SQL(
     """
@@ -204,6 +217,11 @@ def delete_sale(
         employee_id: int,
         concerned_items: list[Item]
 ):
+    """
+    Delete a sale and related records, restore item availability,
+    and log the deletion.
+    """
+
     db.execute(sql.SQL(
     """
     INSERT INTO diamonds_are_forever.action_update_log (

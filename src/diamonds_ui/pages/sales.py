@@ -33,6 +33,12 @@ from diamonds_ui.database.item.certificate import get_certificate, Certificate
 
 
 def render_sale_details(s: Sale, a: Action, items: list[PricedItem], db):
+    """
+    Render detailed information about a sale,
+    including action metadata, payment details,
+    and sold items. Also provides controls to
+    refresh, edit, or delete the sale.
+    """
     with st.container(border=True):
         with st.container(horizontal=True):
             st.markdown(f"### Details for: {s.action_id}")
@@ -66,6 +72,11 @@ def render_sale_details(s: Sale, a: Action, items: list[PricedItem], db):
 
 @st.dialog("Deleting sale")
 def remove_sale(db, s: Sale, items: list[Item]):
+    """
+    Confirmation dialog for deleting a sale.
+    Removes the sale, related action records,
+    and restores availability of concerned items.
+    """
     st.markdown(f"## Are you sure you want to delete this sale (#{s.action_id}) ?")
     with st.container(horizontal=True, horizontal_alignment="center"):
         if st.button("Yes", width="stretch"):
@@ -84,6 +95,11 @@ def remove_sale(db, s: Sale, items: list[Item]):
 
 @st.dialog("Editing sale")
 def edit_sale(db, s: Sale, a: Action):
+    """
+    Dialog for editing sale metadata such as
+    sale number, date, payment method/status,
+    terms, and remarks.
+    """
     sale_num = st.text_input("Sale number *", value=s.sale_num)
     sale_date = st.date_input("Sale date *", value=s.sale_date)
     payment_method = st.text_input("Payment method *", value=s.payment_method)
@@ -129,6 +145,13 @@ def edit_sale(db, s: Sale, a: Action):
 
 @st.dialog("New sale")
 def new_sale(db):
+    """
+    Dialog for registering a new sale.
+    Allows selecting a client, choosing items
+    from the responsible office, validating
+    certificates, editing prices, and submitting
+    the sale with payment details.
+    """
     office = get_counterpart(db, user.get().office_id)
     st.markdown(f"**Responsible office:** {office.name} ({office.country}, {office.city})")
 
@@ -217,6 +240,11 @@ def select_sale(
     sales: list[Sale],
     id: int | None = None,
 ):
+    """
+    Display a selectbox for sales and return
+    the selected sale (optionally preselected
+    by action_id).
+    """
     if id is None:
         index = None
     else:

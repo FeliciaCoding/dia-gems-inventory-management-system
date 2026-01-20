@@ -20,6 +20,10 @@ def get_transfers_to_factories(
         db: psycopg.Connection,
         condition: sql.SQL = sql.SQL("TRUE")
 ):
+    """
+    Fetch transfer-to-factory records matching the given SQL condition.
+    Returns a list of TransferToFactory models.
+    """
     with db.cursor(row_factory=class_row(TransferToFactory)) as cur:
         q = sql.SQL(
             """
@@ -49,6 +53,10 @@ def make_new_transfer_to_factory(
         employee: Employee,
         processing_type: str
 ) -> tuple[int | None, str | None]:
+    """
+    Create a new "transfer to factory" action, link items to it, and insert the
+    transfer_to_factory record. Returns (action_id, error_message).
+    """
     # create new action
     action = db.execute(sql.SQL(
     """
@@ -131,6 +139,10 @@ def get_transfers_to_factory_from_empl_office(
         db: psycopg.Connection,
         empl: Employee
 ):
+    """
+    Fetch transfer-to-factory records created from the employee's office
+    (matches action.from_counterpart_id to empl.office_id).
+    """
     with db.cursor(row_factory=class_row(TransferToFactory)) as cur:
         q = sql.SQL(
             """

@@ -23,6 +23,10 @@ def get_counterparts(
     db: psycopg.Connection,
     condition: sql.SQL = sql.SQL("TRUE")
 ):
+    """
+    Fetch counterparts matching the given SQL condition (joined with account type/category).
+    Returns a list of Counterpart models.
+    """
     with db.cursor(row_factory=class_row(Counterpart)) as cur:
         q = sql.SQL(
             """
@@ -54,6 +58,10 @@ def get_counterpart(
     db: psycopg.Connection,
     id: int
 ):
+    """
+    Fetch a single counterpart by its counterpart_id (includes account type/category joins).
+    Returns one Counterpart or None.
+    """
     with db.cursor(row_factory=class_row(Counterpart)) as cur:
         return cur.execute(
             """

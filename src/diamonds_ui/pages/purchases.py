@@ -27,6 +27,10 @@ from streamlit_utils.query_param import query_param
 
 
 def render_purchase_details(p: Purchase, a: Action, items: list[PricedItem]):
+    """
+    Render detailed information about a purchase,
+    including action metadata, total price, and purchased items.
+    """
     with st.container(border=True):
         st.markdown(f"### Details for: {p.action_id}")
 
@@ -62,6 +66,11 @@ def render_purchase_details(p: Purchase, a: Action, items: list[PricedItem]):
 
 @st.dialog("New purchase")
 def new_purchase(db_conn):
+    """
+    Dialog for registering a new purchase.
+    Supports purchasing loose stones (white/colored diamonds, gemstones)
+    and prepares structure for jewelry purchases.
+    """
     st.write(f"Adding new purchase")
     stock_name = st.text_input("Stock name*")
     purchase_date = st.date_input("Purchase date*")
@@ -369,6 +378,10 @@ def select_purchase(
     purchases: list[Purchase],
     id: int | None = None,
 ):
+    """
+    Display a selectbox for purchases and return
+    the selected purchase (optionally preselected by action_id).
+    """
     if id is None:
         index = None
     else:
