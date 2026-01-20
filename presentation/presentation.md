@@ -221,11 +221,13 @@ Find all availible items at office
 
 ---
 
-# Conclusion
+# Conclusion / Result
 
-- Modeling data is hard
-- Processe in real life can have many little twists and caveats
-- Conceptual (ER) phase maybe is the most important phase in the project
+1. **Full-stack database application development**
+   
+3. **Database design** 
+
+4. **Production-ready deployment** 
 
 ---
 
