@@ -7,7 +7,9 @@ backgroundColor: #fff
 
 # Inventory management system for diamonds, colored stones, and jewelries
 
-## Authors: Liao Pei-Wen, Makovskyi Maksym
+![width:700px](img/intro_diamond_track.png)
+
+## Authors: Liao Pei-Wen, Makovskyi Maksym, Guo Yu Wu
 
 ---
 
@@ -23,7 +25,20 @@ Companies in the diamond and precious stone sector face several operational chal
 
 # Conceptual schema (1)
 
-action inheretance
+action inheretance  
+![width:700px](img/e_zones.png)
+
+- red : central table : action
+- blue : counterPart, person
+- green : items, merchandising
+- yellow : docs, certificate
+
+---
+
+# Conceptual schema (1)
+
+action inheretance  
+![width:700px](img/action_table.png)
 
 --- 
 
@@ -41,7 +56,9 @@ Return style actions
 
 # Conceptual schema (4)
 
-Link between Action and Item
+Link between Action and Item  
+![width:700px](img/action_item.png)
+
 
 ---
 
