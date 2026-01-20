@@ -7,13 +7,11 @@ backgroundColor: #fff
 
 # Inventory management system for diamonds, colored stones, and jewelries
 
-![width:700px](img/intro_diamond_track.png)
-
-## Authors: Liao Pei-Wen, Makovskyi Maksym, Guo Yu Wu
+## Authors: Liao Pei-Wen, Makovskyi Maksym, Wu Guo Yu
 
 ---
 
-# What problem we are trying to solve ?
+# What problem we are trying to solve ? (1)
 
 Companies in the diamond and precious stone sector face several operational challenges:
 
@@ -23,22 +21,42 @@ Companies in the diamond and precious stone sector face several operational chal
 
 ---
 
-# Conceptual schema (1)
+# What problem we are trying to solve ? (2)
 
-action inheretance  
-![width:700px](img/e_zones.png)
+### Lot Concept
 
-- red : central table : action
-- blue : counterPart, person
-- green : items, merchandising
-- yellow : docs, certificate
+- either a single diamond or gemstone
+- or a single piece of jewelry.
+
+Each lot is characterized by:
+
+- A controlled status, belonging to a predefined and validated set of states
+- A current location, which may be an internal office or an external partner
+- An item category (diamond, gemstone, or jewelry)
+- A purchase date and, when applicable, a sale date
+- A linked counterparty (supplier, client, laboratory, or manufacturer)
+- Financial information associated with the lot through commercial documents
+
+---
+
+# What problem we are trying to solve ? (3)
+
+### Inventory Lifecycle is driven by real world operations
+
+- Purchase Note
+- Memo In
+- Return Memo In
+- Memo Out
+- Return Memo Out
+- Transfer records
+- Return Transfer records
+- Invoice
 
 ---
 
 # Conceptual schema (1)
 
-action inheretance  
-![width:700px](img/action_table.png)
+action inheretance
 
 --- 
 
@@ -56,9 +74,7 @@ Return style actions
 
 # Conceptual schema (4)
 
-Link between Action and Item  
-![width:700px](img/action_item.png)
-
+Link between Action and Item
 
 ---
 
@@ -74,7 +90,7 @@ Employee and Action
 
 ---
 
-# Certificate
+# Conceptual schema (7)
 
 Certificate
 
