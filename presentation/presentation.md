@@ -60,9 +60,7 @@ p { text-align: center; }
 
 # Conceptual schema (1)
 
-#### `action`
-
-![width:1000px](img/action_inhertance.png)
+![width:1000px](img/er_schema.png)
 
 --- 
 
@@ -72,39 +70,39 @@ p { text-align: center; }
 
 # Conceptual schema (2)
 
-#### `item`
+
+![width:1000px](img/action_inhertance.png)
+
+---
+
+<style scoped>
+p { text-align: center; }
+</style>
+
+# Conceptual schema (3)
+
 
 ![height:500px](img/item_inhertance.png)
 
 ---
 
-# Conceptual schema (3)
-
-Return style actions
-
----
+<style scoped>
+p { text-align: center; }
+</style>
 
 # Conceptual schema (4)
 
-Link between Action and Item
+![width:850px](img/counterpart_employee_action.png)
 
 ---
+
+<style scoped>
+p { text-align: center; }
+</style>
 
 # Conceptual schema (5)
 
-Link between Counterpart and Account type
-
----
-
-# Conceputal schema (6)
-
-Employee and Action
-
----
-
-# Conceptual schema (7)
-
-Certificate
+![width:850px](img/action_item_certificate.png)
 
 ---
 
@@ -327,11 +325,40 @@ BEGIN
 
     RETURN new;
 END; $$ LANGUAGE plpgsql;
+
+
+
 ```
 
 ---
 
 # SQL (6)
+
+#### `Keep track of availability and location` trigger (part 4)
+
+```SQL
+CREATE TRIGGER responsible_office_after_purchase_trigger
+    AFTER INSERT ON purchase FOR EACH ROW
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
+
+CREATE TRIGGER responsible_office_after_transfer_to_factory_trigger
+    AFTER INSERT ON transfer_to_factory FOR EACH ROW
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
+
+CREATE TRIGGER responsible_office_after_back_from_factory_trigger
+    AFTER INSERT ON back_from_factory FOR EACH ROW
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
+
+CREATE TRIGGER responsible_office_after_sale_trigger
+    AFTER INSERT ON sale FOR EACH ROW
+EXECUTE FUNCTION trig_a_i_keep_track_responsible_office();
+
+
+```
+
+---
+
+# SQL (7)
 
 #### Make a purchase procedure (part 1)
 
@@ -370,7 +397,7 @@ $$;
 
 ---
 
-# SQL (7)
+# SQL (8)
 
 #### Make a purchase procedure (part 2)
 
@@ -408,7 +435,7 @@ $$;
 
 ---
 
-# SQL (7)
+# SQL (9)
 
 #### Make a purchase procedure (part 3)
 
@@ -470,17 +497,53 @@ $$;
 
 ---
 
-# Planed features v.s. Implemented features
+<style scoped>
+p { text-align: center; }
+</style>
 
-![Feature1](img/feature1.png)
+# Planed features v.s. Implemented features (1)
 
-![Feature2](img/feature2.png)
+![height:500px](img/feature1.png)
+
+---
+
+# Planed features v.s. Implemented features (2)
+
+<style scoped>
+p { text-align: center; }
+</style>
+
+![features](img/feature2.png)
+
+---
+
+# Planed features v.s. Implemented features (2)
+
+<style scoped>
+p { text-align: center; }
+</style>
 
 ![Feature3](img/feature3.png)
 
-![Feature4](img/feature4.png)
+---
 
-![Feature5](img/feature5.png)
+# Planed features v.s. Implemented features (2)
+
+<style scoped>
+p { text-align: center; }
+</style>
+
+![features](img/feature4.png)
+
+---
+
+# Planed features v.s. Implemented features (2)
+
+<style scoped>
+p { text-align: center; }
+</style>
+
+![height:500px](img/feature5.png)
 
 ---
 
