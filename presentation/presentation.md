@@ -210,6 +210,15 @@ Find all availible items at office
 # Implemented (or not) features
 
 List of most important stuff
+![Feature1](img/feature1.png)
+
+![Feature2](img/feature2.png)
+
+![Feature3](img/feature3.png)
+
+![Feature4](img/feature4.png)
+
+![Feature5](img/feature5.png)
 
 ---
 
