@@ -207,9 +207,8 @@ Find all availible items at office
 
 ---
 
-# Implemented (or not) features
+# Planed features v.s. Implemented features
 
-List of most important stuff
 ![Feature1](img/feature1.png)
 
 ![Feature2](img/feature2.png)
