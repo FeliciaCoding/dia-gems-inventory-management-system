@@ -5,7 +5,7 @@ member:  Liao Pei-Wen, Maksym Makovskyi, Wu Guo Yu
 
 ---
 
-# Introduction / Conclusion
+# Introduction
 
 This project aims to develop a comprehensive inventory management system for the B2B diamond, gemstone, and jewelry trade.
 
@@ -216,42 +216,203 @@ Each functionality corresponds to a real operational need and is enforced by the
 
 # Conceptual Schema - Phase 2 
 
-------> NEED TO ADD PNG FFILE 
+![er diagram](./../diagram/er_schema.png)
 
-PENDING
+#### Description
+
+Given conceptual design is mainly based around idea of a lifecycle. <br>
+Every item that arrives does not appear from nothing, it has some provenance, certification etc. <br>
+As well every movement (we call it action) that item undergoes should be reflected in the system 
+for answering the questions: What?, Why? and When?
 
 ---
 
 # [Relational Schema -  Phase 3](../diagram/er_to_relational.md)
 
-PENDING - copy paste the content here 
+After translating ER schema to the Relational, we have got the following relations:
+
+#### `currency`
+
+currency (**code**, name)
+
+#### `counterpart` related relations
+
+counterpart (**counterpart_id**, name, phone_number, address_short, city, postal_code, country, email, is_active, created_at, updated_at)
+
+account_type (**type_name**, category, is_internal)
+
+counterpart_account_type (**counterpart_id, type_name**) <br>
+    `counterpart_id` references `counterpart.counterpart_id` <br>
+    `type_name` references `account_type.type_name`
+
+#### `employee`
+
+employee (**employee_id**, counterpart_id, first_name, last_name, email, role, is_active, created_at, updated_at) <br>
+    `counterpart_id` references `counterpart.counterpart_id` NOT NULL
+
+#### `action`
+
+action (**action_id**, from_counterpart_id, to_counterpart_id, terms, remarks, created_at, updated_at, action_category) <br>
+    `from_counterpart_id` references `counterpart.counterpart_id` NOT NULL <br>
+    `to_counterpart_id` references `counterpart.counterpart_id` NOT NULL <br>
+
+#### `action_update_log`
+
+action_update_log (**log_time, action_id**, employee_id, update_type, old_value, new_value, log_time) <br>
+    `action_id` references `action.action_id` <br>
+    `employee_id` references `employee.employee_id` NOT NULL
+
+#### `item` related relations
+
+item (**lot_id**, stock_name, purchase_date, supplier_id, origin, responsible_office_id, created_at, updated_at, is_available, item_type) <br>
+    `supplier_id` references `counterpart.counterpart_id` NOT NULL
+    `responsible_office_id` references `counterpart.counterpart_id` NOT NULL
+
+action_item(**action_id, lot_id**, price, currency_code) <br>
+   `action_id` references `action.action_id` <br>
+   `lot_id` references `item.lot_id` <br>
+   `currency_code` references `currency.code` NOT NULL
+
+#### All the types of action
+
+purchase(**action_id**, purchase_num, purchase_date) <br>
+    `action_id` references `action.action_id`
+
+memo_in (**action_id**, memo_in_num, ship_date, expected_return_date) <br>
+    `action_id` references `action.action_id`
+
+return_memo_in (**action_id**, orig_transfer_id, return_memo_in_num, back_date) <br>
+    `action_id` references `action.action_id` <br>
+    `orig_transfer_id` references `memo_in.action_id` NOT NULL
+
+memo_out(**action_id**, memo_out_num, ship_date, expected_return_date) <br>
+    `action_id` references `action.action_id`
+
+return_memo_out(**action_id**, orig_transfer_id, return_memo_out_num, back_date) <br>
+    `action_id` references `action.action_id` <br>
+    `orig_transfer_id` references `memo_out.action_id` NOT NULL
+
+transfer_to_office(**action_id**, transfer_num, ship_date) <br>
+    `action_id` references `action.action_id`
+
+transfer_to_lab(**action_id**, transfer_num, ship_date, lab_purpose) <br>
+    `action_id` references `action.action_id`
+
+back_from_lab(**action_id**, orig_transfer_id, back_from_lab_num, back_date, new_certificate_num)  <br>
+    `action_id` references `action.action_id` <br>
+    `orig_transfer_id` references `transfer_to_lab.action_id` NOT NULL <br>
+    `new_certificate_num` references `certificate.certificate_num` NOT NULL
+
+transfer_to_factory(**action_id**, transfer_num, ship_date, processing_type) <br>
+    `transfer_to_factory.action_id` references `action.action_id`
+
+back_from_factory(**action_id**, orig_transfer_id, back_from_fac_num, back_date, before_weight_ct, before_shape, before_length, before_width, before_depth, after_weight_ct, after_shape, after_length, after_width, after_depth, weight_loss_ct, note) <br>
+    `action_id` references `action.action_id` <br>
+    `orig_transfer_id` references `transfer_to_factory.action_id` NOT NULL
+
+sale(**action_id**, sale_num, sale_date, payment_method, payment_status) <br>
+    `action_id` references `action.action_id`
+
+#### All the types of `item`
+
+loose_stone (**lot_id**, weight_ct, shape, length, width, depth) <br>
+    `lot_id` references `item.lot_id`
+
+white_diamond (**lot_id**, white_level, clarity) <br>
+    `lot_id` references `loose_stone.lot_id`
+
+colored_diamond (**lot_id**, gem_type, fancy_intensity, fancy_overton, fancy_color, clarity) <br>
+    `lot_id` references `loose_stone.lot_id`
+
+colored_gem_stone (**lot_id**, gem_type, gem_color, treatment) <br>
+    `lot_id` references `loose_stone.lot_id`
+
+jewelry (**lot_id**, jewerly_type, gross_weight_gr, metal_type, metal_weight_gr,
+total_center_stone_qty, total_center_stone_weight_ct, centered_stone_type,
+total_side_stone_qty, total_side_stone_weight_ct, side_stone_type)  <br>
+    `lot_id` references `item.lot_id`
+
+#### `certificate`
+
+certificate(**certificate_num**, lot_id, lab_id, issue_date, shape, weight_ct, length, width, depth, clarity, color, treatment, gem_type, is_valid, created_at, updated_at) <br>
+    `lot_id` references `item.lot_id` NOT NULL <br>
+    `lab_id` references `counterpart.counterpart_id` NOT NULL
 
 ---
-
 
 ##  Encountered Challenge 
 
 1. Database Schema Design: 
 
-    The biggest challenge was converting the requirements document into a working Entity-Relationship schema. We actually went back and forth many time to modify the schema. This was critical because the ER schema affects every design decision and code implementation throughout the project. Key difficulties included modeling complex relationships between items, actions, and counterparts, implementing SQL inheritance (Item → Loose_Stone → specific stone types), and designing action traceability where actions reference each other (e.g., returns linking to original transfers).
+    The biggest challenge was converting the requirements document into a working Entity-Relationship schema. 
+    We actually went back and forth many times to modify the schema. 
+    This was critical because the ER schema affects every design decision and code implementation throughout the project. 
+    Key difficulties included modeling complex relationships between items, actions, and counterparts, implementing SQL inheritance (Item → Loose_Stone → specific stone types), and designing action traceability where actions reference each other (e.g., returns linking to original transfers).
 
+2. User Interface Development with Streamlit: 
 
-2. User Interface Development with Streamlit : 
-
-    As we are not familiar with developing the application interface with Python and Streamlit, this part took us a lot of time to complete 
-
+    As we are not familiar with developing the application interface with Python and Streamlit, this part took us a lot of time to complete.
 
 3. Project Scope Reduction : 
 
-    Time constraints forced us to prioritize features. We deferred some planned functionality (memo in/out, financial reports, admin interfaces) and focused on essential operations: purchase, memo out, sale, and lab/factory transfers. We also simplified some features, like limiting to one certificate per item although the system supports multiple.
+    Time constraints forced us to prioritize features. 
+    We deferred some planned functionality (memo in/out, financial reports, admin interfaces) and focused on essential operations: purchase, memo out, sale, and lab/factory transfers. 
+    We also simplified some features, like limiting to one valid certificate per item although the system supports multiple.
 
+---
 
 ## 5. List of Functions 
 
----- not completed yet, there is excel, please douuble check and update 
-![feature_list.png](img/feature_list.png)
+| Feature                                                                | Imlemented |
+|------------------------------------------------------------------------|------------|
+| Inventory operations:                                                  |            | 
+| Purchase: registering new items                                        | yes        | 
+| Memo Out: sending items to clients for approval                        | yes        | 
+| Return Memo Out: returning items sent for approval                     | yes        | 
+| Sale: registering sales with payment details                           | yes        | 
+| Transfer to Lab: sending to laboratory for certification               | yes        | 
+| Back from Lab: returning items with new certificates                   | yes        | 
+| Transfer to Factory: sending to factory for processing                 | yes        | 
+| Back from Factory: returning items with new dimensions                 | yes        | 
+| Memo In: receiving goods on consignment                                | yes        | 
+| Return Memo In: returning consigned goods                              | yes        | 
+| Transfer To Office: transfering goods between offices                  | yes        | 
+|                                                                        |            | 
+| Consultation and Reporting                                             | yes        | 
+| Complete view by item type                                             | yes        | 
+| Automation location status calculation                                 | yes        | 
+| Complete action history per lot                                        | yes        | 
+| Inventory by type with statistics                                      | yes        | 
+| Filtering by status, availability, location                            | yes        | 
+|                                                                        |            | 
+| Traceability                                                           | yes        | 
+| Timestamped recording of all actions                                   | yes        | 
+| Linking between actions (returns referencing original transfers)       | yes        | 
+| Complete item history via `get_item_history` function                  | yes        | 
+| Update logs in `action_update_log`                                     | yes        | 
+|                                                                        |            | 
+| Financial Features                                                     | yes        | 
+|                                                                        |            | 
+| Financial reports: revenue analysis by period                          | no         | 
+| Grouping by clients: revenue by client                                 | no         | 
+| Grouping by category: revenue by item type                             | no         | 
+| Revenue charts: temporal visualizations                                | no         | 
+|                                                                        |            | 
+| Application                                                            |            | 
+| Registering new white/colored diamond via purchase                     | yes        | 
+| Registering new sale                                                   | yes        | 
+| Transfering item to lab/factory/office                                 | yes        | 
+| Returning item from lab/factory/office                                 | yes        | 
+| Inspecting item (white/colore diamond, gemstone, jewelry)              | yes        | 
+| Inspecting certificate details                                         | no         | 
+| Basic authentication (via email)                                       | yes        | 
+| Counterpart management interface : add/modify suppliers, clients, labs | no         | 
+| Employee account management: add/modify user accounts                  | no         | 
+| PDF generation of administrative reports                               | no         | 
+| Verification that user has filled all the requirement fields           | no         | 
+| Registering Memo In, Memo Out and corresponding returns                | no         | 
 
-
+---
 
 ## 6. Confirmed Bugs 
 
@@ -260,14 +421,51 @@ Currently, no critical bugs identified in the database or stored procedures. Tes
 - Status management
 - Availability updates
 - Location calculations
-- Referential integrity
 
 ## Known Limitations
 
+As some decisions during the Conceptual Schema phase were made,
+even registering new purchases with this schema is not easy at all,
+there are so many intersecting options that such a simple action
+suddenly run into combinatorial explosion.
 
+Besides, deleting or updating `action` or `item` (with `white_deamond/colored_diamond/colored_gemstone/jewelry` underneath)
+can be a problem since an idea of the current design is to reflect every change via a new `action`.
+But what happens if someone mistypes a measurement, and then the item undergoes several `action`s?
+How this problem can be solved when every new action relies on the previous one?
+There is no answer to this in the current design.<br>
+Probably for correct someone's error we should introduce some new `action` (`Correction` for example)
+that would deal with this kind of situation. <br>
+For now, delete or updating has sense only if `item` has just "arrived" in the DB,
+or if the action of our interest is the last one in some lifecycle.
 
+---
 
 ## 7. Members contribution 
 
-## 8. App interface with screen shot 
+- Liao Pei-Wen (requirements document, ER design, SQL schema design, dummy data, views, procedures, application)
+- Makovskyi Maksym (ER design, relational schema, SQL schema, dummy data, triggers, queries, application)
+- Wu Guo Yu (ER design, SQL schema, views, queries)
+
+## 8. Screenshorts of the app
+
+Screenshots presented below are only a little part of the created user interface.
+
+### All items registered in the system
+
+![inventory all](./img/app_screenShot/inventory_all_items.png)
+
+### Registering new purchase
+
+![new purchase](./img/app_screenShot/new_purchase.png)
+
+
+### White diamond's details
+
+![wd details](./img/app_screenShot/white_diamond_detail.png)
+
+### New transfer to another office
+
+![new transfer office](./img/app_screenShot/new_transfer_office.png)
+
 

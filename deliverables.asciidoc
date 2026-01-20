@@ -60,7 +60,7 @@ Le script doit inclure:
 * La création des tables, vues, fonctions/procédures, triggers
 * Le peuplement initial de la base de données (pour avoir un exemple de contenu)
 
-*Mettez à jour le lien ci-après pour pointer vers votre script de création de la BD: link:sql/diamonds[Mon script].*
+*Mettez à jour le lien ci-après pour pointer vers votre script de création de la BD: link:sql/diamonds/1-project-schema.sql[Mon script].*
 
 
 == Code
